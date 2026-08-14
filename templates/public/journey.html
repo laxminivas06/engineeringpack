@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}45-Day Engineering Journey — Curriculum Roadmap{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-calendar3"></i> 45 Days Curriculum</div>
+      <h1 class="section-title">The <span class="text-gradient">Engineering Journey</span> Roadmap</h1>
+      <p class="section-subtitle">11 distinct phases carefully structured from foundational first principles to capstone engineering showcase.</p>
+    </div>
+
+    <!-- VISUAL TIMELINE LIST -->
+    <div class="timeline-list" style="max-width: 900px; margin: 0 auto 4rem;">
+      {% for phase in phases %}
+        <div class="timeline-item">
+          <div class="timeline-badge">{{ phase.phase_number }}</div>
+          <div class="timeline-content">
+            <div class="glass-card" style="padding: 1.5rem 1.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span class="tech-badge" style="font-size: 0.75rem;"><i class="bi bi-layers"></i> {{ phase.domain }}</span>
+                <span class="font-mono" style="font-size: 0.9rem; color: var(--primary-cyan); font-weight: 600;">{{ phase.day_range }}</span>
+              </div>
+              <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Phase {{ phase.phase_number }}: {{ phase.title }}</h3>
+              <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">{{ phase.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- CTA BANNER -->
+    <div class="glass-card" style="text-align: center; padding: 3rem; border-color: var(--border-accent);">
+      <h2 style="font-size: 1.8rem; margin-bottom: 0.75rem;">Ready to Begin Your 45-Day Journey?</h2>
+      <p style="margin-bottom: 1.75rem; color: var(--text-muted);">Enroll in the upcoming cohort and gain hands-on technical exposure.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff-fill"></i> REGISTER NOW (₹3,500)</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

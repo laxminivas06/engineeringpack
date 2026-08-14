@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mnt_01",
+    "name": "Dr. Vikram Seth",
+    "role": "Principal Systems Architect",
+    "domain": "Software & Systems Architecture",
+    "company": "Ex-Google / AIVONTRAA",
+    "bio": "15+ years in distributed systems, kernel engineering, and high-throughput backend infrastructure."
+  },
+  {
+    "id": "mnt_02",
+    "name": "Sarah Lin",
+    "role": "Cybersecurity Director",
+    "domain": "Network Security & Ethical Hacking",
+    "company": "CyberShield Labs",
+    "bio": "Offensive security specialist, bug bounty hunter, and cloud security architecture expert."
+  }
+]

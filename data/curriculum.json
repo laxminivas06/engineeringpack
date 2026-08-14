@@ -1,0 +1,90 @@
+[
+  {
+    "phase_number": 1,
+    "title": "Engineer Mindset",
+    "day_range": "Days 1 - 4",
+    "domain": "System Thinking & Engineering Fundamentals",
+    "icon": "brain",
+    "description": "Transitioning from passive academic learning to active first-principles engineering, problem breakdown, and computational thinking."
+  },
+  {
+    "phase_number": 2,
+    "title": "Software Engineering",
+    "day_range": "Days 5 - 9",
+    "domain": "Software Engineering",
+    "icon": "code-slash",
+    "description": "Clean code architecture, modular design patterns, API design, debugging strategies, and production code quality."
+  },
+  {
+    "phase_number": 3,
+    "title": "Linux & Networking",
+    "day_range": "Days 10 - 14",
+    "domain": "Linux & Networking",
+    "icon": "terminal",
+    "description": "Command-line mastery, shell scripting, TCP/IP protocol suite, DNS, HTTP/S fundamentals, and network analysis."
+  },
+  {
+    "phase_number": 4,
+    "title": "Cybersecurity",
+    "day_range": "Days 15 - 19",
+    "domain": "Cybersecurity",
+    "icon": "shield-check",
+    "description": "Ethical hacking concepts, vulnerability assessments, secure coding, encryption standards, and threat analysis."
+  },
+  {
+    "phase_number": 5,
+    "title": "Robotics & IoT",
+    "day_range": "Days 20 - 24",
+    "domain": "Robotics & IoT",
+    "icon": "cpu",
+    "description": "Microcontrollers, embedded systems, sensor integration, actuator control, MQTT protocols, and hardware-software bridging."
+  },
+  {
+    "phase_number": 6,
+    "title": "Design & System Thinking",
+    "day_range": "Days 25 - 28",
+    "domain": "System Design",
+    "icon": "diagram-3",
+    "description": "Scalable systems design, database selection, load balancing, caching strategies, and resilient architecture."
+  },
+  {
+    "phase_number": 7,
+    "title": "Git & GitHub",
+    "day_range": "Days 29 - 32",
+    "domain": "Git & GitHub",
+    "icon": "git",
+    "description": "Professional version control, branching strategies, collaborative workflows, CI/CD pipelines, and pull request reviews."
+  },
+  {
+    "phase_number": 8,
+    "title": "AI for Engineers",
+    "day_range": "Days 33 - 36",
+    "domain": "AI for Engineers",
+    "icon": "robot",
+    "description": "Applied Machine Learning, LLM prompt engineering, AI service integration, vector databases, and intelligent automation."
+  },
+  {
+    "phase_number": 9,
+    "title": "Career Engineering",
+    "day_range": "Days 37 - 40",
+    "domain": "Career Engineering",
+    "icon": "briefcase",
+    "description": "Resume engineering, tech portfolio building, technical interview prep, system design rounds, and industry networking."
+  },
+  {
+    "phase_number": 10,
+    "title": "Communication & Documentation",
+    "day_range": "Days 41 - 43",
+    "domain": "Communication & Documentation",
+    "icon": "file-earmark-text",
+    "description": "Writing technical documentation, architecture specs, effective code comments, and delivering technical presentations."
+  },
+  {
+    "phase_number": 11,
+    "title": "Engineering Showcase",
+    "day_range": "Days 44 - 45",
+    "domain": "Capstone Project",
+    "icon": "trophy",
+    "description": "Final capstone project presentation, peer review, expert feedback, and graduation credentials."
+  }
+]

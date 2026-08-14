@@ -1,0 +1,57 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Contact Enquiries — Admin Portal{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.contacts') }}" class="sidebar-link active"><i class="bi bi-envelope"></i> <span>Contacts</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+  <div class="dashboard-title-group">
+    <h1>Contact Submissions & Enquiries</h1>
+    <p>View incoming enquiries from website visitors and prospective students.</p>
+  </div>
+  <div class="tech-badge"><i class="bi bi-envelope-fill"></i> Total Enquiries: {{ contacts|length }}</div>
+</div>
+
+<div class="glass-card">
+  <div class="table-responsive">
+    <table class="tech-table">
+      <thead>
+        <tr>
+          <th>Sender Name & Email</th>
+          <th>Phone</th>
+          <th>Subject</th>
+          <th>Message</th>
+          <th>Submitted At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in contacts %}
+          <tr>
+            <td>
+              <strong style="color: var(--text-main); display: block;">{{ c.name }}</strong>
+              <span style="font-size: 0.82rem; color: var(--primary-cyan);">{{ c.email }}</span>
+            </td>
+            <td style="font-size: 0.85rem; color: var(--text-muted);">{{ c.phone or 'N/A' }}</td>
+            <td style="font-size: 0.85rem;"><span class="tech-badge" style="font-size: 0.72rem;">{{ c.subject or 'General' }}</span></td>
+            <td style="font-size: 0.88rem; color: var(--text-main); max-width: 300px; white-space: normal;">{{ c.message }}</td>
+            <td class="font-mono" style="font-size: 0.8rem; color: var(--text-dim);">{{ c.created_at[:10] }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" style="text-align: center; color: var(--text-dim);">No contact messages received yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

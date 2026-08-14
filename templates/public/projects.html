@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects & Outcomes — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-folder-check"></i> Applied Engineering</div>
+      <h1 class="section-title">Practical <span class="text-gradient">Projects & Outcomes</span></h1>
+      <p class="section-subtitle">Bridge the theory gap by building tangible, portfolio-ready engineering projects across core domains.</p>
+    </div>
+
+    <!-- PROJECTS GRID -->
+    <div class="domains-grid" style="margin-bottom: 4rem;">
+      {% for proj in projects %}
+        <div class="glass-card">
+          <div class="domain-card">
+            <div class="card-icon"><i class="bi bi-{{ proj.icon }}"></i></div>
+            <div>
+              <span class="tech-badge" style="font-size: 0.72rem; margin-bottom: 0.5rem;">{{ proj.domain }}</span>
+              <h3 style="font-size: 1.3rem;">{{ proj.name }}</h3>
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-muted); flex: 1;">{{ proj.description }}</p>
+            
+            <div style="background: rgba(0, 242, 254, 0.04); border-left: 3px solid var(--primary-cyan); padding: 0.85rem 1rem; border-radius: var(--radius-sm); margin-top: 0.5rem;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary-cyan); font-family: var(--font-mono); text-transform: uppercase;">
+                <i class="bi bi-trophy-fill"></i> Practical Outcome:
+              </div>
+              <p style="font-size: 0.88rem; color: var(--text-main); margin-top: 0.25rem;">{{ proj.outcome }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="glass-card" style="text-align: center; padding: 3rem; border-color: var(--border-accent);">
+      <h2 style="font-size: 1.8rem; margin-bottom: 0.75rem;">Build Your Technical Portfolio</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.75rem;">Graduates complete Engineering Pack with a verified GitHub portfolio demonstrating real project work.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff-fill"></i> START BUILDING TODAY</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

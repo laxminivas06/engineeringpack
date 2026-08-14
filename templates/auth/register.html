@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Register — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<script>
+  window.location.href = "{{ url_for('auth.login') }}";
+</script>
+<section style="padding: 4rem 0 5rem;" class="tech-grid-bg">
+  <div class="container">
+    <div style="max-width: 480px; margin: 0 auto; text-align: center;">
+      <div class="glass-card" style="padding: 3rem 2.25rem;">
+        <h1 style="font-size: 1.85rem; margin-bottom: 1rem;">Redirecting to Google Sign-In...</h1>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Continue to Sign In</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

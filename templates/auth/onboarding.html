@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Your Profile — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 5rem;">
+  <div class="container">
+    <div style="max-width: 620px; margin: 0 auto;">
+      <div class="glass-card" style="padding: 3rem 2.25rem; border-color: var(--border-accent);">
+        
+        <div style="text-align: center; margin-bottom: 2.25rem;">
+          <div class="tech-badge" style="margin-bottom: 0.75rem;"><i class="bi bi-person-gear"></i> Step 1 of 2</div>
+          <h1 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Complete Your Engineering Pack Profile</h1>
+          <p style="font-size: 0.95rem; color: var(--text-muted);">
+            Tell us a few basic details to personalize your Engineering Pack experience.
+          </p>
+        </div>
+
+        <form action="{{ url_for('auth.onboarding') }}" method="POST" id="onboardingForm">
+          
+          <!-- FULL NAME (Pre-filled, Editable, Required) -->
+          <div class="form-group">
+            <label class="form-label" for="full_name">Full Name *</label>
+            <input type="text" id="full_name" name="full_name" class="form-control" value="{{ user.full_name if user else '' }}" placeholder="e.g. Alex Johnson" required>
+          </div>
+
+          <!-- GOOGLE EMAIL (Read-only) -->
+          <div class="form-group">
+            <label class="form-label" for="email">Google Account Email (Read-Only)</label>
+            <div style="position: relative;">
+              <input type="email" id="email" class="form-control" value="{{ user.email if user else '' }}" disabled style="opacity: 0.75; cursor: not-allowed; background: rgba(8,12,20,0.8); padding-left: 2.5rem;">
+              <i class="bi bi-google" style="position: absolute; left: 0.9rem; top: 0.85rem; color: var(--primary-cyan);"></i>
+            </div>
+            <span style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.25rem;">This email is linked to your authenticated Google profile.</span>
+          </div>
+
+          <!-- PHONE NUMBER (Required with Country Code) -->
+          <div class="form-group">
+            <label class="form-label" for="phone">Mobile Phone Number *</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <select style="width: 110px;" class="form-control font-mono">
+                <option value="+91" selected>🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+971">🇦🇪 +971</option>
+              </select>
+              <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.phone if user else '' }}" placeholder="98765 43210" required>
+            </div>
+          </div>
+
+          <!-- YOU ARE (USER TYPE) -->
+          <div class="form-group">
+            <label class="form-label" for="user_type">You Are *</label>
+            <select id="user_type" name="user_type" class="form-control" required onchange="toggleCustomUserType(this.value)">
+              <option value="" disabled selected>-- Select your role --</option>
+              <option value="Student">Student</option>
+              <option value="Teacher">Teacher / Instructor</option>
+              <option value="Faculty">Faculty / Professor</option>
+              <option value="Working Professional">Working Professional</option>
+              <option value="Engineering Professional">Engineering Professional</option>
+              <option value="Researcher">Researcher</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- CUSTOM USER TYPE (Shown if Other selected) -->
+          <div class="form-group" id="customUserTypeGroup" style="display: none;">
+            <label class="form-label" for="custom_user_type">Specify Your Role *</label>
+            <input type="text" id="custom_user_type" name="custom_user_type" class="form-control" placeholder="Specify role...">
+          </div>
+
+          <!-- BRANCH / DEPARTMENT -->
+          <div class="form-group">
+            <label class="form-label" for="branch">Branch / Department *</label>
+            <select id="branch" name="branch" class="form-control" required onchange="toggleCustomBranch(this.value)">
+              <option value="" disabled selected>-- Select Branch / Department --</option>
+              <option value="Computer Science Engineering">Computer Science Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Data Science">Data Science</option>
+              <option value="Artificial Intelligence & Machine Learning">Artificial Intelligence & Machine Learning</option>
+              <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
+              <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- CUSTOM BRANCH (Shown if Other selected) -->
+          <div class="form-group" id="customBranchGroup" style="display: none;">
+            <label class="form-label" for="custom_branch">Specify Branch / Specialization *</label>
+            <input type="text" id="custom_branch" name="custom_branch" class="form-control" placeholder="Specify branch...">
+          </div>
+
+          <!-- ACADEMIC YEAR -->
+          <div class="form-group">
+            <label class="form-label" for="academic_year">Academic Year *</label>
+            <select id="academic_year" name="academic_year" class="form-control" required>
+              <option value="" disabled selected>-- Select Academic Status --</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+              <option value="Graduated">Graduated</option>
+              <option value="Postgraduate">Postgraduate</option>
+              <option value="Not Applicable">Not Applicable (Teachers / Professionals)</option>
+            </select>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1.25rem;">
+            Continue to Payment <i class="bi bi-arrow-right"></i>
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleCustomUserType(val) {
+    const group = document.getElementById('customUserTypeGroup');
+    const input = document.getElementById('custom_user_type');
+    if (val === 'Other') {
+      group.style.display = 'block';
+      input.setAttribute('required', 'required');
+    } else {
+      group.style.display = 'none';
+      input.removeAttribute('required');
+    }
+  }
+
+  function toggleCustomBranch(val) {
+    const group = document.getElementById('customBranchGroup');
+    const input = document.getElementById('custom_branch');
+    if (val === 'Other') {
+      group.style.display = 'block';
+      input.setAttribute('required', 'required');
+    } else {
+      group.style.display = 'none';
+      input.removeAttribute('required');
+    }
+  }
+</script>
+{% endblock %}

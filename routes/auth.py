@@ -102,7 +102,16 @@ def register():
 @auth_bp.route('/auth/google/redirect', methods=['GET'])
 def google_redirect():
     """Redirects user to official Google OAuth 2.0 consent screen."""
-    client_id = current_app.config.get('GOOGLE_CLIENT_ID')
+    client_id = (current_app.config.get('GOOGLE_CLIENT_ID') or '').strip()
+    
+    if not client_id or 'YOUR_GOOGLE_CLIENT_ID' in client_id.upper():
+        flash(
+            "Google OAuth Client ID is not configured yet. Please set your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the .env file. "
+            "For local testing, you can use the Dev Quick Login below.",
+            "warning"
+        )
+        return redirect(url_for('auth.login'))
+
     redirect_uri = get_google_redirect_uri()
     google_oauth_url = (
         "https://accounts.google.com/o/oauth2/v2/auth?"
@@ -113,6 +122,39 @@ def google_redirect():
         "prompt=select_account"
     )
     return redirect(google_oauth_url)
+
+
+@auth_bp.route('/auth/dev-login', methods=['POST'])
+def dev_login():
+    """Developer bypass login for local testing when Google OAuth credentials are not set."""
+    email = request.form.get('email', '').strip().lower()
+
+    if not email:
+        flash("Please enter an email address for Dev Quick Sign-In.", "danger")
+        return redirect(url_for('auth.login'))
+
+    google_info = {
+        'email': email,
+        'name': email.split('@')[0].replace('.', ' ').replace('_', ' ').title(),
+        'sub': f'dev_{uuid.uuid4().hex[:8]}'
+    }
+
+    success, msg, user_data, role = get_or_create_google_user(google_info)
+    if success:
+        login_session(user_data, role=role)
+        flash(f"Signed in via Dev Quick Login as {email} ({role.upper()}).", "success")
+        if role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        else:
+            if user_data.get('enrollment_status') == 'Pending Onboarding':
+                return redirect(url_for('auth.onboarding'))
+            elif user_data.get('payment_status') == 'Unpaid':
+                return redirect(url_for('auth.payment'))
+            return redirect(url_for('student.dashboard'))
+    else:
+        flash(msg, "danger")
+        return redirect(url_for('auth.login'))
+
 
 
 @auth_bp.route('/auth/google/callback', methods=['GET', 'POST'])

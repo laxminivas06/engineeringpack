@@ -17,6 +17,16 @@
           45 Days to Think, Build & Grow Like an Engineer. Sign in with your Google account to get started.
         </p>
 
+        {% if not config.GOOGLE_CLIENT_ID or 'YOUR_GOOGLE_CLIENT_ID' in config.GOOGLE_CLIENT_ID %}
+        <!-- UNCONFIGURED GOOGLE OAUTH ALERT -->
+        <div class="alert alert-warning text-start mb-4" style="font-size: 0.85rem; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; padding: 0.85rem 1rem;">
+          <div style="font-weight: 700; margin-bottom: 0.35rem;">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> Google OAuth Setup Needed
+          </div>
+          To enable live Google Sign-In, add your <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> to your <code>.env</code> file.<br>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Use the Dev Quick Sign-In below for local testing.</span>
+        </div>
+        {% else %}
         <!-- OFFICIAL GOOGLE IDENTITY SERVICES (GIS) BUTTON WIDGET -->
         <div id="g_id_onload"
              data-client_id="{{ config.GOOGLE_CLIENT_ID }}"
@@ -35,9 +45,10 @@
                data-width="360">
           </div>
         </div>
+        {% endif %}
 
         <!-- SERVER-SIDE GOOGLE OAUTH REDIRECT BUTTON -->
-        <div style="margin-bottom: 1.75rem;">
+        <div style="margin-bottom: 1.25rem;">
           <a href="{{ url_for('auth.google_redirect') }}" class="btn btn-lg" style="width: 100%; background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.85rem; padding: 0.85rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s ease;">
             <svg width="22" height="22" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -47,6 +58,20 @@
             </svg>
             <span>Sign in with Google</span>
           </a>
+        </div>
+
+        <!-- LOCAL TESTING DEV QUICK SIGN-IN -->
+        <div style="margin-bottom: 1.75rem; background: rgba(15, 23, 42, 0.6); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px dashed var(--border-color); text-align: left;">
+          <details>
+            <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--primary-cyan); display: flex; align-items: center; justify-content: space-between;">
+              <span><i class="bi bi-code-slash me-1"></i> Dev / Quick Local Sign-In</span>
+              <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+            </summary>
+            <form method="POST" action="{{ url_for('auth.dev_login') }}" style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+              <input type="email" name="email" class="form-control form-control-sm" placeholder="Enter email (e.g. konthamjaganmohanreddy@gmail.com)" required style="background: rgba(8, 12, 20, 0.8); border: 1px solid var(--border-color); color: #ffffff; font-size: 0.85rem;">
+              <button type="submit" class="btn btn-sm btn-outline-cyan" style="width: 100%; font-size: 0.82rem; padding: 0.4rem;">Quick Sign In (Dev Mode)</button>
+            </form>
+          </details>
         </div>
 
         <div style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 2rem;">

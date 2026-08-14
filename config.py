@@ -1,5 +1,11 @@
 import os
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'engineering-pack-secret-key-2026-aivontraa'

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Engineering Domains — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-grid-3x3-gap-fill"></i> 13 Domains</div>
+      <h1 class="section-title">Explore <span class="text-gradient">Engineering Domains</span></h1>
+      <p class="section-subtitle">Comprehensive cross-disciplinary exposure covering systems, software, security, hardware, and career execution.</p>
+    </div>
+
+    <!-- DOMAINS GRID -->
+    <div class="domains-grid" style="margin-bottom: 4rem;">
+      {% for d in domains %}
+        <div class="glass-card domain-card">
+          <div class="card-icon">
+            <i class="bi bi-{{ d.icon }}"></i>
+          </div>
+          <h3 style="font-size: 1.3rem; margin-top: 0.25rem;">{{ d.name }}</h3>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6;">{{ d.description }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="glass-card" style="text-align: center; padding: 2.5rem;">
+      <h2 style="font-size: 1.6rem; margin-bottom: 0.75rem;">Master All 13 Domains in 45 Days</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">No prior advanced domain expertise required. Designed for ambitious engineering students.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"><i class="bi bi-arrow-right-circle-fill"></i> Join Engineering Pack</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

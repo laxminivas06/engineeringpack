@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Pricing & Enrollment — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-tag-fill"></i> Transparent Pricing</div>
+      <h1 class="section-title">One Price. <span class="text-gradient">Complete Access.</span></h1>
+      <p class="section-subtitle">No hidden fees. 45 days of comprehensive engineering exposure for a single affordable investment.</p>
+    </div>
+
+    <!-- PRICING CARD CONTAINER -->
+    <div style="max-width: 680px; margin: 0 auto 4rem;">
+      <div class="glass-card" style="padding: 3.5rem 2.5rem; text-align: center; border-color: var(--border-accent); box-shadow: var(--shadow-glow);">
+        <div class="tech-badge" style="margin-bottom: 1rem;"><i class="bi bi-star-fill"></i> Full Cohort Access</div>
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Engineering Pack Cohort</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.75rem;">45 Days of Hands-On Engineering Exposure</p>
+        
+        <div style="font-size: 3.6rem; font-family: var(--font-heading); font-weight: 800; color: var(--primary-cyan); margin-bottom: 1.5rem;">
+          ₹{{ site_settings.price }} <span style="font-size: 1rem; color: var(--text-dim); font-weight: 400;">/ One-Time Fee</span>
+        </div>
+
+        <div style="text-align: left; background: rgba(8, 12, 20, 0.5); padding: 1.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-main);">What's Included:</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.95rem;">
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>13 Major Engineering Domains</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>45-Day Structured Learning Roadmap</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Hands-on Capstone Projects & Portfolio</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Cybersecurity & Ethical Hacking Basics</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Linux & Network Protocol Deep Dives</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Applied AI & Machine Learning Services</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Robotics & Embedded IoT Hardware Telemetry</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Career Engineering & Technical Interview Prep</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Communication, RFCs & Documentation Mastery</span></li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;"><i class="bi bi-check-circle-fill text-gradient" style="font-size: 1.1rem;"></i> <span>Verified Certificate of Engineering Completion</span></li>
+          </ul>
+        </div>
+
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg" style="width: 100%;">
+          <i class="bi bi-rocket-takeoff-fill"></i> JOIN ENGINEERING PACK NOW
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us — ENGINEERING PACK{% endblock %}
+
+{% block content %}
+<section style="padding: 3rem 0 2rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-envelope-fill"></i> Support & Enquiries</div>
+      <h1 class="section-title">Get in <span class="text-gradient">Touch</span></h1>
+      <p class="section-subtitle">Have questions about the 45-day program or registration? Send us a message.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; max-width: 1050px; margin: 0 auto 4rem;">
+      <!-- CONTACT FORM -->
+      <div class="glass-card">
+        <h2 style="font-size: 1.4rem; margin-bottom: 1.5rem;">Send Us a Message</h2>
+        <form action="{{ url_for('public.contact') }}" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="name">Full Name *</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Alex Johnson" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="e.g. alex@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" class="form-control" placeholder="Program Enquiry / Registration">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="message">Your Message *</label>
+            <textarea id="message" name="message" class="form-control" placeholder="How can we help you?" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            <i class="bi bi-send-fill"></i> Submit Message
+          </button>
+        </form>
+      </div>
+
+      <!-- COMPANY INFO CARD -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="glass-card">
+          <h2 style="font-size: 1.4rem; margin-bottom: 1.25rem;">Corporate Headquarters</h2>
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-building"></i></div>
+              <div>
+                <strong style="color: var(--text-main); display: block;">{{ site_settings.company }}</strong>
+                <span style="font-size: 0.88rem; color: var(--text-muted);">Automation & Engineering Platform Provider</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-envelope"></i></div>
+              <div>
+                <strong style="color: var(--text-main); display: block;">Email Support</strong>
+                <a href="mailto:{{ site_settings.support_email }}" style="font-size: 0.9rem;">{{ site_settings.support_email }}</a>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-telephone"></i></div>
+              <div>
+                <strong style="color: var(--text-main); display: block;">Phone Helpline</strong>
+                <span style="font-size: 0.9rem; color: var(--text-muted);">{{ site_settings.support_phone }}</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-geo-alt"></i></div>
+              <div>
+                <strong style="color: var(--text-main); display: block;">Location</strong>
+                <span style="font-size: 0.88rem; color: var(--text-muted);">AIVONTRAA Tech Park, Innovation Hub, India</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="border-color: var(--border-accent);">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;"><i class="bi bi-clock-history text-gradient"></i> Support Hours</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Monday – Saturday: 9:00 AM – 7:00 PM IST</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

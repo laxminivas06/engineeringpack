@@ -1,0 +1,57 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}My Projects — Student Portal{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('student.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+  <li><a href="{{ url_for('student.journey') }}" class="sidebar-link"><i class="bi bi-map"></i> <span>45-Day Journey</span></a></li>
+  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link active"><i class="bi bi-folder-check"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('student.certificates') }}" class="sidebar-link"><i class="bi bi-award"></i> <span>Certificates</span></a></li>
+  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link"><i class="bi bi-person-gear"></i> <span>Profile</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+  <div class="dashboard-title-group">
+    <h1>Hands-On Engineering Projects</h1>
+    <p>Track project assignments, repository submissions, and outcomes.</p>
+  </div>
+</div>
+
+<div class="domains-grid">
+  {% for proj in projects %}
+    <div class="glass-card">
+      <div class="domain-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="card-icon"><i class="bi bi-{{ proj.icon }}"></i></div>
+          {% if loop.index == 1 %}
+            <span class="tech-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); border-color: rgba(16, 185, 129, 0.3); font-size: 0.72rem;"><i class="bi bi-check-circle-fill"></i> Completed</span>
+          {% elif loop.index == 2 %}
+            <span class="tech-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--primary-cyan); border-color: var(--border-accent); font-size: 0.72rem;"><i class="bi bi-play-circle"></i> Active</span>
+          {% else %}
+            <span class="tech-badge" style="background: rgba(255, 255, 255, 0.03); color: var(--text-dim); border-color: var(--border-color); font-size: 0.72rem;"><i class="bi bi-clock"></i> Upcoming</span>
+          {% endif %}
+        </div>
+
+        <div>
+          <span class="tech-badge" style="font-size: 0.7rem; margin-bottom: 0.4rem;">{{ proj.domain }}</span>
+          <h3 style="font-size: 1.25rem;">{{ proj.name }}</h3>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-muted); flex: 1;">{{ proj.description }}</p>
+
+        <div style="background: rgba(0, 242, 254, 0.04); border-left: 3px solid var(--primary-cyan); padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
+          <span style="font-weight: 600; font-size: 0.8rem; color: var(--primary-cyan);">Target Outcome:</span>
+          <p style="font-size: 0.85rem; color: var(--text-main); margin-top: 0.2rem;">{{ proj.outcome }}</p>
+        </div>
+
+        <button type="button" class="btn btn-outline btn-sm" style="width: 100%; margin-top: 0.5rem;" onclick="alert('Submission portal active during project phase.')">
+          <i class="bi bi-github"></i> Submit GitHub Repository
+        </button>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

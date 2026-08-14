@@ -60,19 +60,6 @@
           </a>
         </div>
 
-        <!-- LOCAL TESTING DEV QUICK SIGN-IN -->
-        <div style="margin-bottom: 1.75rem; background: rgba(15, 23, 42, 0.6); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px dashed var(--border-color); text-align: left;">
-          <details>
-            <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--primary-cyan); display: flex; align-items: center; justify-content: space-between;">
-              <span><i class="bi bi-code-slash me-1"></i> Dev / Quick Local Sign-In</span>
-              <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-            </summary>
-            <form method="POST" action="{{ url_for('auth.dev_login') }}" style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
-              <input type="email" name="email" class="form-control form-control-sm" placeholder="Enter email (e.g. konthamjaganmohanreddy@gmail.com)" required style="background: rgba(8, 12, 20, 0.8); border: 1px solid var(--border-color); color: #ffffff; font-size: 0.85rem;">
-              <button type="submit" class="btn btn-sm btn-outline-cyan" style="width: 100%; font-size: 0.82rem; padding: 0.4rem;">Quick Sign In (Dev Mode)</button>
-            </form>
-          </details>
-        </div>
 
         <div style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 2rem;">
           <i class="bi bi-shield-check text-gradient"></i> Fast, passwordless & secure Google OAuth sign-in.<br>No manual passwords or temporary testing entries.

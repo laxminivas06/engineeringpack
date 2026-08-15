@@ -242,9 +242,9 @@ Display:
 
 **Hands-on Learning**
 
-**₹2,999**
+**₹3,499**
 
-**≈ ₹66/day**
+**≈ ₹79/day**
 
 **7\. ENGINEERING VISUALIZATION**
 =================================

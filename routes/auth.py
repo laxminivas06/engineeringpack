@@ -7,9 +7,13 @@ import urllib.parse
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from services.auth_service import (
-    get_or_create_google_user, complete_user_onboarding, complete_user_payment,
-    submit_user_payment_proof, authenticate_admin, login_session, logout_session,
+    get_or_create_google_user, authenticate_admin, login_session, logout_session,
     get_current_user, login_required
+)
+from services.product_service import get_product_by_id, get_all_products
+from services.enrollment_service import (
+    get_or_create_enrollment, get_enrollment_by_id, get_student_enrollments,
+    update_master_student_profile, submit_enrollment_payment_proof
 )
 
 auth_bp = Blueprint('auth', __name__)
@@ -26,6 +30,15 @@ def get_google_redirect_uri():
     config_uri = current_app.config.get('GOOGLE_REDIRECT_URI')
     if config_uri:
         return config_uri
+
+    import re
+    host = request.host
+    hostname = host.split(':')[0]
+    port_suffix = f":{host.split(':')[1]}" if ':' in host else ''
+
+    if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', hostname):
+        return f"{request.scheme}://localhost{port_suffix}/auth/google/callback"
+
     return f"{request.scheme}://{request.host}/auth/google/callback"
 
 
@@ -84,12 +97,11 @@ def login():
     if user:
         if session.get('role') == 'admin':
             return redirect(url_for('admin.dashboard'))
+        elif session.get('role') == 'mentor':
+            return redirect(url_for('mentor.dashboard'))
         elif session.get('role') == 'student':
-            if user.get('enrollment_status') == 'Pending Onboarding':
-                return redirect(url_for('auth.onboarding'))
-            elif user.get('payment_status') == 'Unpaid':
-                return redirect(url_for('auth.payment'))
-            return redirect(url_for('student.dashboard'))
+            flash(f"Welcome back, {user.get('full_name') or user.get('name')}! Explore our engineering programs below.", "success")
+            return redirect(url_for('public.index'))
 
     return render_template('auth/login.html')
 
@@ -105,11 +117,7 @@ def google_redirect():
     client_id = (current_app.config.get('GOOGLE_CLIENT_ID') or '').strip()
     
     if not client_id or 'YOUR_GOOGLE_CLIENT_ID' in client_id.upper():
-        flash(
-            "Google OAuth Client ID is not configured yet. Please set your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the .env file. "
-            "For local testing, you can use the Dev Quick Login below.",
-            "warning"
-        )
+        flash("Google OAuth Client ID is not configured yet. Please configure GOOGLE_CLIENT_ID in your .env file.", "warning")
         return redirect(url_for('auth.login'))
 
     redirect_uri = get_google_redirect_uri()
@@ -126,9 +134,8 @@ def google_redirect():
 
 @auth_bp.route('/auth/dev-login', methods=['POST'])
 def dev_login():
-    """Developer bypass login for local testing when Google OAuth credentials are not set."""
+    """Developer bypass login for local testing."""
     email = request.form.get('email', '').strip().lower()
-
     if not email:
         flash("Please enter an email address for Dev Quick Sign-In.", "danger")
         return redirect(url_for('auth.login'))
@@ -142,32 +149,27 @@ def dev_login():
     success, msg, user_data, role = get_or_create_google_user(google_info)
     if success:
         login_session(user_data, role=role)
-        flash(f"Signed in via Dev Quick Login as {email} ({role.upper()}).", "success")
+        flash(f"Signed in as {email} ({role.upper()}).", "success")
         if role == 'admin':
             return redirect(url_for('admin.dashboard'))
+        elif role == 'mentor':
+            return redirect(url_for('mentor.dashboard'))
         else:
-            if user_data.get('enrollment_status') == 'Pending Onboarding':
-                return redirect(url_for('auth.onboarding'))
-            elif user_data.get('payment_status') == 'Unpaid':
-                return redirect(url_for('auth.payment'))
-            return redirect(url_for('student.dashboard'))
+            return redirect(url_for('public.index'))
     else:
         flash(msg, "danger")
         return redirect(url_for('auth.login'))
 
 
-
 @auth_bp.route('/auth/google/callback', methods=['GET', 'POST'])
 def google_callback():
-    """Receives callback from real Google OAuth 2.0 authorization code OR GIS credential form."""
+    """Callback handler for Google OAuth code exchange."""
     google_info = {}
 
-    # 1. Check GIS ID token credential in POST body
     credential = request.form.get('credential')
     if credential:
         google_info = parse_google_id_token(credential)
 
-    # 2. Check OAuth authorization code in GET query string
     if not google_info.get('email'):
         code = request.args.get('code')
         if code:
@@ -176,176 +178,139 @@ def google_callback():
 
     email = google_info.get('email', '').strip().lower()
     if not email:
-        flash("Google Authentication failed or was cancelled by user. Please try signing in again.", "danger")
+        flash("Google Authentication failed. Please try signing in again.", "danger")
         return redirect(url_for('auth.login'))
 
-    # Authenticate via real Google info
     success, msg, user_data, role = get_or_create_google_user(google_info)
     if success:
         login_session(user_data, role=role)
         if role == 'admin':
             flash(f"Welcome Admin, {user_data.get('name') or user_data.get('full_name')}!", "success")
             return redirect(url_for('admin.dashboard'))
+        elif role == 'mentor':
+            flash(f"Welcome Mentor, {user_data.get('full_name') or user_data.get('name')}!", "success")
+            return redirect(url_for('mentor.dashboard'))
         else:
-            flash(f"Signed in with Google as {user_data.get('email')}.", "success")
-            if user_data.get('enrollment_status') == 'Pending Onboarding':
-                return redirect(url_for('auth.onboarding'))
-            elif user_data.get('payment_status') == 'Unpaid':
-                return redirect(url_for('auth.payment'))
-            return redirect(url_for('student.dashboard'))
+            flash(f"Signed in successfully as {user_data.get('email')}!", "success")
+            return redirect(url_for('public.index'))
     else:
         flash(msg, "danger")
         return redirect(url_for('auth.login'))
 
 
-@auth_bp.route('/onboarding', methods=['GET', 'POST'])
+@auth_bp.route('/enroll/<product_id>', methods=['GET'])
 @login_required
-def onboarding():
+def enroll_program(product_id):
+    """Render multi-program enrollment page for a selected program."""
     user = get_current_user()
     if not user:
         return redirect(url_for('auth.login'))
 
-    if user.get('enrollment_status') != 'Pending Onboarding' and user.get('user_type'):
-        if user.get('payment_status') == 'Unpaid':
-            return redirect(url_for('auth.payment'))
+    product = get_product_by_id(product_id)
+    if not product:
+        flash("Selected program not found.", "warning")
+        return redirect(url_for('public.programs_catalog'))
+
+    enrollment = get_or_create_enrollment(user['id'], product['id'])
+
+    # Access control & Re-registration rules
+    p_status = enrollment.get('payment_status')
+    if p_status in ['Confirmed', 'Approved', 'Paid']:
+        flash(f"You are already registered and enrolled in {product['name']}! Payment is confirmed.", "success")
         return redirect(url_for('student.dashboard'))
 
-    if request.method == 'POST':
-        full_name = request.form.get('full_name', '').strip()
-        phone = request.form.get('phone', '').strip()
-        user_type = request.form.get('user_type', '').strip()
-        custom_user_type = request.form.get('custom_user_type', '').strip()
-        branch = request.form.get('branch', '').strip()
-        custom_branch = request.form.get('custom_branch', '').strip()
-        academic_year = request.form.get('academic_year', '').strip()
+    if p_status in ['Proof Submitted', 'Pending']:
+        flash(f"Your payment proof for {product['name']} has been submitted and is currently pending verification.", "info")
+        return redirect(url_for('auth.payment_success_page', enrollment_id=enrollment['id']))
 
-        if not full_name:
-            flash("Please enter your full name.", "danger")
-            return render_template('auth/onboarding.html', user=user)
+    # If payment was Rejected, allow student to re-register/resubmit
+    if p_status == 'Rejected':
+        flash("Your previous payment proof was rejected. Please review your details and resubmit a valid payment screenshot & UTR number.", "warning")
 
-        if not phone or len(phone.replace(' ', '').replace('-', '').replace('+', '')) < 8:
-            flash("Please enter a valid mobile phone number.", "danger")
-            return render_template('auth/onboarding.html', user=user)
-
-        if not user_type:
-            flash("Please select your current role ('You Are').", "danger")
-            return render_template('auth/onboarding.html', user=user)
-
-        if not branch:
-            flash("Please select or enter your branch/department.", "danger")
-            return render_template('auth/onboarding.html', user=user)
-
-        if not academic_year:
-            flash("Please select your academic year.", "danger")
-            return render_template('auth/onboarding.html', user=user)
-
-        onboarding_data = {
-            'full_name': full_name,
-            'phone': phone,
-            'user_type': user_type,
-            'custom_user_type': custom_user_type,
-            'branch': branch,
-            'custom_branch': custom_branch,
-            'academic_year': academic_year
-        }
-
-        success, updated_user = complete_user_onboarding(user['id'], onboarding_data)
-        if success:
-            session['name'] = full_name
-            flash("Profile details saved! Please complete your PhonePe UPI payment below.", "success")
-            return redirect(url_for('auth.payment'))
-        else:
-            flash(updated_user, "danger")
-
-    return render_template('auth/onboarding.html', user=user)
+    return render_template('student/enroll.html', user=user, product=product, enrollment=enrollment)
 
 
-@auth_bp.route('/payment')
+@auth_bp.route('/enroll/<product_id>/process', methods=['POST'])
 @login_required
-def payment():
+def process_enrollment(product_id):
+    """Processes Master Student Profile, Program-Specific details, and Payment Proof with 100 KB file validation."""
     user = get_current_user()
     if not user:
         return redirect(url_for('auth.login'))
 
-    if user.get('payment_status') == 'Paid' and user.get('enrollment_status') == 'Enrolled':
-        return redirect(url_for('student.dashboard'))
+    product = get_product_by_id(product_id)
+    if not product:
+        flash("Program not found.", "danger")
+        return redirect(url_for('public.programs_catalog'))
 
-    return render_template('public/payment.html', user=user)
+    enrollment = get_or_create_enrollment(user['id'], product['id'])
 
+    # 1. Update Master Student Profile (reused across all programs)
+    profile_data = {
+        'full_name': request.form.get('full_name', '').strip(),
+        'phone': request.form.get('phone', '').strip(),
+        'gender': request.form.get('gender', '').strip(),
+        'dob': request.form.get('dob', '').strip(),
+        'address': request.form.get('address', '').strip(),
+        'branch': request.form.get('branch', '').strip(),
+        'custom_branch': request.form.get('custom_branch', '').strip(),
+        'academic_year': request.form.get('academic_year', '').strip(),
+        'custom_academic_year': request.form.get('custom_academic_year', '').strip()
+    }
 
-@auth_bp.route('/payment/process', methods=['POST'])
-@login_required
-def process_payment():
-    user = get_current_user()
-    if not user:
-        return redirect(url_for('auth.login'))
+    if not profile_data['full_name']:
+        flash("Full name is required.", "danger")
+        return redirect(url_for('auth.enroll_program', product_id=product_id))
 
+    if not profile_data['phone'] or len(profile_data['phone'].replace('-', '').replace(' ', '').replace('+', '')) < 8:
+        flash("Please enter a valid phone contact number.", "danger")
+        return redirect(url_for('auth.enroll_program', product_id=product_id))
+
+    success, profile_res = update_master_student_profile(user['id'], profile_data)
+    if not success:
+        flash(profile_res, "danger")
+        return redirect(url_for('auth.enroll_program', product_id=product_id))
+
+    # 2. UTR & Payment Proof Screenshot Upload (STRICT 100 KB MAX VALIDATION)
     utr_number = request.form.get('utr_number', '').strip()
     screenshot_file = request.files.get('payment_screenshot')
 
-    if not utr_number or len(utr_number) < 6:
-        flash("Please enter a valid PhonePe / UPI UTR / Transaction Reference Number (min 6 digits).", "danger")
-        return redirect(url_for('auth.payment'))
+    pay_success, pay_msg = submit_enrollment_payment_proof(
+        enrollment_id=enrollment['id'],
+        utr_number=utr_number,
+        screenshot_file=screenshot_file,
+        app_root_path=current_app.root_path
+    )
 
-    filename = ""
-    if screenshot_file and screenshot_file.filename and allowed_file(screenshot_file.filename):
-        sec_name = secure_filename(screenshot_file.filename)
-        filename = f"pay_{user['id']}_{uuid.uuid4().hex[:6]}_{sec_name}"
-        upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'payments')
-        os.makedirs(upload_dir, exist_ok=True)
-        save_path = os.path.join(upload_dir, filename)
-        screenshot_file.save(save_path)
+    if pay_success:
+        flash(pay_msg, "success")
+        return redirect(url_for('auth.payment_success_page', enrollment_id=enrollment['id']))
     else:
-        flash("Please upload a valid payment screenshot (PNG, JPG, JPEG, WEBP).", "danger")
-        return redirect(url_for('auth.payment'))
-
-    success, result = submit_user_payment_proof(user['id'], utr_number, filename)
-    if success:
-        flash("Payment proof submitted successfully! Your enrollment has been activated.", "success")
-        return redirect(url_for('auth.payment_success'))
-    else:
-        flash(result, "danger")
-        return redirect(url_for('auth.payment'))
+        flash(pay_msg, "danger")
+        return redirect(url_for('auth.enroll_program', product_id=product_id))
 
 
-@auth_bp.route('/payment/success')
+@auth_bp.route('/payment/success/<enrollment_id>', methods=['GET'])
 @login_required
-def payment_success():
+def payment_success_page(enrollment_id):
+    """Displays Payment Proof Submitted Confirmation with PENDING VERIFICATION status."""
     user = get_current_user()
     if not user:
         return redirect(url_for('auth.login'))
-    return render_template('public/payment_success.html', user=user)
+
+    enrollment = get_enrollment_by_id(enrollment_id)
+    if not enrollment:
+        flash("Enrollment record not found.", "warning")
+        return redirect(url_for('public.index'))
+
+    return render_template('public/payment_success.html', user=user, enrollment=enrollment)
 
 
 @auth_bp.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if 'user_id' in session and session.get('role') == 'admin':
         return redirect(url_for('admin.dashboard'))
-
-    if request.method == 'POST':
-        email = request.form.get('email', '').strip()
-        password = request.form.get('password', '').strip()
-
-        if email:
-            admin_res = get_or_create_google_user({'email': email})
-            if admin_res[0] and admin_res[3] == 'admin':
-                login_session(admin_res[2], role='admin')
-                flash(f"Logged in as Administrator ({email}).", "success")
-                return redirect(url_for('admin.dashboard'))
-
-        if not email or not password:
-            flash("Please enter admin email and password.", "danger")
-            return render_template('auth/admin_login.html')
-
-        success, msg, admin_data = authenticate_admin(email, password)
-        if success:
-            login_session(admin_data, role='admin')
-            flash("Logged in as Administrator.", "success")
-            return redirect(url_for('admin.dashboard'))
-        else:
-            flash(msg, "danger")
-
-    return render_template('auth/admin_login.html')
+    return redirect(url_for('auth.google_redirect'))
 
 
 @auth_bp.route('/logout')

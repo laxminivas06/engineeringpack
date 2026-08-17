@@ -1,0 +1,458 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Cohorts Management — Admin Console{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link active"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Cohorts Management</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Cohorts belong strictly to individual Products. Admin manually creates the next cohort per Product when required.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('createCohortModal').style.display='flex'">
+    <i class="bi bi-plus-lg me-1"></i> Manually Create Next Cohort
+  </button>
+</div>
+
+<!-- PRODUCT FILTER TABS -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+  <a href="{{ url_for('admin.select_product', product_id='all') }}" class="btn btn-sm {% if selected_prod_id == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+    🌐 All Programs
+  </a>
+  {% for p in all_products %}
+    <a href="{{ url_for('admin.select_product', product_id=p.id) }}" class="btn btn-sm {% if selected_prod_id == p.id %}btn-primary{% else %}btn-outline{% endif %}">
+      📦 {{ p.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- COHORTS GRID -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+  {% for c in cohorts %}
+  <div class="glass-card" style="padding: 1.75rem; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+      <div>
+        <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem;">{{ c.product_name }}</span>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ c.name }}</h2>
+        <span style="font-size: 0.8rem; color: var(--text-dim);">ID: {{ c.id }}</span>
+      </div>
+      <div>
+        {% if c.status == 'Active' %}
+          <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">ACTIVE</span>
+        {% elif c.status == 'Full' %}
+          <span class="tech-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: rgba(239, 68, 68, 0.4);">FULL</span>
+        {% elif c.status == 'Completed' %}
+          <span class="tech-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border-color: rgba(168, 85, 247, 0.4);">COMPLETED</span>
+        {% else %}
+          <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">UPCOMING</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.25rem; min-height: 40px;">{{ c.description }}</p>
+
+    <!-- PROGRESS & SEAT METRICS -->
+    <div style="margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.4rem;">
+        <span style="color: var(--text-dim);">Seat Capacity</span>
+        <strong style="color: #fff;">{{ c.current_enrollment }} / {{ c.max_capacity }} Students</strong>
+      </div>
+      <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+        {% set pct = (c.current_enrollment / c.max_capacity * 100) if c.max_capacity > 0 else 0 %}
+        <div style="width: {{ pct }}%; height: 100%; background: {% if pct >= 100 %}#ef4444{% else %}#38bdf8{% endif %}; transition: width 0.3s ease;"></div>
+      </div>
+    </div>
+
+    <!-- DATES -->
+    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.25rem; background: rgba(15,23,42,0.5); padding: 0.5rem 0.75rem; border-radius: 6px;">
+      <div><i class="bi bi-calendar-event me-1"></i> Start: {{ c.start_date }}</div>
+      <div><i class="bi bi-calendar-check me-1"></i> End: {{ c.end_date }}</div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      {% if c.status != 'Active' and c.status != 'Completed' %}
+        <form action="{{ url_for('admin.launch_cohort_route', cohort_id=c.id) }}" method="POST" style="flex: 1.2;">
+          <button type="submit" class="btn btn-primary btn-sm w-100" style="font-size: 0.78rem; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); border: none;" onclick="return confirm('🚀 Launch {{ c.name }}? This will activate the 45-day timetable schedule and immediately send Day 1 curriculum email to all confirmed students!')">
+            <i class="bi bi-rocket-takeoff-fill me-1"></i> Start Program
+          </button>
+        </form>
+      {% endif %}
+
+      <button class="btn btn-outline btn-sm" onclick='openUploadCalendarModal({{ (c.id or "") | tojson }}, {{ (c.name or "") | tojson }})' style="font-size: 0.78rem; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Update Calendar
+      </button>
+
+      {% if c.timetable %}
+        <button class="btn btn-outline btn-sm" onclick='openTimetableModal({{ (c.name or "") | tojson }}, {{ (c.timetable or []) | tojson }})' style="font-size: 0.78rem; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="bi bi-calendar3 me-1"></i> View Timetable
+        </button>
+      {% endif %}
+
+      {% if c.status != 'Completed' %}
+        <form action="{{ url_for('admin.complete_existing_cohort', cohort_id=c.id) }}" method="POST" style="flex: 1;">
+          <button type="submit" class="btn btn-outline btn-sm w-100" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc; font-size: 0.78rem;" onclick="return confirm('Mark {{ c.name }} as Completed?')">
+            <i class="bi bi-check-circle me-1"></i> Complete
+          </button>
+        </form>
+      {% endif %}
+
+      <button class="btn btn-outline btn-sm" onclick='openEditCohortModal({{ (c.id or "") | tojson }}, {{ (c.product_id or "") | tojson }}, {{ (c.name or "") | tojson }}, {{ (c.start_date or "") | tojson }}, {{ (c.end_date or "") | tojson }}, {{ (c.max_capacity or 35) | tojson }}, {{ (c.status or "Upcoming") | tojson }}, {{ (c.description or "") | tojson }}, {{ (c.duration_days or 45) | tojson }}, {{ (c.whatsapp_link or "") | tojson }}, {{ (c.assigned_project_ids or []) | tojson }}, {{ (c.assigned_mentor_ids or []) | tojson }})' style="padding: 0.4rem 0.6rem;">
+        <i class="bi bi-pencil"></i>
+      </button>
+
+      {% if c.current_enrollment == 0 %}
+        <form action="{{ url_for('admin.delete_existing_cohort', cohort_id=c.id) }}" method="POST" onsubmit="return confirm('Delete cohort?')">
+          <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239,68,68,0.3); color: #ef4444; padding: 0.4rem 0.6rem;">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-dim);" class="glass-card">
+    <i class="bi bi-layers-half" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    No cohorts created for this program yet. Click "Manually Create Next Cohort" above to add one.
+  </div>
+  {% endfor %}
+</div>
+
+<!-- MANUALLY CREATE COHORT MODAL -->
+<div id="createCohortModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Manually Create Next Cohort</h2>
+      <button onclick="document.getElementById('createCohortModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form action="{{ url_for('admin.create_new_cohort') }}" method="POST">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Select Product / Program *</label>
+        <select name="product_id" class="form-control" required>
+          {% for p in all_products %}
+            <option value="{{ p.id }}" {% if selected_prod_id == p.id %}selected{% endif %}>{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Cohort Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g. Cohort 2" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Start Date</label>
+          <input type="date" name="start_date" class="form-control">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">End Date</label>
+          <input type="date" name="end_date" class="form-control">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Duration (Days) *</label>
+          <input type="number" name="duration_days" class="form-control" value="45" min="1" max="180" placeholder="e.g. 45" required>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Seat Capacity</label>
+          <input type="number" name="max_capacity" class="form-control" value="35">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Official WhatsApp Group Link</label>
+        <input type="url" name="whatsapp_link" class="form-control" placeholder="https://chat.whatsapp.com/..." style="border-color: rgba(37, 211, 102, 0.4);">
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.3rem;">Sent in pre-launch orientation email & daily schedule emails.</div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Projects to this Cohort</label>
+        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          {% for proj in all_projects %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+              <input type="checkbox" name="assigned_project_ids" value="{{ proj.id }}">
+              <span>{{ proj.name or proj.title }} <small style="color: var(--text-dim);">({{ proj.domain or 'Engineering' }})</small></span>
+            </label>
+          {% else %}
+            <span style="font-size: 0.78rem; color: var(--text-dim);">No projects in database yet. Create projects in Projects tab.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Mentors to this Cohort</label>
+        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          {% for mnt in all_mentors %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+              <input type="checkbox" name="assigned_mentor_ids" value="{{ mnt.id }}">
+              <span>{{ mnt.name }} <small style="color: var(--text-dim);">({{ mnt.designation or 'Mentor' }})</small></span>
+            </label>
+          {% else %}
+            <span style="font-size: 0.78rem; color: var(--text-dim);">No mentors in database yet. Add mentors in Mentor Database tab.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Initial Status</label>
+        <select name="status" class="form-control">
+          <option value="Upcoming" selected>Upcoming</option>
+          <option value="Active">Active</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Cohort Description</label>
+        <textarea name="description" class="form-control" rows="3" placeholder="Brief cohort notes or details..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('createCohortModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Cohort</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT COHORT MODAL -->
+<div id="editCohortModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Edit Cohort Details</h2>
+      <button onclick="document.getElementById('editCohortModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="editCohortForm" method="POST">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Product / Program</label>
+        <select id="edit_cohort_product" name="product_id" class="form-control">
+          {% for p in all_products %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Cohort Name *</label>
+        <input type="text" id="edit_cohort_name" name="name" class="form-control" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Start Date</label>
+          <input type="date" id="edit_cohort_start" name="start_date" class="form-control">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">End Date</label>
+          <input type="date" id="edit_cohort_end" name="end_date" class="form-control">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Duration (Days) *</label>
+          <input type="number" id="edit_cohort_duration" name="duration_days" class="form-control" min="1" max="180" required>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Seat Capacity</label>
+          <input type="number" id="edit_cohort_cap" name="max_capacity" class="form-control">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Official WhatsApp Group Link</label>
+        <input type="url" id="edit_cohort_whatsapp" name="whatsapp_link" class="form-control" placeholder="https://chat.whatsapp.com/..." style="border-color: rgba(37, 211, 102, 0.4);">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Projects to this Cohort</label>
+        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          {% for proj in all_projects %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+              <input type="checkbox" name="assigned_project_ids" value="{{ proj.id }}">
+              <span>{{ proj.name or proj.title }} <small style="color: var(--text-dim);">({{ proj.domain or 'Engineering' }})</small></span>
+            </label>
+          {% else %}
+            <span style="font-size: 0.78rem; color: var(--text-dim);">No projects in database yet. Create projects in Projects tab.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Mentors to this Cohort</label>
+        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          {% for mnt in all_mentors %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+              <input type="checkbox" name="assigned_mentor_ids" value="{{ mnt.id }}">
+              <span>{{ mnt.name }} <small style="color: var(--text-dim);">({{ mnt.designation or 'Mentor' }})</small></span>
+            </label>
+          {% else %}
+            <span style="font-size: 0.78rem; color: var(--text-dim);">No mentors in database yet. Add mentors in Mentor Database tab.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Status</label>
+        <select id="edit_cohort_status" name="status" class="form-control">
+          <option value="Upcoming">Upcoming</option>
+          <option value="Active">Active</option>
+          <option value="Full">Full</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Cohort Description</label>
+        <textarea id="edit_cohort_desc" name="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('editCohortModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openEditCohortModal(id, prod_id, name, start_date, end_date, capacity, status, desc, duration_days, whatsapp_link, project_ids, mentor_ids) {
+  document.getElementById('editCohortForm').action = '/admin/cohorts/edit/' + id;
+  document.getElementById('edit_cohort_product').value = prod_id || '';
+  document.getElementById('edit_cohort_name').value = name || '';
+  document.getElementById('edit_cohort_start').value = start_date || '';
+  document.getElementById('edit_cohort_end').value = end_date || '';
+  document.getElementById('edit_cohort_cap').value = capacity || '';
+  document.getElementById('edit_cohort_status').value = status || 'Upcoming';
+  document.getElementById('edit_cohort_desc').value = desc || '';
+  document.getElementById('edit_cohort_duration').value = duration_days || 45;
+  document.getElementById('edit_cohort_whatsapp').value = whatsapp_link || '';
+
+  const projCheckboxes = document.querySelectorAll('#editCohortForm input[name="assigned_project_ids"]');
+  projCheckboxes.forEach(cb => {
+    cb.checked = project_ids && project_ids.includes(cb.value);
+  });
+
+  const mntCheckboxes = document.querySelectorAll('#editCohortForm input[name="assigned_mentor_ids"]');
+  mntCheckboxes.forEach(cb => {
+    cb.checked = mentor_ids && mentor_ids.includes(cb.value);
+  });
+
+  document.getElementById('editCohortModal').style.display = 'flex';
+}
+
+function openTimetableModal(cohortName, timetable) {
+  document.getElementById('timetableTitle').innerText = cohortName + ' — 45 Days Timetable Schedule';
+  const listEl = document.getElementById('timetableList');
+  listEl.innerHTML = '';
+  
+  if (!timetable || timetable.length === 0) {
+    listEl.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 2rem;">No timetable schedule generated yet. Click "Start Program" to activate the 45-day schedule.</div>';
+  } else {
+    timetable.forEach(item => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;';
+      card.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 800; font-size: 0.85rem; padding: 0.4rem 0.7rem; border-radius: 6px; font-family: monospace;">
+            Day ${item.day}
+          </div>
+          <div>
+            <div style="font-weight: 700; color: #fff; font-size: 0.9rem;">${item.title}</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.1rem;">${item.formatted_date || item.date} &bull; <span style="color: #c084fc;">${item.domain}</span></div>
+          </div>
+        </div>
+        <div>
+          <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.72rem;">Scheduled</span>
+        </div>
+      `;
+      listEl.appendChild(card);
+    });
+  }
+
+  document.getElementById('timetableModal').style.display = 'flex';
+}
+
+function openUploadCalendarModal(cohortId, cohortName) {
+  document.getElementById('calendarModalTitle').innerText = 'Upload Calendar — ' + cohortName;
+  document.getElementById('uploadCalendarForm').action = '/admin/cohorts/upload-calendar/' + cohortId;
+  document.getElementById('uploadCalendarModal').style.display = 'flex';
+}
+</script>
+
+<!-- VIEW TIMETABLE MODAL -->
+<div id="timetableModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 720px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+      <div>
+        <h2 id="timetableTitle" style="font-size: 1.4rem; font-weight: 700; margin: 0; color: #38bdf8;">Cohort Timetable</h2>
+        <p style="font-size: 0.82rem; color: var(--text-dim); margin: 0.2rem 0 0 0;">Day-by-day 45 days curriculum schedule & automated email dispatch status.</p>
+      </div>
+      <button onclick="document.getElementById('timetableModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <div id="timetableList" style="display: flex; flex-direction: column; gap: 0.6rem;">
+      <!-- JavaScript populated -->
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE CALENDAR CSV/EXCEL MODAL -->
+<div id="uploadCalendarModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1050; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 580px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+      <div>
+        <h2 id="calendarModalTitle" style="font-size: 1.35rem; font-weight: 700; margin: 0; color: #38bdf8;">Update Cohort Calendar</h2>
+        <p style="font-size: 0.82rem; color: var(--text-dim); margin: 0.2rem 0 0 0;">Upload a CSV or Excel file containing Day, Date, and Topic Title for daily emails.</p>
+      </div>
+      <button onclick="document.getElementById('uploadCalendarModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="uploadCalendarForm" method="POST" enctype="multipart/form-data">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.5rem;">Select Calendar CSV / Excel File (.csv, .xlsx)</label>
+        <input type="file" name="calendar_file" accept=".csv, .xlsx, .xls" class="form-control" required style="padding: 0.6rem;">
+        <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem;">
+          Required Columns: <code>Day</code>, <code>Date</code>, <code>Title</code> (Optional: <code>Domain</code>, <code>Outcomes</code>)
+        </div>
+      </div>
+
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+        <div style="font-weight: 700; color: #fff; margin-bottom: 0.4rem;"><i class="bi bi-info-circle me-1" style="color: #38bdf8;"></i> Sample Template Format</div>
+        <code>Day 1, 2026-08-20, Introduction to Engineering & Robotics, Embedded Systems</code><br>
+        <code>Day 2, 2026-08-21, Microcontroller Programming & Sensors, Electronics</code>
+      </div>
+
+      <div style="display: flex; gap: 0.8rem; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <a href="{{ url_for('admin.download_sample_calendar_csv') }}" class="btn btn-outline btn-sm" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="bi bi-download me-1"></i> Download Sample CSV
+        </a>
+        <div style="display: flex; gap: 0.6rem;">
+          <button type="button" onclick="document.getElementById('uploadCalendarModal').style.display='none'" class="btn btn-outline btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-upload me-1"></i> Upload Calendar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

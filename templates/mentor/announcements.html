@@ -1,0 +1,92 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Cohort Announcements — Mentor Workspace{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-megaphone" style="color: #38bdf8; margin-right: 0.5rem;"></i> Cohort Notices & Announcements
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      Broadcast important notices, live Q&A session links, and project guidance to your assigned cohorts.
+    </p>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+
+  <!-- POST ANNOUNCEMENT FORM -->
+  <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem; height: fit-content;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="bi bi-plus-circle" style="color: #38bdf8;"></i> Post New Cohort Notice
+    </h3>
+
+    <form method="POST" action="{{ url_for('mentor.announcements') }}">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.35rem;">Target Cohort</label>
+        <select name="cohort_id" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+          <option value="">🌐 All Assigned Cohorts</option>
+          {% for c in cohorts %}
+            <option value="{{ c.id }}">{{ c.product_name }} &mdash; {{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.35rem;">Notice Category</label>
+        <select name="category" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+          <option value="Live Session">Live Q&A Session</option>
+          <option value="Project Guidance">Project Guidance</option>
+          <option value="Mentor Notice">Mentor Notice</option>
+          <option value="Curriculum Update">Curriculum Update</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.35rem;">Announcement Title *</label>
+        <input type="text" name="title" class="form-control" required placeholder="e.g. Live Q&A Session: Full Stack Architecture Review" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.35rem;">Announcement Content *</label>
+        <textarea name="content" rows="4" class="form-control" required placeholder="Enter announcement details, meeting links, or instructions..." style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 700; padding: 0.65rem; border-radius: 8px;">
+        <i class="bi bi-send"></i> Broadcast Notice
+      </button>
+    </form>
+  </div>
+
+  <!-- RECENT ANNOUNCEMENTS LIST -->
+  <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="bi bi-list-stars" style="color: #38bdf8;"></i> Active Cohort Notices ({{ announcements|length }})
+    </h3>
+
+    {% if announcements %}
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for a in announcements %}
+          <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 0.75rem; font-weight: 600;">
+                {{ a.category }}
+              </span>
+              <span style="font-size: 0.75rem; color: #94a3b8;"><i class="bi bi-clock"></i> {{ a.date }}</span>
+            </div>
+            <h4 style="font-weight: 700; color: #f8fafc; font-size: 1rem; margin-bottom: 0.4rem;">{{ a.title }}</h4>
+            <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0; line-height: 1.5; white-space: pre-line;">{{ a.content }}</p>
+            {% if a.posted_by_mentor %}
+              <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">Posted by: {{ a.posted_by_mentor }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: #94a3b8; font-size: 0.9rem;">No cohort notices broadcasted yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

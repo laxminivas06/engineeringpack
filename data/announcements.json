@@ -1,16 +1,29 @@
 [
   {
     "id": "ann_01",
-    "title": "Welcome to Engineering Pack Cohort 2026!",
+    "product_id": "prod_engpack",
+    "cohort_ids": ["cohort_ced5d93d"],
+    "title": "Welcome to Engineering Pack Cohort 1!",
     "date": "2026-08-14",
     "category": "Platform",
     "content": "Welcome to your 45-day engineering journey! Dive into Phase 1 to begin building first-principles engineering habits."
   },
   {
     "id": "ann_02",
+    "product_id": "prod_engpack",
+    "cohort_ids": ["all"],
     "title": "Upcoming Live Q&A Session: Linux & Networking",
     "date": "2026-08-18",
     "category": "Live Session",
     "content": "Join our industry mentors this Friday for an interactive Linux terminal deep-dive and networking troubleshooting."
+  },
+  {
+    "id": "ann_03",
+    "product_id": "prod_robotics",
+    "cohort_ids": ["cohort_rob_1"],
+    "title": "Robotics Hardware Kit Unboxing & Orientation",
+    "date": "2026-08-20",
+    "category": "Orientation",
+    "content": "Get ready for sensor integration! Download your ESP32 drivers before Friday's unboxing workshop."
   }
 ]

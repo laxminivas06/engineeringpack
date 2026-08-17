@@ -1,0 +1,62 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Student Feedback & Reviews — Mentor Workspace{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-star-half" style="color: #38bdf8; margin-right: 0.5rem;"></i> Student Feedback & Cohort Reviews
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      View student feedback submitted specifically for you as a mentor or for your assigned cohorts.
+    </p>
+  </div>
+</div>
+
+<div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.75rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+    <h3 style="font-size: 1.15rem; font-weight: 700; color: #f8fafc; margin: 0;">
+      Feedback Entries ({{ reviews|length }})
+    </h3>
+  </div>
+
+  {% if reviews %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+      {% for rev in reviews %}
+        <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              {% if rev.scope == 'mentor' %}
+                <span class="badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 600; font-size: 0.75rem;">
+                  <i class="bi bi-person-check-fill"></i> Mentor Feedback
+                </span>
+              {% else %}
+                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; font-weight: 600; font-size: 0.75rem;">
+                  <i class="bi bi-people-fill"></i> Cohort Feedback
+                </span>
+              {% endif %}
+
+              <div style="color: #f59e0b; font-size: 0.9rem; font-weight: 700;">
+                {% for i in range(rev.rating) %}★{% endfor %}
+              </div>
+            </div>
+
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0.75rem 0;">"{{ rev.comment }}"</p>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 0.75rem; margin-top: 0.5rem; font-size: 0.78rem; color: #94a3b8; display: flex; justify-content: space-between; align-items: center;">
+            <span>By: <strong>{{ rev.student_name }}</strong></span>
+            <span>{{ rev.created_at[:10] }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; padding: 2.5rem; text-align: center; color: #94a3b8;">
+      <i class="bi bi-chat-square-heart" style="font-size: 2.5rem; color: #64748b; margin-bottom: 0.5rem; display: block;"></i>
+      No student feedback submitted for your assigned cohorts or mentorship yet.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -5,10 +5,10 @@
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
   <li><a href="{{ url_for('student.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-  <li><a href="{{ url_for('student.journey') }}" class="sidebar-link"><i class="bi bi-map"></i> <span>45-Day Journey</span></a></li>
-  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link"><i class="bi bi-folder-check"></i> <span>Projects</span></a></li>
-  <li><a href="{{ url_for('student.certificates') }}" class="sidebar-link"><i class="bi bi-award"></i> <span>Certificates</span></a></li>
-  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link active"><i class="bi bi-person-gear"></i> <span>Profile</span></a></li>
+  <li><a href="{{ url_for('student.calendar') }}" class="sidebar-link"><i class="bi bi-calendar3"></i> <span>Program Calendar</span></a></li>
+  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link"><i class="bi bi-folder-check"></i> <span>Assigned Projects</span></a></li>
+  <li><a href="{{ url_for('student.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Feedback & Reviews</span></a></li>
+  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link active"><i class="bi bi-person-gear"></i> <span>My Profile</span></a></li>
 </ul>
 {% endblock %}
 

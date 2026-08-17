@@ -1,71 +1,65 @@
 {% extends 'dashboard_base.html' %}
 
-{% block title %}Platform Settings — Admin Portal{% endblock %}
+{% block title %}System Settings — Admin Console{% endblock %}
 
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
-  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
   <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
   <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
   <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
   <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-  <li><a href="{{ url_for('admin.contacts') }}" class="sidebar-link"><i class="bi bi-envelope"></i> <span>Contacts</span></a></li>
-  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link active"><i class="bi bi-gear"></i> <span>Settings</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link active"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
 </ul>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
-  <div class="dashboard-title-group">
-    <h1>Platform Configuration & Settings</h1>
-    <p>Configure program details, pricing, branding, and corporate contact info.</p>
-  </div>
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Global System Settings</h1>
+  <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">System-wide platform parameters (Company identity, global currency symbol, platform support contact details).</p>
 </div>
 
-<div style="max-width: 720px;">
-  <div class="glass-card" style="padding: 2.5rem 2rem;">
-    <form action="{{ url_for('admin.settings') }}" method="POST">
-      <div class="form-group">
-        <label class="form-label" for="program_name">Program Name</label>
-        <input type="text" id="program_name" name="program_name" class="form-control" value="{{ settings.program_name }}" required>
+<div class="glass-card" style="padding: 2rem; max-width: 700px;">
+  <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+    <i class="bi bi-building text-primary me-2"></i> Platform & Support Identity
+  </h2>
+
+  <form action="{{ url_for('admin.settings') }}" method="POST">
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Company / Organization Name *</label>
+      <input type="text" name="company" class="form-control" value="{{ settings.company or 'AIVONTRAA Automation Pvt. Ltd.' }}" required>
+    </div>
+
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Default Currency Symbol</label>
+      <input type="text" name="currency_symbol" class="form-control" value="{{ settings.currency_symbol or '₹' }}" style="max-width: 150px;">
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Platform Support Email</label>
+        <input type="email" name="support_email" class="form-control" value="{{ settings.support_email or 'hello.aivontraa@gmail.com' }}">
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="tagline">Tagline</label>
-        <input type="text" id="tagline" name="tagline" class="form-control" value="{{ settings.tagline }}" required>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Platform Support Phone</label>
+        <input type="text" name="support_phone" class="form-control" value="{{ settings.support_phone or '+91 9876543210' }}">
       </div>
+    </div>
 
-      <div class="form-group">
-        <label class="form-label" for="company">Parent Company / Provider</label>
-        <input type="text" id="company" name="company" class="form-control" value="{{ settings.company }}" required>
-      </div>
+    <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.83rem; color: #38bdf8;">
+      <i class="bi bi-info-circle me-1"></i> Note: Program-level configurations (Price, Duration, Payment QR Code, Seat Capacity) are managed independently in <a href="{{ url_for('admin.product_settings') }}" style="color: #fff; text-decoration: underline; font-weight: 600;">Product Settings</a>.
+    </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-        <div class="form-group">
-          <label class="form-label" for="price">Program Price (INR ₹)</label>
-          <input type="number" id="price" name="price" class="form-control" value="{{ settings.price }}" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Duration (Days)</label>
-          <input type="text" class="form-control" value="45 Days" disabled style="opacity: 0.7; cursor: not-allowed;">
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-        <div class="form-group">
-          <label class="form-label" for="support_email">Support Email</label>
-          <input type="email" id="support_email" name="support_email" class="form-control" value="{{ settings.support_email }}" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="support_phone">Support Phone</label>
-          <input type="tel" id="support_phone" name="support_phone" class="form-control" value="{{ settings.support_phone }}" required>
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
-        <i class="bi bi-save-fill"></i> Save Platform Settings
-      </button>
-    </form>
-  </div>
+    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+      <i class="bi bi-check2-circle me-1"></i> Save System Settings
+    </button>
+  </form>
 </div>
 {% endblock %}

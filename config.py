@@ -15,6 +15,7 @@ class Config:
     # Google OAuth (Set via environment variables or .env)
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', 'YOUR_GOOGLE_CLIENT_SECRET')
+    GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
 
     # PhonePe / UPI Payment Details
     UPI_ID = os.environ.get('UPI_ID', 'aivontraa@ybl')

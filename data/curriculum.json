@@ -1,90 +1,62 @@
 [
   {
+    "id": "phase_eng_1",
+    "product_id": "prod_engpack",
     "phase_number": 1,
-    "title": "Engineer Mindset",
-    "day_range": "Days 1 - 4",
-    "domain": "System Thinking & Engineering Fundamentals",
-    "icon": "brain",
-    "description": "Transitioning from passive academic learning to active first-principles engineering, problem breakdown, and computational thinking."
-  },
-  {
-    "phase_number": 2,
-    "title": "Software Engineering",
-    "day_range": "Days 5 - 9",
+    "title": "Software Engineering & Architecture",
+    "day_range": "Days 1-15",
     "domain": "Software Engineering",
     "icon": "code-slash",
-    "description": "Clean code architecture, modular design patterns, API design, debugging strategies, and production code quality."
+    "description": "Master clean code, object-oriented design, modular architecture, Git workflows, and unit testing."
   },
   {
-    "phase_number": 3,
-    "title": "Linux & Networking",
-    "day_range": "Days 10 - 14",
+    "id": "phase_eng_2",
+    "product_id": "prod_engpack",
+    "phase_number": 2,
+    "title": "Linux Systems & Networking",
+    "day_range": "Days 16-30",
     "domain": "Linux & Networking",
     "icon": "terminal",
-    "description": "Command-line mastery, shell scripting, TCP/IP protocol suite, DNS, HTTP/S fundamentals, and network analysis."
+    "description": "CLI mastery, bash scripting, TCP/IP stack, socket programming, subnets, and system administration."
   },
   {
-    "phase_number": 4,
-    "title": "Cybersecurity",
-    "day_range": "Days 15 - 19",
-    "domain": "Cybersecurity",
-    "icon": "shield-check",
-    "description": "Ethical hacking concepts, vulnerability assessments, secure coding, encryption standards, and threat analysis."
+    "id": "phase_eng_3",
+    "product_id": "prod_engpack",
+    "phase_number": 3,
+    "title": "Cybersecurity & AI Automation",
+    "day_range": "Days 31-45",
+    "domain": "Security & AI",
+    "icon": "shield-lock",
+    "description": "Ethical hacking basics, OWASP Top 10, practical ML integration, prompt engineering, and capstone deployment."
   },
   {
-    "phase_number": 5,
-    "title": "Robotics & IoT",
-    "day_range": "Days 20 - 24",
-    "domain": "Robotics & IoT",
+    "id": "phase_rob_1",
+    "product_id": "prod_robotics",
+    "phase_number": 1,
+    "title": "Microcontrollers & Actuator Controls",
+    "day_range": "Days 1-15",
+    "domain": "Embedded Systems",
     "icon": "cpu",
-    "description": "Microcontrollers, embedded systems, sensor integration, actuator control, MQTT protocols, and hardware-software bridging."
+    "description": "ESP32/Arduino programming, PWM motor control, sensor interfacing, and breadboard circuit design."
   },
   {
-    "phase_number": 6,
-    "title": "Design & System Thinking",
-    "day_range": "Days 25 - 28",
-    "domain": "System Design",
+    "id": "phase_rob_2",
+    "product_id": "prod_robotics",
+    "phase_number": 2,
+    "title": "ROS & Telemetry Pipelines",
+    "day_range": "Days 16-30",
+    "domain": "Robotics Systems",
     "icon": "diagram-3",
-    "description": "Scalable systems design, database selection, load balancing, caching strategies, and resilient architecture."
+    "description": "Robot Operating System fundamentals, MQTT telemetry streams, and real-time sensory feedback."
   },
   {
-    "phase_number": 7,
-    "title": "Git & GitHub",
-    "day_range": "Days 29 - 32",
-    "domain": "Git & GitHub",
-    "icon": "git",
-    "description": "Professional version control, branching strategies, collaborative workflows, CI/CD pipelines, and pull request reviews."
-  },
-  {
-    "phase_number": 8,
-    "title": "AI for Engineers",
-    "day_range": "Days 33 - 36",
-    "domain": "AI for Engineers",
-    "icon": "robot",
-    "description": "Applied Machine Learning, LLM prompt engineering, AI service integration, vector databases, and intelligent automation."
-  },
-  {
-    "phase_number": 9,
-    "title": "Career Engineering",
-    "day_range": "Days 37 - 40",
-    "domain": "Career Engineering",
-    "icon": "briefcase",
-    "description": "Resume engineering, tech portfolio building, technical interview prep, system design rounds, and industry networking."
-  },
-  {
-    "phase_number": 10,
-    "title": "Communication & Documentation",
-    "day_range": "Days 41 - 43",
-    "domain": "Communication & Documentation",
-    "icon": "file-earmark-text",
-    "description": "Writing technical documentation, architecture specs, effective code comments, and delivering technical presentations."
-  },
-  {
-    "phase_number": 11,
-    "title": "Engineering Showcase",
-    "day_range": "Days 44 - 45",
-    "domain": "Capstone Project",
-    "icon": "trophy",
-    "description": "Final capstone project presentation, peer review, expert feedback, and graduation credentials."
+    "id": "phase_sch_1",
+    "product_id": "prod_schoolpack",
+    "phase_number": 1,
+    "title": "Computing Logic & Coding Fundamentals",
+    "day_range": "Days 1-30",
+    "domain": "Computer Science",
+    "icon": "laptop",
+    "description": "Algorithm design, block-based logic, beginner Python syntax, and problem-solving puzzles."
   }
 ]

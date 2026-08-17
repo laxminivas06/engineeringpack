@@ -1,43 +1,218 @@
 {% extends 'dashboard_base.html' %}
 
-{% block title %}Projects Management — Admin Portal{% endblock %}
+{% block title %}Projects Management — Admin Console{% endblock %}
 
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
-  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
   <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
   <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
   <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link active"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
   <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-  <li><a href="{{ url_for('admin.contacts') }}" class="sidebar-link"><i class="bi bi-envelope"></i> <span>Contacts</span></a></li>
-  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>Settings</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
 </ul>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
-  <div class="dashboard-title-group">
-    <h1>Project Templates & Outcomes</h1>
-    <p>Manage practical engineering project briefs and outcome standards.</p>
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Projects & Capstone Assignments</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Create and assign projects tailored to specific Products, Cohorts, and Student groups.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('addProjectModal').style.display='flex'">
+    <i class="bi bi-plus-lg me-1"></i> Add New Project
+  </button>
+</div>
+
+<!-- PRODUCT TABS -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+  <a href="{{ url_for('admin.select_product', product_id='all') }}" class="btn btn-sm {% if selected_prod_id == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+    🌐 All Products
+  </a>
+  {% for p in products %}
+    <a href="{{ url_for('admin.select_product', product_id=p.id) }}" class="btn btn-sm {% if selected_prod_id == p.id %}btn-primary{% else %}btn-outline{% endif %}">
+      📦 {{ p.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- PROJECTS GRID -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+  {% for proj in projects %}
+  <div class="glass-card" style="padding: 1.75rem; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+      <div>
+        <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem;">{{ proj.domain }}</span>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ proj.name }}</h3>
+      </div>
+      <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+        <i class="bi bi-{{ proj.icon or 'layers' }}"></i>
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 1.25rem;">{{ proj.description }}</p>
+
+    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: #34d399; margin-bottom: 1.25rem;">
+      <i class="bi bi-trophy me-1"></i> <strong>Outcome:</strong> {{ proj.outcome or 'Portfolio artifact' }}
+    </div>
+
+    <!-- TARGET SCOPE -->
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); pt-2;">
+      <span>Central Repository Project <strong style="color: #38bdf8;">(Attachable to any Cohort)</strong></span>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="btn btn-outline btn-sm" onclick='openEditProjectModal({{ (proj.id or "") | tojson }}, {{ (proj.product_id or "") | tojson }}, {{ (proj.cohort_id or "all") | tojson }}, {{ (proj.name or "") | tojson }}, {{ (proj.domain or "") | tojson }}, {{ (proj.icon or "layers") | tojson }}, {{ (proj.description or "") | tojson }}, {{ (proj.outcome or "") | tojson }})' style="flex: 1;">
+        <i class="bi bi-pencil me-1"></i> Edit
+      </button>
+      <form action="{{ url_for('admin.delete_project', project_id=proj.id) }}" method="POST" onsubmit="return confirm('Delete project?')">
+        <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239,68,68,0.3); color: #ef4444;">
+          <i class="bi bi-trash"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-dim);" class="glass-card">
+    <i class="bi bi-folder" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    No projects created for this program yet. Click "Add New Project" above to create one.
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ADD PROJECT MODAL -->
+<div id="addProjectModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 580px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Add New Project</h2>
+      <button onclick="document.getElementById('addProjectModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form action="{{ url_for('admin.add_project') }}" method="POST">
+      <input type="hidden" name="cohort_id" value="all">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Select Product / Program *</label>
+        <select name="product_id" class="form-control" required>
+          {% for p in products %}
+            <option value="{{ p.id }}" {% if selected_prod_id == p.id %}selected{% endif %}>{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Project Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g. Autonomous Telemetry Dashboard" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Domain / Category</label>
+          <input type="text" name="domain" class="form-control" placeholder="e.g. Software Engineering">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Icon Name</label>
+          <input type="text" name="icon" class="form-control" value="layers">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Project Description</label>
+        <textarea name="description" class="form-control" rows="3" placeholder="Project deliverables and technical scope..."></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Learning Outcome</label>
+        <input type="text" name="outcome" class="form-control" placeholder="e.g. Production-ready full stack microservice">
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('addProjectModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Project</button>
+      </div>
+    </form>
   </div>
 </div>
 
-<div class="domains-grid">
-  {% for proj in projects %}
-    <div class="glass-card">
-      <div class="domain-card">
-        <div class="card-icon"><i class="bi bi-{{ proj.icon }}"></i></div>
+<!-- EDIT PROJECT MODAL -->
+<div id="editProjectModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 580px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Edit Project Details</h2>
+      <button onclick="document.getElementById('editProjectModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="editProjectForm" method="POST">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
         <div>
-          <span class="tech-badge" style="font-size: 0.7rem; margin-bottom: 0.4rem;">{{ proj.domain }}</span>
-          <h3 style="font-size: 1.2rem;">{{ proj.name }}</h3>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Product / Program</label>
+          <select id="edit_proj_product" name="product_id" class="form-control">
+            {% for p in products %}
+              <option value="{{ p.id }}">{{ p.name }}</option>
+            {% endfor %}
+          </select>
         </div>
-        <p style="font-size: 0.88rem; color: var(--text-muted); flex: 1;">{{ proj.description }}</p>
-        <div style="background: rgba(0, 242, 254, 0.04); border-left: 3px solid var(--primary-cyan); padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
-          <span style="font-weight: 600; font-size: 0.8rem; color: var(--primary-cyan);">Outcome:</span>
-          <p style="font-size: 0.85rem; color: var(--text-main); margin-top: 0.2rem;">{{ proj.outcome }}</p>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Target Cohort</label>
+          <select id="edit_proj_cohort" name="cohort_id" class="form-control">
+            <option value="all">All Cohorts in Product</option>
+            {% for c in cohorts %}
+              <option value="{{ c.id }}">{{ c.name }} ({{ c.product_name }})</option>
+            {% endfor %}
+          </select>
         </div>
       </div>
-    </div>
-  {% endfor %}
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Project Name *</label>
+        <input type="text" id="edit_proj_name" name="name" class="form-control" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Domain</label>
+          <input type="text" id="edit_proj_domain" name="domain" class="form-control">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Icon</label>
+          <input type="text" id="edit_proj_icon" name="icon" class="form-control">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Description</label>
+        <textarea id="edit_proj_desc" name="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Outcome</label>
+        <input type="text" id="edit_proj_outcome" name="outcome" class="form-control">
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('editProjectModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script>
+function openEditProjectModal(id, prod_id, cohort_id, name, domain, icon, desc, outcome) {
+  document.getElementById('editProjectForm').action = '/admin/projects/edit/' + id;
+  document.getElementById('edit_proj_product').value = prod_id || '';
+  document.getElementById('edit_proj_cohort').value = cohort_id || 'all';
+  document.getElementById('edit_proj_name').value = name || '';
+  document.getElementById('edit_proj_domain').value = domain || '';
+  document.getElementById('edit_proj_icon').value = icon || '';
+  document.getElementById('edit_proj_desc').value = desc || '';
+  document.getElementById('edit_proj_outcome').value = outcome || '';
+  document.getElementById('editProjectModal').style.display = 'flex';
+}
+</script>
 {% endblock %}

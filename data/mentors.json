@@ -1,18 +1,93 @@
 [
   {
     "id": "mnt_01",
-    "name": "Dr. Vikram Seth",
-    "role": "Principal Systems Architect",
-    "domain": "Software & Systems Architecture",
-    "company": "Ex-Google / AIVONTRAA",
-    "bio": "15+ years in distributed systems, kernel engineering, and high-throughput backend infrastructure."
+    "full_name": "Laxmi Nivas Morishetty",
+    "name": "Laxmi Nivas Morishetty",
+    "email": "hello.aivontraa@gmail.com",
+    "professional_title": "Full Stack Architect & AI Systems Engineer",
+    "role": "Full Stack Architect & AI Systems Engineer",
+    "domain": "Full Stack Development, AI Automation, Distributed Systems",
+    "short_bio": "5+ years building scalable web architectures, intelligent AI automation pipelines, and first-principles software products.",
+    "bio": "5+ years building scalable web architectures, intelligent AI automation pipelines, and first-principles software products.",
+    "detailed_about": "Laxmi Nivas specializes in full-stack web applications, microservices, Linux kernel automation, and practical AI system integration. He mentors engineering students to transition from textbook theory to industry production standards.",
+    "experience": "5+ Years in Full Stack & AI Systems Engineering",
+    "skills": "Python, JavaScript, Flask, Next.js, Docker, Linux, AI Automation, REST APIs",
+    "education_certifications": "B.Tech Computer Science & Engineering",
+    "website": "https://aivontraa.com",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "twitter": "https://twitter.com",
+    "other_links": "",
+    "internal_phone": "+91 9876543210",
+    "profile_photo_url": "/static/uploads/mentors/mentor_a918f4.jpg",
+    "status": "Active",
+    "created_at": "2026-08-14T00:00:00Z",
+    "social_links": [
+      {
+        "platform": "Website",
+        "url": "https://aivontraa.com"
+      },
+      {
+        "platform": "GitHub",
+        "url": "https://github.com"
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://linkedin.com"
+      },
+      {
+        "platform": "Twitter/X",
+        "url": "https://twitter.com"
+      }
+    ],
+    "google_id": "dev_bb8b5b94"
   },
   {
     "id": "mnt_02",
+    "full_name": "Dr. Vikram Seth",
+    "name": "Dr. Vikram Seth",
+    "email": "vikram@aivontraa.com",
+    "professional_title": "Principal Systems Architect",
+    "role": "Principal Systems Architect",
+    "domain": "Systems Architecture & Embedded Telemetry",
+    "short_bio": "15+ years in distributed systems, kernel engineering, microcontroller telemetry, and high-throughput infrastructure.",
+    "bio": "15+ years in distributed systems, kernel engineering, microcontroller telemetry, and high-throughput infrastructure.",
+    "detailed_about": "Dr. Vikram Seth has designed mission-critical distributed backends and IoT sensory communication frameworks. He leads systems architecture and hardware-software integration workshops.",
+    "experience": "15+ Years (Ex-Google / AIVONTRAA)",
+    "skills": "C++, Linux Kernel, RTOS, Distributed Storage, Sockets, ESP32 Telemetry",
+    "education_certifications": "Ph.D. Computer Systems & Network Engineering",
+    "website": "https://aivontraa.com",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "twitter": "",
+    "other_links": "",
+    "internal_phone": "+91 9876543211",
+    "profile_photo_url": "",
+    "status": "Active",
+    "created_at": "2026-08-14T00:00:00Z"
+  },
+  {
+    "id": "mnt_03",
+    "full_name": "Sarah Lin",
     "name": "Sarah Lin",
+    "email": "sarah@aivontraa.com",
+    "professional_title": "Cybersecurity Director",
     "role": "Cybersecurity Director",
-    "domain": "Network Security & Ethical Hacking",
-    "company": "CyberShield Labs",
-    "bio": "Offensive security specialist, bug bounty hunter, and cloud security architecture expert."
+    "domain": "Network Security, Penetration Testing & Threat Modeling",
+    "short_bio": "Offensive security specialist, bug bounty hunter, and cloud security architecture expert.",
+    "bio": "Offensive security specialist, bug bounty hunter, and cloud security architecture expert.",
+    "detailed_about": "Sarah Lin guides students through ethical hacking fundamentals, network packet dissection, vulnerability auditing, and secure software development lifecycle standards.",
+    "experience": "10+ Years in Cybersecurity & Ethical Hacking",
+    "skills": "Wireshark, Nmap, Metasploit, OAuth2, Cryptography, Cloud Security",
+    "education_certifications": "CISSP, CEH Certified Master",
+    "website": "",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "twitter": "https://twitter.com",
+    "other_links": "",
+    "internal_phone": "+91 9876543212",
+    "profile_photo_url": "",
+    "status": "Active",
+    "created_at": "2026-08-15T00:00:00Z"
   }
 ]

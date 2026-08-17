@@ -1,0 +1,162 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Mentor Profile Management — {{ mentor.full_name }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-person-bounding-box" style="color: #38bdf8; margin-right: 0.5rem;"></i> Mentor Profile Self-Management
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      Update your public profile, domain expertise, bio, and add custom professional/social links.
+    </p>
+  </div>
+</div>
+
+<div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem;">
+  <form method="POST" action="{{ url_for('mentor.profile') }}" enctype="multipart/form-data">
+    
+    <!-- AVATAR & BASIC DETAILS -->
+    <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1.5rem; flex-wrap: wrap;">
+      <div style="position: relative;">
+        <img src="{{ mentor.profile_photo_url if mentor.profile_photo_url else '/static/images/default-avatar.png' }}" alt="{{ mentor.full_name }}" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Update Profile Photo</label>
+        <input type="file" name="profile_photo" class="form-control" accept="image/*" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.4rem; border-radius: 8px; font-size: 0.85rem;">
+        <span style="font-size: 0.75rem; color: #64748b;">Recommended square format (PNG/JPG/WEBP).</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Full Name *</label>
+        <input type="text" name="full_name" value="{{ mentor.full_name }}" class="form-control" required style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Professional Title *</label>
+        <input type="text" name="professional_title" value="{{ mentor.professional_title }}" class="form-control" placeholder="e.g. Principal Systems Architect & AI Engineer" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Domain / Expertise Area *</label>
+        <input type="text" name="domain" value="{{ mentor.domain }}" class="form-control" placeholder="e.g. Full Stack Systems, AI Automation, Robotics" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Years of Experience</label>
+        <input type="text" name="experience" value="{{ mentor.experience }}" class="form-control" placeholder="e.g. 8+ Years in Systems Engineering" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+    </div>
+
+    <!-- BIO AND ABOUT -->
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Short Bio</label>
+      <input type="text" name="short_bio" value="{{ mentor.short_bio }}" class="form-control" placeholder="Brief summary of your professional engineering focus" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+    </div>
+
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Detailed About / Mentorship Philosophy</label>
+      <textarea name="detailed_about" rows="4" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;" placeholder="Explain your core technical background, project guidance philosophy, and industry standards...">{{ mentor.detailed_about }}</textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Core Skills & Technologies</label>
+        <input type="text" name="skills" value="{{ mentor.skills }}" class="form-control" placeholder="e.g. Python, Flask, Docker, Linux, C++, ROS, MQTT" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Education & Certifications</label>
+        <input type="text" name="education_certifications" value="{{ mentor.education_certifications }}" class="form-control" placeholder="e.g. B.Tech Computer Science / AWS Certified" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+    </div>
+
+    <!-- DYNAMIC MULTIPLE SOCIAL / PROFESSIONAL LINKS -->
+    <div style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 1.25rem; background: rgba(15, 23, 42, 0.6); border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="bi bi-link-45deg" style="color: #38bdf8; font-size: 1.2rem;"></i> Professional Profiles & Web Links
+        </h3>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addProfileLinkRow()" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="bi bi-plus-lg me-1"></i> Add Link
+        </button>
+      </div>
+
+      <div id="profileLinksContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <!-- Dynamic link rows inserted here -->
+      </div>
+    </div>
+
+    <!-- PROTECTED SENSITIVE FIELDS NOTE -->
+    <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 0.85rem; margin-bottom: 1.5rem; font-size: 0.82rem; color: #94a3b8;">
+      <i class="bi bi-shield-lock-fill" style="color: #f59e0b; margin-right: 0.3rem;"></i>
+      <strong>Protected Account Credentials:</strong> Account Sign-In Gmail (<span style="color: #38bdf8;">{{ mentor.email }}</span>) and private contact phone (<span style="color: #10b981;">{{ mentor.internal_phone if mentor.internal_phone else 'Protected' }}</span>) are managed by Administrators.
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+      <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 700; padding: 0.75rem 2rem; border-radius: 8px;">
+        <i class="bi bi-check2-circle"></i> Save Profile Changes
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script id="existing-links-json" type="application/json">
+{{ (mentor.processed_links if mentor.processed_links else []) | tojson }}
+</script>
+
+<script>
+let existingLinks = [];
+try {
+  const jsonElem = document.getElementById('existing-links-json');
+  if (jsonElem) {
+    existingLinks = JSON.parse(jsonElem.textContent);
+  }
+} catch(e) {
+  console.error("Error parsing links JSON", e);
+}
+
+const PLATFORMS = ["LinkedIn", "GitHub", "Twitter/X", "Website", "Instagram", "YouTube", "Portfolio", "Medium", "Facebook", "Other"];
+
+function createLinkRowHTML(platformValue = "LinkedIn", urlValue = "") {
+  let optionsHTML = PLATFORMS.map(p => `<option value="${p}" ${p === platformValue ? 'selected' : ''}>${p}</option>`).join('');
+  return `
+    <div class="link-row" style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+      <select name="link_platform[]" class="form-control" style="width: 150px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+        ${optionsHTML}
+      </select>
+      <input type="url" name="link_url[]" class="form-control" placeholder="https://..." value="${urlValue}" style="flex: 1; min-width: 220px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="this.closest('.link-row').remove()" style="border-color: rgba(239,68,68,0.4); color: #ef4444; padding: 0.5rem 0.75rem; border-radius: 8px;">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  `;
+}
+
+function addProfileLinkRow(platform = "LinkedIn", url = "") {
+  const container = document.getElementById('profileLinksContainer');
+  if (container) {
+    const div = document.createElement('div');
+    div.innerHTML = createLinkRowHTML(platform, url);
+    container.appendChild(div.firstElementChild);
+  }
+}
+
+// Populate initial links on load
+document.addEventListener("DOMContentLoaded", function() {
+  if (existingLinks && existingLinks.length > 0) {
+    existingLinks.forEach(l => {
+      addProfileLinkRow(l.platform || "LinkedIn", l.url || "");
+    });
+  } else {
+    addProfileLinkRow("LinkedIn", "");
+    addProfileLinkRow("GitHub", "");
+    addProfileLinkRow("Website", "");
+  }
+});
+</script>
+{% endblock %}

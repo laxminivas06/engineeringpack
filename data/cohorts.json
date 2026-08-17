@@ -1,0 +1,148 @@
+[
+  {
+    "id": "cohort_ced5d93d",
+    "product_id": "prod_engpack",
+    "name": "Cohort 1",
+    "start_date": "2026-08-17",
+    "end_date": "2026-10-01",
+    "max_capacity": 35,
+    "current_enrollment": 0,
+    "status": "Active",
+    "description": "Active engineering cohort for Batch 1.",
+    "duration_days": 5,
+    "assigned_mentor_ids": ["mnt_01", "mnt_02"],
+    "assigned_project_ids": ["proj_01", "proj_02", "proj_03"],
+    "timetable": [
+      {
+        "day": 1,
+        "date": "2026-08-20",
+        "formatted_date": "2026-08-20",
+        "title": "Introduction to Engineering & Robotics",
+        "domain": "Embedded Systems",
+        "outcomes": [
+          "Practical application",
+          "Technical mindset"
+        ],
+        "status": "Scheduled"
+      },
+      {
+        "day": 2,
+        "date": "2026-08-21",
+        "formatted_date": "2026-08-21",
+        "title": "Microcontroller Programming & Sensors",
+        "domain": "Electronics",
+        "outcomes": [
+          "Hardware interfacing",
+          "Sensor calibration"
+        ],
+        "status": "Scheduled"
+      },
+      {
+        "day": 3,
+        "date": "2026-08-22",
+        "formatted_date": "2026-08-22",
+        "title": "CAD Modeling & Rapid Prototyping",
+        "domain": "Mechanical",
+        "outcomes": [
+          "3D Design",
+          "Prototyping basics"
+        ],
+        "status": "Scheduled"
+      },
+      {
+        "day": 4,
+        "date": "2026-08-23",
+        "formatted_date": "2026-08-23",
+        "title": "IoT Gateways & Cloud Connectivity",
+        "domain": "IoT & Cloud",
+        "outcomes": [
+          "Telemetry ingestion",
+          "Dashboard setup"
+        ],
+        "status": "Scheduled"
+      },
+      {
+        "day": 5,
+        "date": "2026-08-24",
+        "formatted_date": "2026-08-24",
+        "title": "AI/ML Model Training for Edge Devices",
+        "domain": "Artificial Intelligence",
+        "outcomes": [
+          "Edge Deployment",
+          "Model optimization"
+        ],
+        "status": "Scheduled"
+      }
+    ]
+  },
+  {
+    "id": "cohort_eng_2",
+    "product_id": "prod_engpack",
+    "name": "Cohort 2",
+    "start_date": "2026-10-05",
+    "end_date": "2026-11-20",
+    "max_capacity": 35,
+    "current_enrollment": 0,
+    "status": "Upcoming",
+    "description": "Upcoming engineering cohort for Batch 2.",
+    "assigned_mentor_ids": ["mnt_01"],
+    "assigned_project_ids": ["proj_01"]
+  },
+  {
+    "id": "cohort_rob_1",
+    "product_id": "prod_robotics",
+    "name": "Cohort 1",
+    "start_date": "2026-09-01",
+    "end_date": "2026-10-01",
+    "max_capacity": 30,
+    "current_enrollment": 0,
+    "status": "Active",
+    "description": "Initial robotics pack cohort.",
+    "assigned_mentor_ids": ["mnt_01", "mnt_02"],
+    "assigned_project_ids": ["proj_04"]
+  },
+  {
+    "id": "cohort_sch_1",
+    "product_id": "prod_schoolpack",
+    "name": "Cohort 1",
+    "start_date": "2026-09-10",
+    "end_date": "2026-11-10",
+    "max_capacity": 40,
+    "current_enrollment": 0,
+    "status": "Active",
+    "description": "Foundational school pack cohort.",
+    "assigned_mentor_ids": ["mnt_03"],
+    "assigned_project_ids": ["proj_05"]
+  },
+  {
+    "id": "cohort_8b806677",
+    "product_id": "prod_fc383290",
+    "name": "Cohort 1",
+    "start_date": "2026-08-18",
+    "end_date": "2026-10-02",
+    "max_capacity": 35,
+    "current_enrollment": 0,
+    "status": "Active",
+    "description": "Initial active cohort for Laxmi Nivas Morishetty."
+  },
+  {
+    "id": "cohort_f3ab534f",
+    "product_id": "prod_engpack",
+    "name": "Test Attachment Cohort",
+    "start_date": "2026-09-01",
+    "end_date": "2026-10-15",
+    "duration_days": 45,
+    "whatsapp_link": "https://chat.whatsapp.com/test-attach",
+    "max_capacity": 35,
+    "current_enrollment": 0,
+    "status": "Upcoming",
+    "description": "Cohort for Engineering Pack with 35 seat capacity.",
+    "assigned_project_ids": [
+      "proj_01",
+      "proj_02"
+    ],
+    "assigned_mentor_ids": [
+      "mnt_01"
+    ]
+  }
+]

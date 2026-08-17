@@ -5,7 +5,9 @@
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
   <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Registered Students</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payment Approvals</span></a></li>
   <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
   <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
   <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>

@@ -1,0 +1,211 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Product Settings — {{ product.name }}{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings', product_id=product.id) }}" class="sidebar-link active"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+        <h1 style="font-size: 1.8rem; font-weight: 700; margin: 0;">{{ product.name }} Settings</h1>
+        <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">{{ product.status }}</span>
+      </div>
+      <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Configure price, payment QR code, duration, seat capacity, tagline, and descriptions specific to {{ product.name }}.</p>
+    </div>
+
+    <!-- PRODUCT SWITCHER TABS -->
+    <div style="display: flex; gap: 0.5rem; background: rgba(15, 23, 42, 0.8); padding: 0.3rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+      {% for p in all_products %}
+        <a href="{{ url_for('admin.product_settings', product_id=p.id) }}" class="btn btn-sm {% if p.id == product.id %}btn-primary{% else %}btn-outline{% endif %}" style="font-size: 0.78rem; padding: 0.3rem 0.75rem;">
+          {{ p.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+  <!-- MAIN SETTINGS FORM -->
+  <div class="glass-card" style="padding: 2rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+      <i class="bi bi-gear-wide-connected text-primary me-2"></i> Configuration & Pricing
+    </h2>
+
+    <form action="{{ url_for('admin.product_settings', product_id=product.id) }}" method="POST" enctype="multipart/form-data">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Name *</label>
+        <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Tagline / Subtitle</label>
+        <input type="text" name="tagline" class="form-control" value="{{ product.tagline }}">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Brief Description</label>
+        <textarea name="description" class="form-control" rows="2">{{ product.description }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Overview (Detailed Mission / Description)</label>
+        <textarea name="overview" class="form-control" rows="4" placeholder="Detailed program overview displayed on the public program page...">{{ product.overview or '' }}</textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Product Price (₹) *</label>
+          <input type="number" name="price" class="form-control" value="{{ product.price }}" required>
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Fee charged to students enrolling in {{ product.name }}.</span>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Duration (Days)</label>
+          <input type="number" name="duration_days" class="form-control" value="{{ product.duration_days }}">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Courses / Modules Included</label>
+        <textarea name="courses_modules" class="form-control" rows="4" placeholder="Module 1: ...&#10;Module 2: ...">{{ product.courses_modules or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Phases & Learning Journey</label>
+        <textarea name="phases_duration" class="form-control" rows="3" placeholder="Phase 1 (Days 1-15): ...&#10;Phase 2 (Days 16-30): ...">{{ product.phases_duration or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Practical Projects & Portfolio</label>
+        <textarea name="projects_summary" class="form-control" rows="3" placeholder="List capstone projects and practical exposure...">{{ product.projects_summary or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Skills & Learning Outcomes</label>
+        <textarea name="learning_outcomes" class="form-control" rows="3" placeholder="Key skills and practical capabilities gained...">{{ product.learning_outcomes or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Eligibility & Prerequisites</label>
+        <textarea name="eligibility" class="form-control" rows="2" placeholder="Who should join? Target audience or requirements...">{{ product.eligibility or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program-Specific Custom Content</label>
+        <textarea name="program_specific_content" class="form-control" rows="2" placeholder="Additional details, perks, or mentor guidelines...">{{ product.program_specific_content or '' }}</textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Default Seat Capacity per Cohort</label>
+        <input type="number" name="default_cohort_capacity" class="form-control" value="{{ product.default_cohort_capacity }}">
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Maximum default students allowed per cohort under {{ product.name }}.</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Upload Program Banner / Card Image</label>
+          <input type="file" name="banner_image" class="form-control" accept="image/*">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Displayed on public program pages and cards.</span>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Upload Product Payment QR Code</label>
+          <input type="file" name="payment_qr" class="form-control" accept="image/*">
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Students scan this QR to complete payment.</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+        <i class="bi bi-check2-circle me-1"></i> Save Product Settings
+      </button>
+    </form>
+  </div>
+
+  <!-- RIGHT COLUMN: QR PREVIEW & PROGRAM MENTORS -->
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <!-- QR PREVIEW CARD -->
+    <div class="glass-card" style="padding: 1.75rem; text-align: center;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">Payment QR Preview</h3>
+      {% if product.payment_qr_url %}
+        <div style="background: #fff; padding: 1rem; border-radius: 12px; display: inline-block; margin-bottom: 1rem;">
+          <img src="{{ product.payment_qr_url }}" alt="Payment QR Code" style="max-width: 180px; height: auto; display: block;">
+        </div>
+        <div style="font-size: 0.82rem; color: var(--text-dim);">
+          Price: <strong style="color: #34d399;">₹{{ "{:,.0f}".format(product.price) }}</strong>
+        </div>
+      {% else %}
+        <div style="padding: 3rem 1rem; border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; color: var(--text-dim); margin-bottom: 1rem;">
+          <i class="bi bi-qr-code" style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;"></i>
+          No Payment QR image uploaded yet.
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- PROGRAM MENTORS ASSIGNMENT CARD -->
+    <div class="glass-card" style="padding: 1.75rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">
+        <i class="bi bi-person-badge text-gradient me-2"></i> Program Mentors
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1.25rem;">
+        Select and assign central mentor profiles to {{ product.name }}.
+      </p>
+
+      <!-- ASSIGN NEW MENTOR FORM -->
+      <form action="{{ url_for('admin.assign_product_mentor', product_id=product.id) }}" method="POST" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          <select name="mentor_id" class="form-control" style="font-size: 0.85rem;" required>
+            <option value="" disabled selected>-- Select Central Mentor --</option>
+            {% for m in available_mentors %}
+              <option value="{{ m.id }}">{{ m.full_name }} ({{ m.professional_title }})</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary btn-sm" style="white-space: nowrap;">
+            <i class="bi bi-plus-lg me-1"></i> Assign
+          </button>
+        </div>
+      </form>
+
+      <!-- CURRENTLY ASSIGNED MENTORS LIST -->
+      <div>
+        <h4 style="font-size: 0.88rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.75rem;">Currently Assigned ({{ assigned_mentors | length }}):</h4>
+        {% if assigned_mentors %}
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for m in assigned_mentors %}
+              <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(15, 23, 42, 0.6); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div>
+                  <div style="font-weight: 600; font-size: 0.9rem; color: #fff;">{{ m.full_name }}</div>
+                  <div style="font-size: 0.78rem; color: var(--primary-cyan);">{{ m.professional_title }}</div>
+                </div>
+                <form action="{{ url_for('admin.remove_product_mentor', product_id=product.id, mentor_id=m.id) }}" method="POST" style="margin: 0;">
+                  <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444; padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Remove from this program">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="font-size: 0.82rem; color: var(--text-dim); font-style: italic;">
+            No mentors assigned to {{ product.name }} yet.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

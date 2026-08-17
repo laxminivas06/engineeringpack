@@ -1,42 +1,77 @@
 [
   {
     "id": "proj_01",
+    "product_id": "prod_engpack",
+    "cohort_id": "cohort_ced5d93d",
+    "assigned_student_ids": [],
     "name": "Full-Stack Web Platform",
     "domain": "Software Engineering",
     "icon": "layers",
+    "status": "Open",
     "description": "Build a modular web platform with clean frontend-backend separation, session security, and structured data handling.",
-    "outcome": "Deployable full-stack application with production-ready structure and responsive UI."
+    "instructions": "1. Initialize a Git repository with clean commit history.\n2. Design modular backend routes with RESTful endpoints.\n3. Implement role-based authentication and secure session management.\n4. Create responsive Jinja2/HTML templates with modern CSS styling.\n5. Include a comprehensive README.md with setup instructions.",
+    "outcome": "Deployable full-stack application with production-ready structure and responsive UI.",
+    "opened_by_mentor_id": "mnt_01",
+    "opened_at": "2026-08-17T20:32:42.062279Z"
   },
   {
     "id": "proj_02",
+    "product_id": "prod_engpack",
+    "cohort_id": "all",
+    "assigned_student_ids": [],
     "name": "Network Protocol Analyzer",
     "domain": "Networking & Linux",
     "icon": "diagram-2",
+    "status": "Open",
     "description": "Create a command-line tool to inspect network packets, parse HTTP/DNS requests, and output diagnostic reports.",
-    "outcome": "Deep understanding of TCP/IP stack and Linux networking socket operations."
+    "instructions": "1. Use raw sockets or Python scapy module to capture network packets.\n2. Implement protocol dissecting logic for Ethernet, IP, TCP, and UDP headers.\n3. Add filtering flags for specific port numbers or IP ranges.\n4. Export structured diagnostic logs in JSON format.",
+    "outcome": "Deep understanding of TCP/IP stack and Linux networking socket operations.",
+    "opened_by_mentor_id": "mnt_01",
+    "opened_at": "2026-08-17T20:24:11.590581Z"
   },
   {
     "id": "proj_03",
+    "product_id": "prod_engpack",
+    "cohort_id": "all",
+    "assigned_student_ids": [],
     "name": "Security Audit & Vulnerability Scanner",
     "domain": "Cybersecurity",
     "icon": "shield-lock",
+    "status": "Locked",
     "description": "Implement automated security checks for web application headers, weak configurations, and input sanitization.",
-    "outcome": "Practical exposure to OWASP Top 10 vulnerabilities and defensive engineering."
+    "instructions": "1. Build an HTTP scanner testing security headers (CSP, HSTS, X-Frame-Options).\n2. Test target endpoints for SQL injection vulnerabilities using parameterized query audits.\n3. Audit XSS sanitization across form input fields.\n4. Generate an executive summary security report in HTML/PDF format.",
+    "outcome": "Practical exposure to OWASP Top 10 vulnerabilities and defensive engineering.",
+    "opened_by_mentor_id": "",
+    "opened_at": ""
   },
   {
     "id": "proj_04",
-    "name": "IoT Real-Time Dashboard",
+    "product_id": "prod_robotics",
+    "cohort_id": "cohort_rob_1",
+    "assigned_student_ids": [],
+    "name": "Autonomous Rover Telemetry System",
     "domain": "Robotics & IoT",
     "icon": "broadcast",
+    "status": "Locked",
     "description": "Develop a lightweight telemetry dashboard that ingests sensor data via MQTT/WebSockets and renders live telemetry.",
-    "outcome": "End-to-end telemetry pipeline connecting physical hardware sensors to cloud dashboard."
+    "instructions": "1. Write ESP32 firmware transmitting IMU and wheel encoder telemetry over MQTT.\n2. Set up an MQTT broker and backend ingestion service.\n3. Build a real-time web dashboard visualizing speed, acceleration, and orientation.\n4. Add emergency stop command trigger from dashboard to rover node.",
+    "outcome": "End-to-end telemetry pipeline connecting physical hardware sensors to cloud dashboard.",
+    "opened_by_mentor_id": "",
+    "opened_at": ""
   },
   {
     "id": "proj_05",
-    "name": "Engineering Showcase Capstone",
-    "domain": "Capstone Project",
-    "icon": "star",
-    "description": "Synthesize software, networking, security, and AI concepts into an end-to-end engineering solution.",
-    "outcome": "Portfolio-grade capstone project ready for technical recruiters and industry showcase."
+    "product_id": "prod_schoolpack",
+    "cohort_id": "cohort_sch_1",
+    "assigned_student_ids": [],
+    "name": "Interactive Story & Game Engine",
+    "domain": "STEM Logic",
+    "icon": "controller",
+    "status": "Locked",
+    "description": "Create interactive stories and logic puzzles using Python animation and game mechanics.",
+    "instructions": "1. Write a branching story logic system using custom Python classes.\n2. Integrate Pygame or Turtle graphics for visual rendering.\n3. Add score tracking and inventory item storage.\n4. Package the final game as a runnable executable desktop app.",
+    "outcome": "First interactive game application published to personal portfolio.",
+    "opened_by_mentor_id": "",
+    "opened_at": ""
   }
 ]

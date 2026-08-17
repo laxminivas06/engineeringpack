@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} — {{ product.tagline }}{% endblock %}
+
+{% block content %}
+<!-- PROGRAM DETAIL HERO -->
+<section class="hero-section tech-grid-bg" style="padding: 4rem 0 3rem;">
+  <div class="container">
+    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 300px;">
+        <a href="{{ url_for('public.programs_catalog') }}" class="btn btn-outline btn-sm"
+          style="margin-bottom: 1.25rem;">
+          <i class="bi bi-arrow-left"></i> All Programs
+        </a>
+        <div class="tech-badge" style="margin-bottom: 1rem;">
+          <i class="bi bi-award-fill"></i> {{ product.duration_days }} Days Intensive Program
+        </div>
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.75rem;">
+          {{ product.name }}
+        </h1>
+        <p style="font-size: 1.2rem; color: var(--primary-cyan); font-weight: 600; margin-bottom: 1.25rem;">
+          {{ product.tagline }}
+        </p>
+        <p class="hero-description" style="font-size: 1.05rem; margin-bottom: 2rem;">
+          {{ product.description }}
+        </p>
+      </div>
+
+      {% if product.banner_image_url %}
+      <div
+        style="flex: 1; min-width: 300px; max-width: 520px; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-glow); border: 1px solid var(--border-accent);">
+        <img src="{{ product.banner_image_url }}" alt="{{ product.name }}"
+          style="width: 100%; height: 320px; object-fit: cover;">
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT & MODULES -->
+<section id="overviewSection" style="padding: 4rem 0;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem;">
+      <!-- LEFT COLUMN: OVERVIEW, COURSES, OUTCOMES, PROJECTS -->
+      <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+
+        <!-- PROGRAM OVERVIEW -->
+        <div class="glass-card" style="padding: 2.25rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: #fff;">
+            <i class="bi bi-compass-fill text-gradient me-2"></i> Program Overview
+          </h2>
+          <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-muted); white-space: pre-line;">
+            {{ product.overview or product.description }}
+          </p>
+        </div>
+
+        <!-- COURSES & MODULES INCLUDED -->
+        {% if product.courses_modules %}
+        <div class="glass-card" style="padding: 2.25rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">
+            <i class="bi bi-journal-code text-gradient me-2"></i> Courses & Modules Included
+          </h2>
+          <div
+            style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 1rem; line-height: 1.8; color: var(--text-main); white-space: pre-line;">
+            {{ product.courses_modules }}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- PHASES & DURATION / JOURNEY -->
+        {% if product.phases_duration or phases %}
+        <div class="glass-card" style="padding: 2.25rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">
+            <i class="bi bi-diagram-3-fill text-gradient me-2"></i> Learning Journey & Phases
+          </h2>
+          {% if product.phases_duration %}
+          <div
+            style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 1rem; line-height: 1.8; color: var(--text-main); white-space: pre-line; margin-bottom: 1.5rem;">
+            {{ product.phases_duration }}
+          </div>
+          {% endif %}
+
+          {% if phases %}
+          <div class="timeline-list" style="margin-top: 1rem;">
+            {% for phase in phases %}
+            <div class="timeline-item">
+              <div class="timeline-badge">{{ phase.phase_number }}</div>
+              <div class="timeline-content">
+                <div
+                  style="background: rgba(8, 12, 20, 0.6); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                  <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                    <span class="tech-badge" style="font-size: 0.72rem;">{{ phase.domain }}</span>
+                    <span style="font-size: 0.85rem; color: var(--primary-cyan); font-family: var(--font-mono);">{{
+                      phase.day_range }}</span>
+                  </div>
+                  <h4 style="font-size: 1.15rem; margin-bottom: 0.4rem;">Phase {{ phase.phase_number }}: {{ phase.title
+                    }}</h4>
+                  <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">{{ phase.description }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- SKILLS & LEARNING OUTCOMES -->
+        {% if product.learning_outcomes %}
+        <div class="glass-card" style="padding: 2.25rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">
+            <i class="bi bi-award-fill text-gradient me-2"></i> Skills & Learning Outcomes
+          </h2>
+          <div
+            style="background: rgba(0, 242, 254, 0.04); border-left: 4px solid var(--primary-cyan); padding: 1.5rem; border-radius: var(--radius-sm); font-size: 1rem; line-height: 1.8; color: var(--text-main); white-space: pre-line;">
+            {{ product.learning_outcomes }}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- PRACTICAL PROJECTS -->
+        {% if product.projects_summary or projects %}
+        <div class="glass-card" style="padding: 2.25rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">
+            <i class="bi bi-tools text-gradient me-2"></i> Practical Projects & Capstones
+          </h2>
+          {% if product.projects_summary %}
+          <p
+            style="font-size: 1.02rem; line-height: 1.8; color: var(--text-muted); white-space: pre-line; margin-bottom: 1.5rem;">
+            {{ product.projects_summary }}
+          </p>
+          {% endif %}
+
+          {% if projects %}
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem;">
+            {% for proj in projects %}
+            <div
+              style="background: rgba(15, 23, 42, 0.6); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <span class="tech-badge" style="font-size: 0.7rem; margin-bottom: 0.5rem;">{{ proj.domain }}</span>
+              <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">{{ proj.name }}</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">{{ proj.description }}</p>
+              <div style="font-size: 0.8rem; color: var(--primary-cyan); margin-top: 0.5rem; font-weight: 600;">
+                <i class="bi bi-check2"></i> {{ proj.outcome }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- PROGRAM MENTORS & INSTRUCTORS SECTION -->
+        {% if mentors %}
+        <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2.5rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="bi bi-person-badge-fill text-gradient"></i> Program Mentors & Instructors
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">Learn directly from experienced
+            engineers and systems architects guiding this program.</p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+            {% for m in mentors %}
+            <div
+              style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div
+                  style="width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-accent); flex-shrink: 0; background: rgba(0, 242, 254, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: var(--primary-cyan);">
+                  {% if m.profile_photo_url and 'default-avatar' not in m.profile_photo_url %}
+                  <img src="{{ m.profile_photo_url }}" alt="{{ m.full_name }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                  {% else %}
+                  {{ m.full_name[0] }}
+                  {% endif %}
+                </div>
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0;">{{ m.full_name }}</h3>
+                  <span style="font-size: 0.82rem; color: var(--primary-cyan); font-weight: 500;">{{
+                    m.professional_title }}</span>
+                </div>
+              </div>
+
+              {% if m.domain %}
+              <div style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                <strong>Domain:</strong> {{ m.domain }}
+              </div>
+              {% endif %}
+
+              {% if m.experience %}
+              <div style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.75rem;">
+                <i class="bi bi-briefcase me-1"></i> {{ m.experience }}
+              </div>
+              {% endif %}
+
+              <p
+                style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem; flex-grow: 1;">
+                {{ m.short_bio or m.detailed_about }}
+              </p>
+
+              <!-- APPROVED PROFESSIONAL SOCIAL LINKS -->
+              <div
+                style="display: flex; flex-wrap: wrap; gap: 0.85rem; font-size: 1.15rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px dashed var(--border-color);">
+                {% for link in m.processed_links %}
+                <a href="{{ link.url }}" target="_blank" rel="noopener" style="color: var(--primary-cyan);"
+                  title="{{ link.platform }}"><i class="bi {{ link.icon }}"></i></a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- RIGHT COLUMN: ENROLLMENT SIDEBAR CARD -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="glass-card"
+          style="padding: 2rem; position: sticky; top: 100px; border-color: var(--border-accent); box-shadow: var(--shadow-glow);">
+          <div class="tech-badge" style="margin-bottom: 0.75rem;"><i class="bi bi-star-fill"></i> Enrollment Open</div>
+
+          <div
+            style="font-size: 2.8rem; font-family: var(--font-heading); font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.25rem;">
+            {{ product.currency_symbol }}{{ "{:,.0f}".format(product.price) }}
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-dim); margin-bottom: 1.5rem;">All-inclusive program fee for {{
+            product.duration_days }} Days</p>
+
+          {% if current_user %}
+          <a href="{{ url_for('auth.enroll_program', product_id=product.id) }}" class="btn btn-primary btn-lg btn-block"
+            style="margin-bottom: 1rem;">
+            <i class="bi bi-rocket-takeoff-fill me-1"></i> Join Program
+          </a>
+          {% else %}
+          <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg btn-block" style="margin-bottom: 1rem;">
+            <i class="bi bi-person-circle me-1"></i> Sign In to Join Program
+          </a>
+          {% endif %}
+
+          <div
+            style="display: flex; flex-direction: column; gap: 0.85rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); font-size: 0.9rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <i class="bi bi-clock-history text-gradient" style="font-size: 1.2rem;"></i>
+              <span><strong>{{ product.duration_days }} Days</strong> Duration</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <i class="bi bi-people-fill text-gradient" style="font-size: 1.2rem;"></i>
+              <span><strong>{{ product.default_cohort_capacity }} Seats</strong> per Cohort</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <i class="bi bi-award-fill text-gradient" style="font-size: 1.2rem;"></i>
+              <span>Verified Certificate of Completion</span>
+            </div>
+          </div>
+
+          {% if product.eligibility %}
+          <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-main);"><i
+                class="bi bi-person-check-fill text-gradient"></i> Eligibility:</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              {{ product.eligibility }}
+            </p>
+          </div>
+          {% endif %}
+
+          {% if product.program_specific_content %}
+          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-main);"><i
+                class="bi bi-info-circle-fill text-gradient"></i> Highlights:</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              {{ product.program_specific_content }}
+            </p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

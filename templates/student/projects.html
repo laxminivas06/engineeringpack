@@ -5,52 +5,135 @@
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
   <li><a href="{{ url_for('student.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-  <li><a href="{{ url_for('student.journey') }}" class="sidebar-link"><i class="bi bi-map"></i> <span>45-Day Journey</span></a></li>
-  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link active"><i class="bi bi-folder-check"></i> <span>Projects</span></a></li>
-  <li><a href="{{ url_for('student.certificates') }}" class="sidebar-link"><i class="bi bi-award"></i> <span>Certificates</span></a></li>
-  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link"><i class="bi bi-person-gear"></i> <span>Profile</span></a></li>
+  <li><a href="{{ url_for('student.calendar') }}" class="sidebar-link"><i class="bi bi-calendar3"></i> <span>Program Calendar</span></a></li>
+  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link active"><i class="bi bi-folder-check"></i> <span>Assigned Projects</span></a></li>
+  <li><a href="{{ url_for('student.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Feedback & Reviews</span></a></li>
+  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link"><i class="bi bi-person-gear"></i> <span>My Profile</span></a></li>
 </ul>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
+<div class="dashboard-header" style="margin-bottom: 2rem;">
   <div class="dashboard-title-group">
-    <h1>Hands-On Engineering Projects</h1>
-    <p>Track project assignments, repository submissions, and outcomes.</p>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-folder-check" style="color: #38bdf8; margin-right: 0.4rem;"></i> Cohort Hands-On Projects
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      Projects become active when opened by your assigned mentor for {{ cohort.name if cohort else 'your cohort' }}.
+    </p>
   </div>
 </div>
 
-<div class="domains-grid">
+<div class="domains-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
   {% for proj in projects %}
-    <div class="glass-card">
-      <div class="domain-card">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div class="card-icon"><i class="bi bi-{{ proj.icon }}"></i></div>
-          {% if loop.index == 1 %}
-            <span class="tech-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); border-color: rgba(16, 185, 129, 0.3); font-size: 0.72rem;"><i class="bi bi-check-circle-fill"></i> Completed</span>
-          {% elif loop.index == 2 %}
-            <span class="tech-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--primary-cyan); border-color: var(--border-accent); font-size: 0.72rem;"><i class="bi bi-play-circle"></i> Active</span>
-          {% else %}
-            <span class="tech-badge" style="background: rgba(255, 255, 255, 0.03); color: var(--text-dim); border-color: var(--border-color); font-size: 0.72rem;"><i class="bi bi-clock"></i> Upcoming</span>
+    <div class="glass-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid {% if proj.status == 'Open' %}rgba(56, 189, 248, 0.3){% else %}rgba(255, 255, 255, 0.1){% endif %}; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+      
+      <div>
+        <!-- TOP HEADER & STATUS -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+            <i class="bi bi-{{ proj.icon if proj.icon else 'layers' }}"></i>
+          </div>
+
+          <div>
+            {% if proj.status == 'Open' %}
+              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.78rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 16px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <i class="bi bi-unlock-fill"></i> Opened by Mentor
+              </span>
+            {% else %}
+              <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.78rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 16px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <i class="bi bi-lock-fill"></i> Project not yet opened by mentor
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="margin-bottom: 0.75rem;">
+          <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 10px;">{{ proj.domain }}</span>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem;">{{ proj.name }}</h3>
+        </div>
+
+        <!-- DETAILS & INSTRUCTIONS (ONLY WHEN OPEN) -->
+        {% if proj.status == 'Open' %}
+          <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 1rem;">{{ proj.description }}</p>
+
+          {% if proj.instructions %}
+            <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; font-size: 0.82rem;">
+              <strong style="color: #38bdf8;"><i class="bi bi-list-task"></i> Requirements & Instructions:</strong>
+              <div style="white-space: pre-line; margin-top: 0.3rem; color: #cbd5e1;">{{ proj.instructions }}</div>
+            </div>
           {% endif %}
-        </div>
 
-        <div>
-          <span class="tech-badge" style="font-size: 0.7rem; margin-bottom: 0.4rem;">{{ proj.domain }}</span>
-          <h3 style="font-size: 1.25rem;">{{ proj.name }}</h3>
-        </div>
-
-        <p style="font-size: 0.9rem; color: var(--text-muted); flex: 1;">{{ proj.description }}</p>
-
-        <div style="background: rgba(0, 242, 254, 0.04); border-left: 3px solid var(--primary-cyan); padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
-          <span style="font-weight: 600; font-size: 0.8rem; color: var(--primary-cyan);">Target Outcome:</span>
-          <p style="font-size: 0.85rem; color: var(--text-main); margin-top: 0.2rem;">{{ proj.outcome }}</p>
-        </div>
-
-        <button type="button" class="btn btn-outline btn-sm" style="width: 100%; margin-top: 0.5rem;" onclick="alert('Submission portal active during project phase.')">
-          <i class="bi bi-github"></i> Submit GitHub Repository
-        </button>
+          <div style="background: rgba(56, 189, 248, 0.05); border-left: 3px solid #38bdf8; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem;">
+            <span style="font-weight: 700; font-size: 0.8rem; color: #38bdf8;">Target Outcome:</span>
+            <p style="font-size: 0.85rem; color: #f8fafc; margin-top: 0.2rem; margin-bottom: 0;">{{ proj.outcome }}</p>
+          </div>
+        {% else %}
+          <!-- LOCKED STATE MESSAGE -->
+          <div style="background: rgba(30, 41, 59, 0.5); border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
+            <i class="bi bi-shield-lock" style="font-size: 2rem; color: #f59e0b; display: block; margin-bottom: 0.5rem;"></i>
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin: 0;">Project Access Locked</h4>
+            <p style="font-size: 0.83rem; color: #94a3b8; margin-top: 0.3rem; margin-bottom: 0;">
+              Detailed requirements, instructions, and submission features will unlock automatically when your assigned mentor opens this project.
+            </p>
+          </div>
+        {% endif %}
       </div>
+
+      <!-- SUBMISSION SECTION -->
+      <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; margin-top: 0.5rem;">
+        {% if proj.status == 'Open' %}
+          {% if proj.submission %}
+            <!-- SUBMISSION RECORDED -->
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 0.85rem; margin-bottom: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #10b981;">
+                  <i class="bi bi-check-circle-fill"></i> Repository Submitted
+                </span>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 0.72rem; font-weight: 600;">
+                  {{ proj.submission.status }}
+                </span>
+              </div>
+              <a href="{{ proj.submission.github_url }}" target="_blank" style="color: #38bdf8; font-size: 0.82rem; word-break: break-all; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <i class="bi bi-github"></i> {{ proj.submission.github_url }}
+              </a>
+
+              {% if proj.submission.mentor_feedback %}
+                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #cbd5e1; background: rgba(15, 23, 42, 0.6); padding: 0.5rem; border-radius: 6px;">
+                  <strong style="color: #38bdf8;">Mentor Feedback:</strong> {{ proj.submission.mentor_feedback }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- UPDATE REPO FORM -->
+            <form action="{{ url_for('student.submit_project', project_id=proj.id) }}" method="POST" style="margin: 0;">
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="url" name="github_url" value="{{ proj.submission.github_url }}" class="form-control" required placeholder="https://github.com/username/repository" style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.5rem; border-radius: 6px; font-size: 0.82rem;">
+                <button type="submit" class="btn btn-sm btn-outline" style="border-color: rgba(56,189,248,0.4); color: #38bdf8; font-weight: 600; padding: 0.5rem 0.85rem; border-radius: 6px; white-space: nowrap;">
+                  Update Link
+                </button>
+              </div>
+            </form>
+          {% else %}
+            <!-- NEW SUBMISSION FORM -->
+            <form action="{{ url_for('student.submit_project', project_id=proj.id) }}" method="POST" style="margin: 0;">
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Submit GitHub Repository URL *</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="url" name="github_url" class="form-control" required placeholder="https://github.com/username/repository" style="flex: 1; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.55rem; border-radius: 6px; font-size: 0.82rem;">
+                <button type="submit" class="btn btn-sm btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 600; padding: 0.55rem 1rem; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  <i class="bi bi-github"></i> Submit
+                </button>
+              </div>
+            </form>
+          {% endif %}
+        {% else %}
+          <!-- DISABLED SUBMISSION BUTTON -->
+          <button type="button" class="btn btn-outline btn-sm" disabled style="width: 100%; opacity: 0.4; cursor: not-allowed; border-color: rgba(255,255,255,0.1); color: #64748b; font-weight: 600; padding: 0.6rem; border-radius: 8px;">
+            <i class="bi bi-lock-fill"></i> Project Submission Locked
+          </button>
+        {% endif %}
+      </div>
+
     </div>
   {% endfor %}
 </div>

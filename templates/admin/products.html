@@ -1,0 +1,282 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Products / Programs — Admin Console{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link active"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Products & Programs Management</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Top-level product entity architecture. Each program encapsulates its own cohorts, pricing, QR code, curriculum, projects, and announcements.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('createProductModal').style.display='flex'">
+    <i class="bi bi-plus-lg me-1"></i> Create New Product
+  </button>
+</div>
+
+<!-- PRODUCTS GRID CARDS -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+  {% for prod in products %}
+  <div class="glass-card" style="padding: 1.75rem; position: relative; border-top: 3px solid #38bdf8;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+      <div>
+        <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">{{ prod.status }}</span>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 0.5rem; margin-bottom: 0.25rem;">{{ prod.name }}</h2>
+        <p style="font-size: 0.85rem; color: #38bdf8; font-weight: 500; margin: 0;">{{ prod.tagline }}</p>
+      </div>
+      <div style="font-size: 1.5rem; font-weight: 800; color: #34d399;">
+        {{ prod.currency_symbol }}{{ "{:,.0f}".format(prod.price) }}
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 1.25rem;">{{ prod.description }}</p>
+
+    <!-- METRICS STRIP -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: rgba(15, 23, 42, 0.6); padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Duration</span>
+        <div style="font-weight: 700; font-size: 0.95rem; color: #fff;">{{ prod.duration_days }} Days</div>
+      </div>
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Cohorts</span>
+        <div style="font-weight: 700; font-size: 0.95rem; color: #c084fc;">{{ prod.cohort_count }}</div>
+      </div>
+      <div>
+        <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Enrolled</span>
+        <div style="font-weight: 700; font-size: 0.95rem; color: #34d399;">{{ prod.student_count }}</div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="{{ url_for('admin.select_product', product_id=prod.id) }}" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.8rem;">
+        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      </a>
+      <a href="{{ url_for('admin.product_settings', product_id=prod.id) }}" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.8rem; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+        <i class="bi bi-sliders me-1"></i> Settings
+      </a>
+      <button class="btn btn-outline btn-sm" onclick="openEditProductModal({{ prod.id | tojson }})" style="padding: 0.4rem 0.6rem;">
+        <i class="bi bi-pencil"></i>
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- CREATE PRODUCT MODAL -->
+<div id="createProductModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 700px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Create New Program / Product</h2>
+      <button onclick="document.getElementById('createProductModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form action="{{ url_for('admin.add_product') }}" method="POST" enctype="multipart/form-data">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Name *</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g. Robotics Pack" required>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Tagline / Subtitle</label>
+          <input type="text" name="tagline" class="form-control" placeholder="e.g. Build & Control Intelligent Robotics">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Brief Description</label>
+        <textarea name="description" class="form-control" rows="2" placeholder="Short description for program cards..."></textarea>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Detailed Program Overview</label>
+        <textarea name="overview" class="form-control" rows="3" placeholder="Full program overview displayed on detail page..."></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Duration (Days)</label>
+          <input type="number" name="duration_days" class="form-control" value="45">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Price (₹)</label>
+          <input type="number" name="price" class="form-control" value="3500">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Seat Capacity</label>
+          <input type="number" name="default_cohort_capacity" class="form-control" value="35">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Courses & Modules Included</label>
+        <textarea name="courses_modules" class="form-control" rows="3" placeholder="Module 1: ...&#10;Module 2: ..."></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Learning Outcomes</label>
+          <textarea name="learning_outcomes" class="form-control" rows="2" placeholder="Skills gained..."></textarea>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Eligibility & Prerequisites</label>
+          <textarea name="eligibility" class="form-control" rows="2" placeholder="Who should enroll..."></textarea>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Status</label>
+          <select name="status" class="form-control">
+            <option value="Active" selected>Active</option>
+            <option value="Draft">Draft</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Banner Image</label>
+          <input type="file" name="banner_image" class="form-control" accept="image/*">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Payment QR Image</label>
+          <input type="file" name="payment_qr" class="form-control" accept="image/*">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('createProductModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Program</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div id="editProductModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 700px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Edit Program / Product</h2>
+      <button onclick="document.getElementById('editProductModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="editProductForm" method="POST" enctype="multipart/form-data">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Program Name *</label>
+          <input type="text" id="edit_name" name="name" class="form-control" required>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Tagline / Subtitle</label>
+          <input type="text" id="edit_tagline" name="tagline" class="form-control">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Brief Description</label>
+        <textarea id="edit_description" name="description" class="form-control" rows="2"></textarea>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Detailed Program Overview</label>
+        <textarea id="edit_overview" name="overview" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Duration (Days)</label>
+          <input type="number" id="edit_duration_days" name="duration_days" class="form-control">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Price (₹)</label>
+          <input type="number" id="edit_price" name="price" class="form-control">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Default Capacity</label>
+          <input type="number" id="edit_default_cohort_capacity" name="default_cohort_capacity" class="form-control">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Courses & Modules Included</label>
+        <textarea id="edit_courses_modules" name="courses_modules" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Learning Outcomes</label>
+          <textarea id="edit_learning_outcomes" name="learning_outcomes" class="form-control" rows="2"></textarea>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Eligibility & Prerequisites</label>
+          <textarea id="edit_eligibility" name="eligibility" class="form-control" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Status</label>
+          <select id="edit_status" name="status" class="form-control">
+            <option value="Active">Active</option>
+            <option value="Draft">Draft</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Update Banner Image</label>
+          <input type="file" name="banner_image" class="form-control" accept="image/*">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Update Payment QR</label>
+          <input type="file" name="payment_qr" class="form-control" accept="image/*">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('editProductModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const productsData = {
+  {% for p in products %}
+    "{{ p.id }}": {{ p | tojson }},
+  {% endfor %}
+};
+
+function openEditProductModal(productId) {
+  const prod = productsData[productId] || {};
+  document.getElementById('editProductForm').action = '/admin/products/edit/' + (prod.id || productId);
+  document.getElementById('edit_name').value = prod.name || '';
+  document.getElementById('edit_tagline').value = prod.tagline || '';
+  document.getElementById('edit_description').value = prod.description || '';
+  document.getElementById('edit_duration_days').value = prod.duration_days || '';
+  document.getElementById('edit_price').value = prod.price || '';
+  document.getElementById('edit_default_cohort_capacity').value = prod.default_cohort_capacity || '';
+  document.getElementById('edit_status').value = prod.status || 'Active';
+  document.getElementById('edit_overview').value = prod.overview || '';
+  document.getElementById('edit_courses_modules').value = prod.courses_modules || '';
+  document.getElementById('edit_learning_outcomes').value = prod.learning_outcomes || '';
+  document.getElementById('edit_eligibility').value = prod.eligibility || '';
+  document.getElementById('editProductModal').style.display = 'flex';
+}
+</script>
+{% endblock %}

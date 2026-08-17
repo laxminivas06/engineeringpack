@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Dashboard — ENGINEERING PACK{% endblock %}</title>
+  <title>{% block title %}Dashboard — Multi-Program Console{% endblock %}</title>
 
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
@@ -31,10 +31,24 @@
   <!-- TOP DASHBOARD NAVBAR -->
   <nav class="navbar">
     <div class="container" style="max-width: 100%; padding: 0 1.5rem;">
-      <a href="{{ url_for('public.index') }}" class="nav-brand">
-        <div class="brand-icon"><i class="bi bi-cpu-fill"></i></div>
-        <span>ENGINEERING <span class="text-gradient">PACK</span></span>
-      </a>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="{{ url_for('public.index') }}" class="nav-brand">
+          <div class="brand-icon"><i class="bi bi-cpu-fill"></i></div>
+          <span>AIVONTRAA <span class="text-gradient">CONSOLE</span></span>
+        </a>
+
+        {% if session.role == 'admin' %}
+        <!-- ADMIN PRODUCT CONTEXT SELECTOR DROPDOWN -->
+        <div class="product-context-selector" style="margin-left: 1rem; position: relative; display: inline-block;">
+          <select onchange="window.location.href='/admin/select-product/' + this.value" class="form-control" style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; padding: 0.4rem 1.8rem 0.4rem 0.8rem; font-size: 0.85rem; border-radius: 8px; cursor: pointer;">
+            <option value="all" {% if admin_product_id == 'all' %}selected{% endif %}>🌐 All Products / Global Aggregate</option>
+            {% for prod in all_products %}
+              <option value="{{ prod.id }}" {% if admin_product_id == prod.id %}selected{% endif %}>📦 {{ prod.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endif %}
+      </div>
 
       <div class="nav-actions">
         <a href="{{ url_for('public.index') }}" class="btn btn-outline btn-sm"><i class="bi bi-globe"></i> View Website</a>
@@ -61,7 +75,41 @@
         </div>
       </div>
 
-      {% block sidebar_menu %}{% endblock %}
+      {% block sidebar_menu %}
+        {% if session.role == 'admin' %}
+        <ul class="sidebar-nav">
+          <li><a href="{{ url_for('admin.products') }}" class="sidebar-link {% if request.endpoint == 'admin.products' %}active{% endif %}"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+          <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+          <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link {% if request.endpoint == 'admin.mentors_page' %}active{% endif %}"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+          <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link {% if request.endpoint == 'admin.cohorts' %}active{% endif %}"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+          <li><a href="{{ url_for('admin.students') }}" class="sidebar-link {% if request.endpoint == 'admin.students' %}active{% endif %}"><i class="bi bi-people"></i> <span>Students</span></a></li>
+          <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link {% if request.endpoint == 'admin.curriculum' %}active{% endif %}"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+          <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link {% if request.endpoint == 'admin.projects' %}active{% endif %}"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+          <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link {% if request.endpoint == 'admin.announcements' %}active{% endif %}"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+          <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link {% if request.endpoint == 'admin.feedback' %}active{% endif %}"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+          <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link {% if request.endpoint == 'admin.payments' %}active{% endif %}"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+          <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link {% if request.endpoint == 'admin.product_settings' %}active{% endif %}"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+          <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link {% if request.endpoint == 'admin.settings' %}active{% endif %}"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+        </ul>
+        {% elif session.role == 'mentor' %}
+        <ul class="sidebar-nav">
+          <li><a href="{{ url_for('mentor.dashboard') }}" class="sidebar-link {% if request.endpoint == 'mentor.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> <span>Mentor Dashboard</span></a></li>
+          <li><a href="{{ url_for('mentor.cohorts') }}" class="sidebar-link {% if request.endpoint == 'mentor.cohorts' %}active{% endif %}"><i class="bi bi-layers-half"></i> <span>Assigned Cohorts</span></a></li>
+          <li><a href="{{ url_for('mentor.projects') }}" class="sidebar-link {% if request.endpoint == 'mentor.projects' %}active{% endif %}"><i class="bi bi-folder-check"></i> <span>Project Controls</span></a></li>
+          <li><a href="{{ url_for('mentor.feedback') }}" class="sidebar-link {% if request.endpoint == 'mentor.feedback' %}active{% endif %}"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+          <li><a href="{{ url_for('mentor.announcements') }}" class="sidebar-link {% if request.endpoint == 'mentor.announcements' %}active{% endif %}"><i class="bi bi-megaphone"></i> <span>Cohort Notices</span></a></li>
+          <li><a href="{{ url_for('mentor.profile') }}" class="sidebar-link {% if request.endpoint == 'mentor.profile' %}active{% endif %}"><i class="bi bi-person-bounding-box"></i> <span>My Mentor Profile</span></a></li>
+        </ul>
+        {% elif session.role == 'student' %}
+        <ul class="sidebar-nav">
+          <li><a href="{{ url_for('student.dashboard') }}" class="sidebar-link {% if request.endpoint == 'student.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+          <li><a href="{{ url_for('student.calendar') }}" class="sidebar-link {% if request.endpoint == 'student.calendar' %}active{% endif %}"><i class="bi bi-calendar3"></i> <span>Program Calendar</span></a></li>
+          <li><a href="{{ url_for('student.projects') }}" class="sidebar-link {% if request.endpoint == 'student.projects' %}active{% endif %}"><i class="bi bi-folder-check"></i> <span>Assigned Projects</span></a></li>
+          <li><a href="{{ url_for('student.feedback') }}" class="sidebar-link {% if request.endpoint == 'student.feedback' %}active{% endif %}"><i class="bi bi-star-half"></i> <span>Feedback & Reviews</span></a></li>
+          <li><a href="{{ url_for('student.profile') }}" class="sidebar-link {% if request.endpoint == 'student.profile' %}active{% endif %}"><i class="bi bi-person-gear"></i> <span>My Profile</span></a></li>
+        </ul>
+        {% endif %}
+      {% endblock %}
 
       <a href="{{ url_for('auth.logout') }}" class="sidebar-link logout-link">
         <i class="bi bi-box-arrow-right"></i>

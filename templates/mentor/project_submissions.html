@@ -1,0 +1,138 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Student Submissions — {{ project.name }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div>
+    <a href="{{ url_for('mentor.projects') }}" style="color: #38bdf8; text-decoration: none; font-size: 0.88rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; margin-bottom: 0.5rem;">
+      &larr; Back to Project Controls
+    </a>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-file-earmark-code" style="color: #38bdf8; margin-right: 0.5rem;"></i> {{ project.name }} &mdash; Student Submissions
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      Domain: {{ project.domain }} &bull; Status: <strong style="color: {% if project.status == 'Open' %}#10b981{% else %}#ef4444{% endif %};">{{ project.status }}</strong>
+    </p>
+  </div>
+</div>
+
+<div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin: 0;">
+      Submitted Repositories ({{ submissions|length }})
+    </h3>
+  </div>
+
+  {% if submissions %}
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+        <thead>
+          <tr style="background: rgba(30, 41, 59, 0.8); color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <th style="padding: 0.85rem 1rem;">Student Name</th>
+            <th style="padding: 0.85rem 1rem;">Email</th>
+            <th style="padding: 0.85rem 1rem;">GitHub Repository URL</th>
+            <th style="padding: 0.85rem 1rem;">Submitted At</th>
+            <th style="padding: 0.85rem 1rem;">Status</th>
+            <th style="padding: 0.85rem 1rem;">Mentor Feedback</th>
+            <th style="padding: 0.85rem 1rem; text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sub in submissions %}
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1;">
+              <td style="padding: 0.85rem 1rem; font-weight: 700; color: #f8fafc;">
+                {{ sub.student_name }}
+              </td>
+              <td style="padding: 0.85rem 1rem; color: #94a3b8;">
+                {{ sub.student_email }}
+              </td>
+              <td style="padding: 0.85rem 1rem;">
+                <a href="{{ sub.github_url }}" target="_blank" style="color: #38bdf8; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  <i class="bi bi-github"></i> {{ sub.github_url.replace('https://github.com/', '') }} <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem;"></i>
+                </a>
+              </td>
+              <td style="padding: 0.85rem 1rem; color: #94a3b8; font-size: 0.8rem;">
+                {{ sub.submitted_at[:10] }}
+              </td>
+              <td style="padding: 0.85rem 1rem;">
+                {% if sub.status == 'Reviewed' %}
+                  <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.25rem 0.6rem; border-radius: 10px; font-weight: 600; font-size: 0.75rem;">
+                    <i class="bi bi-check-circle-fill"></i> Reviewed
+                  </span>
+                {% elif sub.status == 'Changes Requested' %}
+                  <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.25rem 0.6rem; border-radius: 10px; font-weight: 600; font-size: 0.75rem;">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Changes Requested
+                  </span>
+                {% else %}
+                  <span class="badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 0.25rem 0.6rem; border-radius: 10px; font-weight: 600; font-size: 0.75rem;">
+                    <i class="bi bi-clock"></i> {{ sub.status }}
+                  </span>
+                {% endif %}
+              </td>
+              <td style="padding: 0.85rem 1rem; color: #cbd5e1; font-size: 0.82rem; max-width: 220px;">
+                {{ sub.mentor_feedback if sub.mentor_feedback else 'No feedback added yet.' }}
+              </td>
+              <td style="padding: 0.85rem 1rem; text-align: right;">
+                <button type="button" class="btn btn-sm btn-outline" onclick="openReviewModal('{{ sub.id }}', '{{ sub.status }}', '{{ sub.mentor_feedback|escapejs }}')" style="border-color: rgba(56,189,248,0.4); color: #38bdf8; padding: 0.35rem 0.75rem; font-weight: 600; border-radius: 6px;">
+                  <i class="bi bi-pencil-square"></i> Review
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; padding: 2rem; text-align: center; color: #94a3b8;">
+      <i class="bi bi-inbox" style="font-size: 2rem; color: #64748b; margin-bottom: 0.5rem; display: block;"></i>
+      No student submissions recorded for this project yet.
+    </div>
+  {% endif %}
+</div>
+
+<!-- REVIEW MODAL -->
+<div id="reviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center;">
+  <div style="background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin: 0;">Review Submission</h3>
+      <button onclick="closeReviewModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="reviewForm" method="POST" action="">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Review Status</label>
+        <select name="status" id="modalStatus" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;">
+          <option value="Submitted">Submitted</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Reviewed">Reviewed & Approved</option>
+          <option value="Changes Requested">Changes Requested</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Mentor Feedback / Comments</label>
+        <textarea name="feedback" id="modalFeedback" rows="4" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.6rem; border-radius: 8px;" placeholder="Provide feedback on code structure, repository cleanliness, or required improvements..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button type="button" onclick="closeReviewModal()" class="btn btn-outline" style="border-color: rgba(255,255,255,0.2); color: #cbd5e1;">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 600;">Save Review</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openReviewModal(submissionId, currentStatus, currentFeedback) {
+  document.getElementById('reviewForm').action = '/mentor/submissions/' + submissionId + '/review';
+  document.getElementById('modalStatus').value = currentStatus || 'Reviewed';
+  document.getElementById('modalFeedback').value = currentFeedback || '';
+  document.getElementById('reviewModal').style.display = 'flex';
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').style.display = 'none';
+}
+</script>
+{% endblock %}

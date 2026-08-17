@@ -1,77 +1,166 @@
 {% extends 'dashboard_base.html' %}
 
-{% block title %}Student Roster — Admin Portal{% endblock %}
+{% block title %}Registered Students — Admin Console{% endblock %}
 
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
-  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
   <li><a href="{{ url_for('admin.students') }}" class="sidebar-link active"><i class="bi bi-people"></i> <span>Students</span></a></li>
   <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
   <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
   <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-  <li><a href="{{ url_for('admin.contacts') }}" class="sidebar-link"><i class="bi bi-envelope"></i> <span>Contacts</span></a></li>
-  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>Settings</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
 </ul>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
-  <div class="dashboard-title-group">
-    <h1>Student Management Roster</h1>
-    <p>View all enrolled students and track individual cohort progress.</p>
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Student Directory & Enrollments</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Student → Product/Program → Cohort architecture. Filter enrolled students across products and cohorts.</p>
   </div>
-  <div class="tech-badge"><i class="bi bi-person-lines-fill"></i> Total Students: {{ students|length }}</div>
+  <a href="{{ url_for('admin.export_students_csv') }}" class="btn btn-outline">
+    <i class="bi bi-download me-1"></i> Export CSV Report
+  </a>
 </div>
 
-<div class="glass-card">
-  <div class="table-responsive">
-    <table class="tech-table">
-      <thead>
-        <tr>
-          <th>Student Details</th>
-          <th>Contact & Phone</th>
-          <th>College / Branch / Year</th>
-          <th>Current Progress</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for std in students %}
-          <tr>
-            <td>
-              <strong style="color: var(--text-main); display: block;">{{ std.full_name }}</strong>
-              <span class="font-mono" style="font-size: 0.8rem; color: var(--primary-cyan);">ID: {{ std.id }}</span>
-            </td>
-            <td>
-              <div style="font-size: 0.88rem; color: var(--text-main);">{{ std.email }}</div>
-              <div style="font-size: 0.82rem; color: var(--text-dim);">{{ std.phone }}</div>
-            </td>
-            <td>
-              <div style="font-size: 0.88rem; color: var(--text-main);">{{ std.college }}</div>
-              <div style="font-size: 0.82rem; color: var(--text-muted);">{{ std.branch }} • {{ std.year }}</div>
-            </td>
-            <td>
-              <div style="font-size: 0.85rem; color: var(--text-main);">{{ std.current_phase }}</div>
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                <div class="progress-bar-container" style="height: 6px; width: 100px; margin: 0;">
-                  <div class="progress-bar-fill" style="width: {{ std.progress_pct }}%;"></div>
-                </div>
-                <span class="font-mono" style="font-size: 0.75rem; color: var(--text-dim);">Day {{ std.current_day }}</span>
-              </div>
-            </td>
-            <td>
-              <span class="tech-badge" style="font-size: 0.72rem;">{{ std.status }}</span>
-            </td>
-            <td>
-              <button type="button" class="btn btn-outline btn-sm" onclick="alert('Student management details modal placeholder.')"><i class="bi bi-eye"></i> View</button>
-            </td>
-          </tr>
-        {% else %}
-          <tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No students registered yet.</td></tr>
+<!-- DUAL FILTER BAR -->
+<div class="glass-card" style="padding: 1.25rem; margin-bottom: 2rem;">
+  <form action="{{ url_for('admin.students') }}" method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end;">
+    
+    <!-- SEARCH INPUT -->
+    <div>
+      <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem;">Search Student</label>
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Name, Email, Reg ID..." class="form-control" style="font-size: 0.85rem;">
+    </div>
+
+    <!-- PRODUCT FILTER -->
+    <div>
+      <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem;">Product / Program</label>
+      <select name="product" class="form-control" style="font-size: 0.85rem;" onchange="this.form.submit()">
+        <option value="all" {% if filter_product == 'all' %}selected{% endif %}>All Programs</option>
+        {% for p in products %}
+          <option value="{{ p.id }}" {% if filter_product == p.id %}selected{% endif %}>{{ p.name }}</option>
         {% endfor %}
-      </tbody>
-    </table>
+      </select>
+    </div>
+
+    <!-- COHORT FILTER -->
+    <div>
+      <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem;">Cohort</label>
+      <select name="cohort" class="form-control" style="font-size: 0.85rem;" onchange="this.form.submit()">
+        <option value="all" {% if selected_cohort == 'all' %}selected{% endif %}>All Cohorts</option>
+        {% for c in cohorts %}
+          <option value="{{ c.id }}" {% if selected_cohort == c.id %}selected{% endif %}>{{ c.name }} ({{ c.product_name }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- PAYMENT FILTER -->
+    <div>
+      <label style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.3rem;">Payment Status</label>
+      <select name="payment" class="form-control" style="font-size: 0.85rem;" onchange="this.form.submit()">
+        <option value="all" {% if selected_payment == 'all' %}selected{% endif %}>All Payments</option>
+        <option value="approved" {% if selected_payment == 'approved' %}selected{% endif %}>Approved / Paid</option>
+        <option value="pending" {% if selected_payment == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="rejected" {% if selected_payment == 'rejected' %}selected{% endif %}>Rejected</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-primary w-100" style="font-size: 0.85rem;">
+        <i class="bi bi-funnel me-1"></i> Apply Filters
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- STUDENTS TABLE -->
+<div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+    <thead>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); font-size: 0.78rem; text-transform: uppercase;">
+        <th style="padding: 0.8rem 1rem;">Student & Reg ID</th>
+        <th style="padding: 0.8rem 1rem;">Program / Product</th>
+        <th style="padding: 0.8rem 1rem;">Cohort</th>
+        <th style="padding: 0.8rem 1rem;">Payment Status</th>
+        <th style="padding: 0.8rem 1rem;">Student Status</th>
+        <th style="padding: 0.8rem 1rem; text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 1rem;">
+          <div style="font-weight: 700; color: #fff;">{{ s.full_name or s.name }}</div>
+          <div style="font-size: 0.78rem; color: #38bdf8;">{{ s.registration_id or 'Unassigned' }}</div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">{{ s.email }}</div>
+        </td>
+        <td style="padding: 1rem;">
+          <span class="tech-badge" style="background: rgba(56, 189, 248, 0.1); color: #38bdf8; font-size: 0.75rem;">
+            {{ s.product_name or 'Engineering Pack' }}
+          </span>
+        </td>
+        <td style="padding: 1rem;">
+          <span class="tech-badge" style="background: rgba(168, 85, 247, 0.1); color: #c084fc; font-size: 0.75rem;">
+            {{ s.cohort_name or 'Cohort 1' }}
+          </span>
+        </td>
+        <td style="padding: 1rem;">
+          {% if s.payment_status in ['Approved', 'Paid'] %}
+            <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Paid (₹{{ s.payment_amount or 3500 }})</span>
+          {% elif s.payment_status == 'Rejected' %}
+            <span class="tech-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">Rejected</span>
+          {% else %}
+            <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">Pending</span>
+          {% endif %}
+        </td>
+        <td style="padding: 1rem;">
+          <span class="tech-badge" style="background: rgba(255, 255, 255, 0.1); color: #fff;">
+            {{ s.student_status or s.status or 'Active' }}
+          </span>
+        </td>
+        <td style="padding: 1rem; text-align: right;">
+          <form action="{{ url_for('admin.update_student_status', user_id=s.id) }}" method="POST" style="display: inline-flex; gap: 0.4rem;">
+            <select name="student_status" class="form-control" style="font-size: 0.75rem; padding: 0.2rem 0.5rem; width: auto;" onchange="this.form.submit()">
+              <option value="Active" {% if s.student_status == 'Active' %}selected{% endif %}>Active</option>
+              <option value="Completed" {% if s.student_status == 'Completed' %}selected{% endif %}>Completed</option>
+              <option value="Inactive" {% if s.student_status == 'Inactive' %}selected{% endif %}>Inactive</option>
+              <option value="Dropped" {% if s.student_status == 'Dropped' %}selected{% endif %}>Dropped</option>
+            </select>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-dim);">
+          No student records found matching the selected filters.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  {% if total_pages > 1 %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; pt-3; border-top: 1px solid rgba(255,255,255,0.1);">
+    <span style="font-size: 0.8rem; color: var(--text-dim);">Showing {{ total_count }} student(s)</span>
+    <div style="display: flex; gap: 0.5rem;">
+      {% if page > 1 %}
+        <a href="{{ url_for('admin.students', page=page-1, q=search_query, product=filter_product, cohort=selected_cohort, payment=selected_payment, status=selected_status) }}" class="btn btn-outline btn-sm">Previous</a>
+      {% endif %}
+      <span style="padding: 0.4rem 0.8rem; font-size: 0.8rem; color: #fff;">Page {{ page }} of {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a href="{{ url_for('admin.students', page=page+1, q=search_query, product=filter_product, cohort=selected_cohort, payment=selected_payment, status=selected_status) }}" class="btn btn-outline btn-sm">Next</a>
+      {% endif %}
+    </div>
   </div>
+  {% endif %}
 </div>
 {% endblock %}

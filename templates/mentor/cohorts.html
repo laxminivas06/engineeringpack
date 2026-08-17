@@ -1,0 +1,104 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Assigned Cohorts — Mentor Workspace{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+  <div>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
+      <i class="bi bi-layers-half" style="color: #38bdf8; margin-right: 0.5rem;"></i> Assigned Cohorts & Student Roster
+    </h1>
+    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+      View all cohorts assigned to {{ mentor.full_name }} across programs.
+    </p>
+  </div>
+</div>
+
+{% if cohorts %}
+  {% for cohort in cohorts %}
+    <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 1rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 20px;">
+              {{ cohort.product_name }}
+            </span>
+            <h2 style="font-size: 1.3rem; font-weight: 800; color: #f8fafc; margin: 0;">{{ cohort.name }}</h2>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.35rem;">
+            <i class="bi bi-calendar3"></i> {{ cohort.start_date }} to {{ cohort.end_date }} &bull; {{ cohort.duration_days }} Days &bull; Capacity: {{ cohort.student_count }} / {{ cohort.max_capacity }} Students
+          </p>
+        </div>
+
+        <div>
+          {% if cohort.status == 'Active' %}
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700; padding: 0.4rem 1rem; border-radius: 20px;">
+              <i class="bi bi-play-circle-fill"></i> ACTIVE COHORT
+            </span>
+          {% elif cohort.status == 'Upcoming' %}
+            <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 700; padding: 0.4rem 1rem; border-radius: 20px;">
+              <i class="bi bi-clock-history"></i> UPCOMING COHORT
+            </span>
+          {% else %}
+            <span class="badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); font-weight: 700; padding: 0.4rem 1rem; border-radius: 20px;">
+              {{ cohort.status }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- STUDENT ROSTER TABLE -->
+      <h4 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.75rem;">
+        <i class="bi bi-people-fill" style="color: #38bdf8; margin-right: 0.4rem;"></i> Enrolled Student Roster ({{ cohort.student_count }})
+      </h4>
+
+      {% if cohort.students %}
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="background: rgba(30, 41, 59, 0.8); color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <th style="padding: 0.75rem 1rem;">Registration ID</th>
+                <th style="padding: 0.75rem 1rem;">Student Name</th>
+                <th style="padding: 0.75rem 1rem;">Email Address</th>
+                <th style="padding: 0.75rem 1rem;">Branch / Year</th>
+                <th style="padding: 0.75rem 1rem;">Enrollment Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in cohort.students %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1;">
+                  <td style="padding: 0.75rem 1rem; font-family: monospace; font-weight: 600; color: #38bdf8;">
+                    {{ s.registration_id if s.registration_id else s.id }}
+                  </td>
+                  <td style="padding: 0.75rem 1rem; font-weight: 600; color: #f8fafc;">
+                    {{ s.full_name if s.full_name else s.name }}
+                  </td>
+                  <td style="padding: 0.75rem 1rem; color: #94a3b8;">
+                    {{ s.email }}
+                  </td>
+                  <td style="padding: 0.75rem 1rem; color: #cbd5e1;">
+                    {{ s.branch if s.branch else 'General' }} {% if s.academic_year %}({{ s.academic_year }}){% endif %}
+                  </td>
+                  <td style="padding: 0.75rem 1rem;">
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem;">
+                      {{ s.payment_status if s.payment_status else 'Enrolled' }}
+                    </span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem;">
+          No students enrolled in this cohort yet.
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem; text-align: center;">
+    <p style="color: #94a3b8; font-size: 1rem; margin: 0;">No cohorts assigned to your account yet.</p>
+  </div>
+{% endif %}
+{% endblock %}

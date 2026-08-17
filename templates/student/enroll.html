@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Enroll in {{ product.name }} — Program Enrollment{% endblock %}
+
+{% block content %}
+<section style="padding: 3.5rem 0 5rem;" class="tech-grid-bg">
+  <div class="container">
+    <div style="max-width: 780px; margin: 0 auto;">
+      
+      <!-- HEADER BANNER -->
+      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2rem; border-top: 3px solid var(--primary-cyan); text-align: center;">
+        <span class="tech-badge" style="margin-bottom: 0.5rem;"><i class="bi bi-box-seam me-1"></i> Program Enrollment</span>
+        <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
+          Enroll in <span class="text-gradient">{{ product.name }}</span>
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--text-dim); margin: 0;">
+          Complete your master profile and submit payment proof to confirm your enrollment.
+        </p>
+      </div>
+
+      <!-- ENROLLMENT FORM -->
+      <div class="glass-card" style="padding: 2.5rem;">
+        <form id="enrollmentForm" action="{{ url_for('auth.process_enrollment', product_id=product.id) }}" method="POST" enctype="multipart/form-data">
+          
+          <!-- SECTION 1: STUDENT PROFILE -->
+          <div style="margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px dashed var(--border-color);">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="bi bi-person-lines-fill"></i> 1. Student Profile
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Full Name *</label>
+                <input type="text" name="full_name" class="form-control" value="{{ user.full_name or user.name or '' }}" required>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Google Email (Verified)</label>
+                <input type="email" class="form-control" value="{{ user.email }}" readonly style="background: rgba(15,23,42,0.8); opacity: 0.85;">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Phone / Contact Number *</label>
+                <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" placeholder="e.g. +91 9876543210" required>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Gender</label>
+                <select name="gender" class="form-control">
+                  <option value="" {% if not user.gender %}selected{% endif %}>Select Gender...</option>
+                  <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                  <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                  <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other / Prefer not to say</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Date of Birth</label>
+                <input type="date" name="dob" class="form-control" value="{{ user.dob or '' }}">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Branch / Specialization *</label>
+                <select name="branch" class="form-control">
+                  <option value="Computer Science & Engineering" {% if user.branch == 'Computer Science & Engineering' %}selected{% endif %}>Computer Science & Engineering (CSE)</option>
+                  <option value="Artificial Intelligence & ML" {% if user.branch == 'Artificial Intelligence & ML' %}selected{% endif %}>Artificial Intelligence & ML</option>
+                  <option value="Data Science & Software" {% if user.branch == 'Data Science & Software' %}selected{% endif %}>Data Science & Software</option>
+                  <option value="Electronics & Communication" {% if user.branch == 'Electronics & Communication' %}selected{% endif %}>Electronics & Communication (ECE)</option>
+                  <option value="Electrical & Electronics" {% if user.branch == 'Electrical & Electronics' %}selected{% endif %}>Electrical & Electronics (EEE)</option>
+                  <option value="Mechanical / Robotics Engineering" {% if user.branch == 'Mechanical / Robotics Engineering' %}selected{% endif %}>Mechanical / Robotics Engineering</option>
+                  <option value="Information Technology" {% if user.branch == 'Information Technology' %}selected{% endif %}>Information Technology (IT)</option>
+                  <option value="School / Diploma Student" {% if user.branch == 'School / Diploma Student' %}selected{% endif %}>School / Diploma Student</option>
+                  <option value="Other" {% if user.branch == 'Other' %}selected{% endif %}>Other Branch</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Academic Year *</label>
+                <select id="academicYearSelect" name="academic_year" class="form-control" onchange="toggleCustomAcademicYear(this.value)" required>
+                  <option value="">Select Academic Year...</option>
+                  <option value="1st Year" {% if user.academic_year == '1st Year' %}selected{% endif %}>1st Year</option>
+                  <option value="2nd Year" {% if user.academic_year == '2nd Year' %}selected{% endif %}>2nd Year</option>
+                  <option value="3rd Year" {% if user.academic_year == '3rd Year' %}selected{% endif %}>3rd Year</option>
+                  <option value="4th Year" {% if user.academic_year == '4th Year' %}selected{% endif %}>4th Year</option>
+                  <option value="Postgraduate" {% if user.academic_year == 'Postgraduate' %}selected{% endif %}>Postgraduate / Graduate</option>
+                  <option value="N/A" {% if user.academic_year == 'N/A' %}selected{% endif %}>N/A</option>
+                  <option value="Others" {% if 'Other' in (user.academic_year or '') %}selected{% endif %}>Others</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- CUSTOM ACADEMIC YEAR INPUT (REVEALED IF OTHERS) -->
+            <div id="customAcademicYearDiv" style="display: {% if 'Other' in (user.academic_year or '') %}block{% else %}none{% endif %}; margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--primary-cyan); margin-bottom: 0.4rem;">Specify Academic Year / Status</label>
+              <input type="text" name="custom_academic_year" class="form-control" value="{{ user.custom_academic_year or '' }}" placeholder="e.g. Diploma 2nd Year / Gap Year / Working Professional">
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">City / Address</label>
+              <input type="text" name="address" class="form-control" value="{{ user.address or '' }}" placeholder="e.g. Hyderabad, Telangana">
+            </div>
+          </div>
+
+
+          <!-- SECTION 2: PROGRAM PAYMENT DETAILS -->
+          <div style="margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px dashed var(--border-color);">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="bi bi-credit-card-2-front-fill"></i> 2. Program Payment Details
+            </h3>
+
+            <!-- DYNAMIC PROGRAM SUMMARY STRIP -->
+            <div style="background: rgba(15, 23, 42, 0.7); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-accent); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+              <div>
+                <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">Selected Program</span>
+                <h4 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin: 0;">{{ product.name }}</h4>
+                <span style="font-size: 0.82rem; color: var(--primary-cyan);">Duration: {{ product.duration_days }} Days</span>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">Program Fee</span>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #34d399;">
+                  {{ product.currency_symbol }}{{ "{:,.0f}".format(product.price) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- PAYMENT QR & INSTRUCTIONS -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; align-items: center; margin-bottom: 1.5rem; background: rgba(8,12,20,0.5); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+              <div style="text-align: center;">
+                <div style="background: #fff; padding: 0.75rem; border-radius: 12px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                  {% if product.payment_qr_url %}
+                    <img src="{{ product.payment_qr_url }}" alt="Payment QR" style="width: 170px; height: 170px; display: block; object-fit: contain;">
+                  {% else %}
+                    <img src="{{ url_for('static', filename='images/payment-qr.png') }}" alt="UPI QR" style="width: 170px; height: 170px; display: block;">
+                  {% endif %}
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 0.5rem; font-family: var(--font-mono);">
+                  Scan & Pay via PhonePe / GPay / Paytm UPI
+                </div>
+              </div>
+
+              <div>
+                <h5 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;"><i class="bi bi-info-circle text-gradient"></i> Instructions:</h5>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+                  {{ product.payment_instructions or "Scan the QR code to pay the fee. Enter your UTR / Ref Number below and upload screenshot." }}
+                </p>
+                <div style="font-size: 0.82rem; color: #fbbf24; background: rgba(245, 158, 11, 0.1); padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid rgba(245,158,11,0.2);">
+                  <i class="bi bi-shield-exclamation me-1"></i> Screenshot file size MUST be <strong>under 100 KB</strong>.
+                </div>
+              </div>
+            </div>
+
+            <!-- UTR & SCREENSHOT INPUTS -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">
+                  UPI UTR / Reference Transaction Number *
+                </label>
+                <input type="text" name="utr_number" class="form-control" placeholder="e.g. 423589102431 or Ref No." value="{{ enrollment.utr_number or '' }}" required>
+                <span style="font-size: 0.75rem; color: var(--text-dim);">Enter the UPI / Bank reference number printed on your receipt.</span>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">
+                  Upload Payment Screenshot (Max 100 KB) *
+                </label>
+                <input type="file" id="screenshotInput" name="payment_screenshot" class="form-control" accept="image/png, image/jpeg, image/jpg, image/webp" onchange="validateScreenshotSize(this)" required>
+                <span id="fileSizeStatus" style="font-size: 0.78rem; color: var(--text-dim); display: block; margin-top: 0.25rem;">
+                  Supported: PNG, JPG, JPEG, WEBP (Max: 100 KB)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBMIT BUTTON STRIP -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <a href="{{ url_for('public.program_detail', product_id_or_slug=product.id) }}" class="btn btn-outline">Cancel</a>
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
+              <i class="bi bi-check-circle-fill me-1"></i> Submit Payment Proof for Verification
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleCustomAcademicYear(val) {
+  const customDiv = document.getElementById('customAcademicYearDiv');
+  if (val === 'Others') {
+    customDiv.style.display = 'block';
+  } else {
+    customDiv.style.display = 'none';
+  }
+}
+
+function validateScreenshotSize(input) {
+  const statusEl = document.getElementById('fileSizeStatus');
+  const submitBtn = document.getElementById('submitBtn');
+
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const sizeKB = (file.size / 1024).toFixed(1);
+    const MAX_KB = 100;
+
+    if (file.size > MAX_KB * 1024) {
+      alert(`File size error: Selected image is ${sizeKB} KB, which exceeds the maximum limit of 100 KB.\n\nPlease select a smaller image or compress your screenshot before uploading.`);
+      input.value = ''; // Reset input
+      statusEl.style.color = '#ef4444';
+      statusEl.innerHTML = `<i class="bi bi-x-circle-fill"></i> Error: Selected file was ${sizeKB} KB (Max allowed is 100 KB).`;
+      submitBtn.disabled = true;
+    } else {
+      statusEl.style.color = '#34d399';
+      statusEl.innerHTML = `<i class="bi bi-check-circle-fill"></i> Valid file size: ${sizeKB} KB (Ready to upload)`;
+      submitBtn.disabled = false;
+    }
+  }
+}
+</script>
+{% endblock %}

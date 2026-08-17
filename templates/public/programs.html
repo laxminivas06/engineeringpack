@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Programs — Explore Engineering, Robotics, STEM & Intermediate Packs{% endblock %}
+
+{% block content %}
+<section class="hero-section tech-grid-bg" style="padding: 4rem 0 3rem;">
+  <div class="container text-center">
+    <div class="tech-badge" style="margin-bottom: 1rem;">
+      <i class="bi bi-box-seam-fill"></i> Dynamic Learning Programs
+    </div>
+    <h1 class="hero-title" style="max-width: 850px; margin: 0 auto 1rem;">
+      Empowering Every Student with <span class="text-gradient">Structured Engineering Programs</span>
+    </h1>
+    <p class="hero-description" style="max-width: 720px; margin: 0 auto 2rem;">
+      From first-principles STEM logic to advanced distributed cloud architectures and robotics, explore our specialized programs built for hands-on technical mastery.
+    </p>
+
+    <!-- PUBLIC AGGREGATED STATS STRIP -->
+    <div class="hero-stats-grid" style="max-width: 900px; margin: 2.5rem auto 0; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.active_programs }}</div>
+        <div class="stat-label">Active Programs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_registered }}+</div>
+        <div class="stat-label">Registered Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.completed_cohorts }}</div>
+        <div class="stat-label">Completed Cohorts</div>
+      </div>
+      <div class="stat-card" style="border-color: var(--border-accent);">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Practical Outcomes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS CATALOG GRID -->
+<section style="padding: 4rem 0 5rem;">
+  <div class="container">
+    <div class="section-header">
+      <div class="tech-badge"><i class="bi bi-grid-3x3-gap-fill"></i> Choose Your Path</div>
+      <h2 class="section-title">Explore <span class="text-gradient">Our Programs</span></h2>
+      <p class="section-subtitle">Select any program to view full overview, modules, curriculum roadmap, outcomes, and enrollment options.</p>
+    </div>
+
+    <div class="domains-grid" style="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;">
+      {% for prod in products %}
+        <div class="glass-card domain-card" style="padding: 2rem; display: flex; flex-direction: column; position: relative; border-top: 3px solid var(--primary-cyan);">
+          {% if prod.banner_image_url %}
+            <div style="width: 100%; height: 160px; overflow: hidden; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <img src="{{ prod.banner_image_url }}" alt="{{ prod.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          {% endif %}
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <div>
+              <span class="tech-badge" style="font-size: 0.75rem;"><i class="bi bi-clock"></i> {{ prod.duration_days }} Days Program</span>
+              <h3 style="font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0.25rem;">{{ prod.name }}</h3>
+              <p style="font-size: 0.88rem; color: var(--primary-cyan); font-weight: 500; margin: 0;">{{ prod.tagline }}</p>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #34d399; font-family: var(--font-heading);">
+              {{ prod.currency_symbol }}{{ "{:,.0f}".format(prod.price) }}
+            </div>
+          </div>
+
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; flex: 1;">
+            {{ prod.description }}
+          </p>
+
+          <div style="display: flex; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <a href="{{ url_for('public.program_detail', product_id_or_slug=prod.slug or prod.id) }}" class="btn btn-primary btn-block" style="text-align: center;">
+              <i class="bi bi-eye-fill me-1"></i> View Program Details
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

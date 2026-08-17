@@ -1,0 +1,261 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Mentor Management — Admin Console{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link active"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Central Mentor Database</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Create mentor accounts, assign programs, and manage access credentials (Gmail & Contact). Mentors self-manage their bio, skills, and links.</p>
+  </div>
+  <button class="btn btn-primary" onclick="openCreateMentorModal()">
+    <i class="bi bi-person-plus-fill me-1"></i> Add Central Mentor
+  </button>
+</div>
+
+<!-- MENTORS LIST GRID -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+  {% for m in mentors %}
+  <div class="glass-card" style="padding: 1.75rem; position: relative; border-top: 3px solid var(--primary-cyan); display: flex; flex-direction: column;">
+    
+    <!-- HEADER: PHOTO + NAME + TITLE -->
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+      <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-accent); flex-shrink: 0; background: rgba(0,242,254,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: var(--primary-cyan);">
+        {% if m.profile_photo_url and 'default-avatar' not in m.profile_photo_url %}
+          <img src="{{ m.profile_photo_url }}" alt="{{ m.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+          {{ m.full_name[0] }}
+        {% endif %}
+      </div>
+      <div>
+        <span class="tech-badge" style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.12); color: #38bdf8;">{{ m.status }}</span>
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.25rem; margin-bottom: 0.15rem;">{{ m.full_name }}</h3>
+        <p style="font-size: 0.85rem; color: var(--primary-cyan); margin: 0; font-weight: 500;">{{ m.professional_title }}</p>
+      </div>
+    </div>
+
+    <!-- ADMIN CREDENTIALS & CONTACT (ONLY ADMIN HAS ACCESS) -->
+    <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 10px; padding: 0.9rem; margin-bottom: 1.25rem; font-size: 0.83rem;">
+      <div style="color: #94a3b8; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.35rem;">
+        <i class="bi bi-shield-lock-fill" style="color: #f59e0b;"></i> Admin Account Credentials
+      </div>
+      
+      <div style="margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem;">
+        <span style="color: #cbd5e1;"><i class="bi bi-envelope-fill me-1" style="color: #38bdf8;"></i> <strong>Gmail Email:</strong></span>
+        <span style="font-family: monospace; font-weight: 600; color: #38bdf8;">{{ m.email if m.email else 'Not Set' }}</span>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem;">
+        <span style="color: #cbd5e1;"><i class="bi bi-telephone-fill me-1" style="color: #10b981;"></i> <strong>Contact Phone:</strong></span>
+        <span style="font-weight: 600; color: #10b981;">{{ m.internal_phone if m.internal_phone else 'Not Set' }}</span>
+      </div>
+    </div>
+
+    <!-- ASSIGNED PROGRAMS -->
+    <div style="margin-bottom: 1.25rem;">
+      <span style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 0.35rem;">Assigned Programs ({{ m.assigned_program_count }}):</span>
+      {% if m.assigned_programs %}
+        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          {% for prog in m.assigned_programs %}
+            <span class="tech-badge" style="font-size: 0.72rem; background: rgba(52, 211, 153, 0.12); color: #34d399;">{{ prog }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <span style="font-size: 0.78rem; color: var(--text-dim); font-style: italic;">Not assigned to any program yet.</span>
+      {% endif %}
+    </div>
+
+    <div style="font-size: 0.75rem; color: #64748b; margin-top: auto; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.08); font-style: italic;">
+      <i class="bi bi-info-circle me-1"></i> Bio, skills & social links self-managed by mentor in profile.
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+      <button type="button" class="btn btn-outline btn-sm" onclick="openEditMentorModal('{{ m.id }}')" style="flex: 1; font-size: 0.8rem;">
+        <i class="bi bi-pencil me-1"></i> Edit Mentor
+      </button>
+      <form action="{{ url_for('admin.delete_mentor_route', mentor_id=m.id) }}" method="POST" onsubmit="return confirm('Delete this mentor from central DB? This will also unassign them from all programs.');">
+        <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239,68,68,0.4); color: #ef4444; padding: 0.4rem 0.6rem;">
+          <i class="bi bi-trash"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- CREATE MENTOR MODAL (ADMIN CONTROLLED FIELDS ONLY) -->
+<div id="createMentorModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 600px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">Add Central Mentor</h2>
+      <button onclick="document.getElementById('createMentorModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form action="{{ url_for('admin.add_mentor_route') }}" method="POST" enctype="multipart/form-data">
+      
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Mentor Full Name *</label>
+        <input type="text" name="full_name" class="form-control" placeholder="e.g. Laxmi Nivas Morishetty" required style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Professional Title *</label>
+        <input type="text" name="professional_title" class="form-control" placeholder="e.g. Full Stack Architect & AI Systems Engineer" required style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: #38bdf8;"><i class="bi bi-envelope-fill me-1"></i> Gmail / Sign-In Email *</label>
+          <input type="email" name="email" class="form-control" placeholder="e.g. mentor@gmail.com" required style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; padding: 0.65rem; border-radius: 8px;">
+          <span style="font-size: 0.72rem; color: #94a3b8;">Used by mentor to sign in to platform.</span>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: #10b981;"><i class="bi bi-telephone-fill me-1"></i> Contact Number *</label>
+          <input type="text" name="internal_phone" class="form-control" placeholder="e.g. +91 9876543210" style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; font-weight: 600; padding: 0.65rem; border-radius: 8px;">
+          <span style="font-size: 0.72rem; color: #94a3b8;">Protected private contact number.</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Profile Photo</label>
+          <input type="file" name="profile_photo" class="form-control" accept="image/*" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.4rem; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Account Status</label>
+          <select name="status" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+            <option value="Active" selected>Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PROGRAM ASSIGNMENTS -->
+      <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(30, 41, 59, 0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">Assign to Learning Programs:</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+          {% for prod in products %}
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #cbd5e1; cursor: pointer;">
+              <input type="checkbox" name="assigned_program_ids" value="{{ prod.id }}"> {{ prod.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('createMentorModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 600;">Create Central Mentor</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MENTOR MODAL (ADMIN CONTROLLED FIELDS ONLY) -->
+<div id="editMentorModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 600px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">Edit Mentor Details</h2>
+      <button onclick="document.getElementById('editMentorModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <form id="editMentorForm" method="POST" enctype="multipart/form-data">
+      
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Mentor Full Name *</label>
+        <input type="text" id="edit_full_name" name="full_name" class="form-control" required style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Professional Title *</label>
+        <input type="text" id="edit_professional_title" name="professional_title" class="form-control" required style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: #38bdf8;"><i class="bi bi-envelope-fill me-1"></i> Gmail / Sign-In Email *</label>
+          <input type="email" id="edit_email" name="email" class="form-control" required style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; padding: 0.65rem; border-radius: 8px;">
+          <span style="font-size: 0.72rem; color: #94a3b8;">Used by mentor to sign in.</span>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: #10b981;"><i class="bi bi-telephone-fill me-1"></i> Contact Number *</label>
+          <input type="text" id="edit_internal_phone" name="internal_phone" class="form-control" style="width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; font-weight: 600; padding: 0.65rem; border-radius: 8px;">
+          <span style="font-size: 0.72rem; color: #94a3b8;">Protected private contact number.</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Update Profile Photo</label>
+          <input type="file" name="profile_photo" class="form-control" accept="image/*" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.4rem; border-radius: 8px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Account Status</label>
+          <select id="edit_status" name="status" class="form-control" style="width: 100%; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); color: #f8fafc; padding: 0.65rem; border-radius: 8px;">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button type="button" onclick="document.getElementById('editMentorModal').style.display='none'" class="btn btn-outline">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #2563eb); border: none; font-weight: 600;">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script id="mentors-json" type="application/json">
+{
+  {% for m in mentors %}
+    "{{ m.id }}": {{ m | tojson }}{% if not loop.last %},{% endif %}
+  {% endfor %}
+}
+</script>
+
+<script>
+let mentorsData = {};
+try {
+  const jsonElem = document.getElementById('mentors-json');
+  if (jsonElem) {
+    mentorsData = JSON.parse(jsonElem.textContent);
+  }
+} catch(e) {
+  console.error("Error parsing mentors JSON", e);
+}
+
+function openCreateMentorModal() {
+  document.getElementById('createMentorModal').style.display = 'flex';
+}
+
+function openEditMentorModal(mentorId) {
+  const m = mentorsData[mentorId] || {};
+  document.getElementById('editMentorForm').action = '/admin/mentors/edit/' + (m.id || mentorId);
+  document.getElementById('edit_full_name').value = m.full_name || m.name || '';
+  document.getElementById('edit_professional_title').value = m.professional_title || m.role || '';
+  document.getElementById('edit_email').value = m.email || '';
+  document.getElementById('edit_internal_phone').value = m.internal_phone || '';
+  document.getElementById('edit_status').value = m.status || 'Active';
+
+  document.getElementById('editMentorModal').style.display = 'flex';
+}
+</script>
+{% endblock %}

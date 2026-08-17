@@ -1,95 +1,70 @@
 {% extends 'base.html' %}
 
-{% block title %}About Engineering Pack — 45-Day Engineering Exposure{% endblock %}
+{% block title %}About Us — {{ site_settings.company }}{% endblock %}
 
 {% block content %}
-<section style="padding: 3rem 0 2rem;">
+<section style="padding: 3.5rem 0 2rem;">
   <div class="container">
-    <div class="section-header">
-      <div class="tech-badge"><i class="bi bi-info-circle-fill"></i> About The Program</div>
-      <h1 class="section-title">What is <span class="text-gradient">Engineering Pack?</span></h1>
-      <p class="section-subtitle">A 45-day practical exposure program built to transform engineering students into industry-ready practitioners.</p>
+    <div class="section-header" style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">
+      <span class="tech-badge" style="margin-bottom: 0.75rem;"><i class="bi bi-info-circle-fill me-1"></i> About Our Organization</span>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
+        About <span class="text-gradient">AIVONTRAA</span>
+      </h1>
+      <p style="color: var(--text-dim); font-size: 1.05rem; line-height: 1.6;">
+        Bridging the gap between academic theory and real-world technology innovation through hands-on engineering programs.
+      </p>
     </div>
 
     <!-- MISSION CARD -->
     <div class="glass-card" style="padding: 3rem; margin-bottom: 3.5rem;">
-      <h2 style="font-size: 1.8rem; margin-bottom: 1.25rem;">
-        Moving Students From Academic Syllabi to Professional Engineering Identity
+      <h2 style="font-size: 1.8rem; margin-bottom: 1.25rem; font-weight: 700; color: #fff;">
+        Building Industry-Ready Engineers & Technical Founders
       </h2>
-      <p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5rem;">
-        Traditional engineering education often focuses heavily on theoretical exams and memorization, leaving students underprepared for actual tech industry workflows. <strong>Engineering Pack</strong> is a 45-day intensive engineering journey designed by <strong>{{ site_settings.company }}</strong> to cultivate true first-principles problem-solving.
+      <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.5rem;">
+        At <strong>{{ site_settings.company }}</strong>, we believe engineering excellence cannot be measured solely by textbook exams. Our mission is to nurture students across a comprehensive growth roadmap — taking them from foundational learning to practical building, hands-on exposure, industry internships, innovation, startup creation, and career readiness.
       </p>
-      <div class="hero-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 2rem;">
-        <div class="stat-card">
-          <i class="bi bi-journal-bookmark-fill text-gradient" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">1. Academic Learning</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Theoretical concepts & foundational mathematics</div>
-        </div>
-        <div class="stat-card" style="border-color: var(--border-accent);">
-          <i class="bi bi-tools text-gradient" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-          <div style="font-weight: 700; color: var(--primary-cyan); margin-bottom: 0.25rem;">2. Practical Engineering</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Terminal tools, networks, security, hardware & AI</div>
-        </div>
-        <div class="stat-card">
-          <i class="bi bi-person-workspace text-gradient" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">3. Professional Identity</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Portfolio, communication, Git workflows & system design</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- 13 MAJOR DOMAINS OVERVIEW -->
-    <div style="margin-bottom: 3.5rem;">
-      <div class="section-header" style="margin-bottom: 2rem;">
-        <h2 style="font-size: 1.8rem;">13 Core Pillars Covered in 45 Days</h2>
-        <p style="font-size: 0.95rem; color: var(--text-muted);">Cross-functional engineering domain mastery.</p>
-      </div>
-
-      <div class="domains-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-code-slash text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Software Engineering</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-shield-check text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Cybersecurity</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-diagram-3 text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Networking</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-terminal text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Linux Administration</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-robot text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">AI for Engineers</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-gear-wide-connected text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Robotics</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-cpu text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">IoT & Sensors</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-layers text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">System Design</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-git text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Git & GitHub</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-folder-check text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Projects & Capstones</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-chat-square-text text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Communication</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-person-badge text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Soft Skills</strong></div>
-        <div class="glass-card" style="padding: 1.25rem;"><i class="bi bi-briefcase text-gradient" style="font-size: 1.4rem;"></i> <strong style="display: block; margin-top: 0.5rem;">Career Engineering</strong></div>
-      </div>
-    </div>
-
-    <!-- MENTORS & LEADERSHIP -->
-    {% if mentors %}
-    <div style="margin-bottom: 3.5rem;">
-      <div class="section-header" style="margin-bottom: 2rem;">
-        <h2 style="font-size: 1.8rem;">Guided by Industry Mentors</h2>
-        <p style="font-size: 0.95rem; color: var(--text-muted);">Learn directly from seasoned systems architects and security directors.</p>
-      </div>
-
-      <div class="domains-grid">
-        {% for m in mentors %}
-          <div class="glass-card">
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-              <div class="avatar-circle" style="width: 54px; height: 54px; font-size: 1.4rem;">{{ m.name[0] }}</div>
-              <div>
-                <h3 style="font-size: 1.15rem;">{{ m.name }}</h3>
-                <span style="font-size: 0.82rem; color: var(--primary-cyan); font-family: var(--font-mono);">{{ m.role }}</span>
-              </div>
+      <!-- 8-STAGE STUDENT DEVELOPMENT GRID -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 2rem;">
+        {% for step in lifecycle_steps %}
+          <div class="glass-card" style="text-align: left; padding: 1.5rem; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+              <span class="tech-badge" style="font-size: 0.75rem; background: rgba(0, 242, 254, 0.1); color: var(--primary-cyan);">Pillar {{ step.num }}</span>
+              <i class="bi bi-{{ step.icon }} text-gradient" style="font-size: 1.4rem;"></i>
             </div>
-            <p style="font-size: 0.88rem; margin-bottom: 0.75rem;">{{ m.bio }}</p>
-            <div style="font-size: 0.8rem; color: var(--text-dim);"><i class="bi bi-building"></i> {{ m.company }}</div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff;">{{ step.title }}</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">{{ step.desc }}</p>
           </div>
         {% endfor %}
       </div>
     </div>
-    {% endif %}
 
-    <div style="text-align: center;">
-      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff-fill"></i> Join Cohort Today</a>
+    <!-- CORE PILLARS SECTION -->
+    <div style="margin-bottom: 3.5rem;">
+      <div class="section-header" style="margin-bottom: 2rem; text-align: center;">
+        <span class="tech-badge" style="margin-bottom: 0.5rem;"><i class="bi bi-layers-fill me-1"></i> Architectural Framework</span>
+        <h2 style="font-size: 1.8rem; font-weight: 700;">Our Core Organizational Pillars</h2>
+        <p style="font-size: 0.95rem; color: var(--text-muted);">The strategic pillars supporting every program in our ecosystem.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for pillar in pillars %}
+          <div class="glass-card" style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--primary-cyan);">
+                <i class="bi bi-{{ pillar.icon }}"></i>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: #fff;">{{ pillar.title }}</h3>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin: 0;">{{ pillar.description }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem; margin-bottom: 3rem;">
+      <a href="{{ url_for('public.mentors') }}" class="btn btn-outline btn-lg me-2"><i class="bi bi-person-badge-fill me-1"></i> View Industry Mentors</a>
+      <a href="{{ url_for('public.programs_catalog') }}" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff-fill me-1"></i> Explore Active Programs</a>
     </div>
   </div>
 </section>

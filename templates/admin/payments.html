@@ -1,0 +1,157 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Payment Approvals — Admin Console{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link active"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem;">Payment Verification & Approvals</h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Review UTR transactions and approve enrollment for students across Products & Cohorts.</p>
+  </div>
+  <a href="{{ url_for('admin.product_settings') }}" class="btn btn-outline" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+    <i class="bi bi-sliders me-1"></i> Product Pricing & QR Setup
+  </a>
+</div>
+
+<!-- PRODUCT FILTER TABS -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+  <a href="{{ url_for('admin.select_product', product_id='all') }}" class="btn btn-sm {% if selected_prod_id == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+    🌐 All Products
+  </a>
+  {% for p in all_products %}
+    <a href="{{ url_for('admin.select_product', product_id=p.id) }}" class="btn btn-sm {% if selected_prod_id == p.id %}btn-primary{% else %}btn-outline{% endif %}">
+      📦 {{ p.name }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- STATUS STATS STRIP -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+  <a href="{{ url_for('admin.payments', status='all') }}" class="glass-card" style="padding: 1rem 1.25rem; text-decoration: none;">
+    <div style="font-size: 0.78rem; color: var(--text-dim); text-transform: uppercase;">Total Registrations</div>
+    <div style="font-size: 1.6rem; font-weight: 800; color: #fff; margin-top: 0.2rem;">{{ status_counts.all }}</div>
+  </a>
+
+  <a href="{{ url_for('admin.payments', status='pending') }}" class="glass-card" style="padding: 1rem 1.25rem; text-decoration: none; border-top: 2px solid #fbbf24;">
+    <div style="font-size: 0.78rem; color: #fbbf24; text-transform: uppercase;">Pending Approvals</div>
+    <div style="font-size: 1.6rem; font-weight: 800; color: #fbbf24; margin-top: 0.2rem;">{{ status_counts.pending }}</div>
+  </a>
+
+  <a href="{{ url_for('admin.payments', status='approved') }}" class="glass-card" style="padding: 1rem 1.25rem; text-decoration: none; border-top: 2px solid #34d399;">
+    <div style="font-size: 0.78rem; color: #34d399; text-transform: uppercase;">Approved Payments</div>
+    <div style="font-size: 1.6rem; font-weight: 800; color: #34d399; margin-top: 0.2rem;">{{ status_counts.approved }}</div>
+  </a>
+
+  <a href="{{ url_for('admin.payments', status='rejected') }}" class="glass-card" style="padding: 1rem 1.25rem; text-decoration: none; border-top: 2px solid #ef4444;">
+    <div style="font-size: 0.78rem; color: #ef4444; text-transform: uppercase;">Rejected</div>
+    <div style="font-size: 1.6rem; font-weight: 800; color: #ef4444; margin-top: 0.2rem;">{{ status_counts.rejected }}</div>
+  </a>
+</div>
+
+<!-- PAYMENTS TABLE -->
+<div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+    <thead>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); font-size: 0.78rem; text-transform: uppercase;">
+        <th style="padding: 0.8rem 1rem;">Student Details</th>
+        <th style="padding: 0.8rem 1rem;">Product / Program</th>
+        <th style="padding: 0.8rem 1rem;">Cohort</th>
+        <th style="padding: 0.8rem 1rem;">UTR & Proof</th>
+        <th style="padding: 0.8rem 1rem;">Amount</th>
+        <th style="padding: 0.8rem 1rem;">Status</th>
+        <th style="padding: 0.8rem 1rem; text-align: right;">Approval Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in payments %}
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 1rem;">
+          <div style="font-weight: 700; color: #fff;">{{ p.full_name or p.name }}</div>
+          <div style="font-size: 0.78rem; color: #38bdf8;">{{ p.registration_id or 'N/A' }}</div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">{{ p.email }}</div>
+        </td>
+        <td style="padding: 1rem;">
+          <span class="tech-badge" style="background: rgba(56, 189, 248, 0.1); color: #38bdf8; font-size: 0.75rem;">
+            {{ p.product_name or 'Engineering Pack' }}
+          </span>
+        </td>
+        <td style="padding: 1rem;">
+          <span class="tech-badge" style="background: rgba(168, 85, 247, 0.1); color: #c084fc; font-size: 0.75rem;">
+            {{ p.cohort_name or 'Cohort 1' }}
+          </span>
+        </td>
+        <td style="padding: 1rem;">
+          <div style="font-family: monospace; font-weight: 600; color: #fbbf24;">{{ p.utr_number or 'No UTR' }}</div>
+          {% if p.payment_screenshot %}
+            {% set img_url = p.payment_screenshot if (p.payment_screenshot.startswith('/') or p.payment_screenshot.startswith('http')) else '/static/uploads/payments/' ~ p.payment_screenshot %}
+            <div style="margin-top: 0.35rem;">
+              <a href="{{ img_url }}" target="_blank" title="Click to open full size screenshot">
+                <img src="{{ img_url }}" alt="Proof Screenshot" style="width: 56px; height: 56px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-accent); box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: inline-block;">
+              </a>
+            </div>
+            <a href="{{ img_url }}" target="_blank" style="font-size: 0.75rem; color: #38bdf8; text-decoration: underline; display: inline-block; margin-top: 0.2rem;">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Open Image
+            </a>
+          {% else %}
+            <span style="font-size: 0.75rem; color: var(--text-dim);">No proof uploaded</span>
+          {% endif %}
+        </td>
+        <td style="padding: 1rem; font-weight: 700; color: #34d399;">
+          ₹{{ p.payment_amount or 3500 }}
+        </td>
+        <td style="padding: 1rem;">
+          {% if p.payment_status in ['Approved', 'Paid', 'Confirmed'] %}
+            <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">CONFIRMED</span>
+          {% elif p.payment_status == 'Rejected' %}
+            <span class="tech-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">REJECTED</span>
+          {% else %}
+            <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">PENDING</span>
+          {% endif %}
+        </td>
+        <td style="padding: 1rem; text-align: right;">
+          {% if p.payment_status not in ['Approved', 'Paid', 'Confirmed'] %}
+          <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+            <form action="{{ url_for('admin.approve_payment', user_id=p.id) }}" method="POST" style="margin: 0;">
+              <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-size: 0.78rem; padding: 0.35rem 0.75rem;">
+                <i class="bi bi-check-lg me-1"></i> Approve
+              </button>
+            </form>
+            <form action="{{ url_for('admin.reject_payment', user_id=p.id) }}" method="POST" style="margin: 0;">
+              <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: #f87171; font-size: 0.78rem; padding: 0.35rem 0.75rem;">
+                <i class="bi bi-x-lg me-1"></i> Reject
+              </button>
+            </form>
+          </div>
+          {% else %}
+            <span style="font-size: 0.8rem; color: #34d399; font-weight: 600;"><i class="bi bi-check-circle-fill me-1"></i> Verified & Confirmed</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-dim);">
+          No payment records found for the selected status.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

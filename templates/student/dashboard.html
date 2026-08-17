@@ -1,112 +1,278 @@
 {% extends 'dashboard_base.html' %}
 
-{% block title %}Student Dashboard — ENGINEERING PACK{% endblock %}
+{% block title %}Student Portal & Dashboard — ENGINEERING PACK{% endblock %}
 
 {% block sidebar_menu %}
 <ul class="sidebar-nav">
   <li><a href="{{ url_for('student.dashboard') }}" class="sidebar-link active"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-  <li><a href="{{ url_for('student.journey') }}" class="sidebar-link"><i class="bi bi-map"></i> <span>45-Day Journey</span></a></li>
-  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link"><i class="bi bi-folder-check"></i> <span>Projects</span></a></li>
-  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link"><i class="bi bi-person-gear"></i> <span>Profile</span></a></li>
+  <li><a href="{{ url_for('student.calendar') }}" class="sidebar-link"><i class="bi bi-calendar3"></i> <span>Program Calendar</span></a></li>
+  <li><a href="{{ url_for('student.projects') }}" class="sidebar-link"><i class="bi bi-folder-check"></i> <span>Assigned Projects</span></a></li>
+  <li><a href="{{ url_for('student.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Feedback & Reviews</span></a></li>
+  <li><a href="{{ url_for('student.profile') }}" class="sidebar-link"><i class="bi bi-person-gear"></i> <span>My Profile</span></a></li>
 </ul>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="dashboard-header">
+<div class="dashboard-header" style="margin-bottom: 2rem;">
   <div class="dashboard-title-group">
-    <h1>Welcome back, Engineer 👋</h1>
-    <p>Track your 45-day technical progression and active project milestones.</p>
+    <h1>Welcome back, {{ user.full_name if user and user.full_name else 'Engineer' }} 👋</h1>
+    <p style="margin: 0.2rem 0 0 0; color: var(--text-muted);">Manage your enrolled programs, view calendar timetable, submit projects, and share mentor & cohort feedback.</p>
   </div>
-  <div class="tech-badge"><i class="bi bi-person-check-fill"></i> {{ user.branch if user else 'Student' }}</div>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 700; padding: 0.4rem 0.8rem;">
+      <i class="bi bi-patch-check-fill me-1"></i> Verified Student
+    </span>
+    <span class="tech-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 700; padding: 0.4rem 0.8rem;">
+      <i class="bi bi-layers-fill me-1"></i> {{ cohort.name if cohort else 'Active Cohort' }}
+    </span>
+  </div>
 </div>
 
 <!-- STATS METRICS GRID -->
-<div class="stats-cards-grid">
+<div class="stats-cards-grid" style="margin-bottom: 2rem;">
   <div class="dash-stat-card">
     <div>
-      <div class="dash-stat-val">{{ user.progress_pct if user else 16 }}%</div>
-      <div class="dash-stat-lbl">45-Day Progress</div>
+      <div class="dash-stat-val">{{ enrollments | length }}</div>
+      <div class="dash-stat-lbl">Enrolled Programs</div>
     </div>
-    <div class="dash-stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
+    <div class="dash-stat-icon"><i class="bi bi-box-seam"></i></div>
   </div>
 
   <div class="dash-stat-card">
     <div>
-      <div class="dash-stat-val">Day {{ user.current_day if user else 1 }}</div>
-      <div class="dash-stat-lbl">Current Active Day</div>
+      <div class="dash-stat-val">{{ timetable | length if timetable else (cohort.duration_days if cohort else 45) }} Days</div>
+      <div class="dash-stat-lbl">Program Duration</div>
     </div>
-    <div class="dash-stat-icon"><i class="bi bi-calendar-event"></i></div>
+    <div class="dash-stat-icon"><i class="bi bi-calendar-range"></i></div>
   </div>
 
   <div class="dash-stat-card">
     <div>
-      <div class="dash-stat-val">{{ user.completed_projects if user else 0 }} / 5</div>
-      <div class="dash-stat-lbl">Completed Projects</div>
+      <div class="dash-stat-val">{{ projects | length }}</div>
+      <div class="dash-stat-lbl">Assigned Projects</div>
     </div>
     <div class="dash-stat-icon"><i class="bi bi-folder-check"></i></div>
   </div>
 </div>
 
-<!-- CURRENT PROGRESS TRACKER CARD -->
-<div class="glass-card" style="margin-bottom: 2rem;">
-  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+<!-- 1. MY ENROLLED PROGRAMS SECTION -->
+<div class="glass-card" id="enrolled-programs" style="margin-bottom: 2rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
     <div>
-      <span class="tech-badge" style="font-size: 0.75rem; margin-bottom: 0.25rem;">Active Roadmap Phase</span>
-      <h2 style="font-size: 1.4rem;">{{ user.current_phase if user else 'Phase 1: Engineer Mindset' }}</h2>
+      <h2 style="font-size: 1.3rem; margin: 0; color: #fff;"><i class="bi bi-box-seam text-gradient me-2"></i> My Enrolled Programs</h2>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin: 0.2rem 0 0 0;">Select any program card below to view detailed curriculum overview and enrollment proof.</p>
     </div>
-    <a href="{{ url_for('student.journey') }}" class="btn btn-outline btn-sm"><i class="bi bi-arrow-right"></i> View Complete Journey</a>
+    <a href="{{ url_for('public.programs_catalog') }}" class="btn btn-outline btn-sm" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+      <i class="bi bi-plus-circle me-1"></i> Explore More Programs
+    </a>
   </div>
-  
-  <p style="font-size: 0.92rem; color: var(--text-muted);">
-    Focus: Problem breakdown, system thinking, core technical domains, debugging strategies, and hands-on engineering execution.
-  </p>
 
-  <div class="progress-bar-container">
-    <div class="progress-bar-fill" style="width: {{ user.progress_pct if user else 16 }}%;"></div>
-  </div>
-  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem;" class="font-mono">
-    <span>Day 1: First Principles</span>
-    <span>Day {{ user.current_day if user else 1 }} of 45</span>
-    <span>Day 45: Engineering Showcase</span>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem;">
+    {% for enr in enrollments %}
+      {% set prod = enr.product or product %}
+      <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; position: relative;" class="program-enrolled-card">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.72rem; font-weight: 700;">
+              <i class="bi bi-check-circle-fill me-1"></i> Confirmed & Active
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-dim); font-family: monospace;">
+              {{ enr.reference_id or ('ENR-' ~ enr.id[:8]) }}
+            </span>
+          </div>
+
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">
+            {{ prod.name if prod else 'Engineering Pack' }}
+          </h3>
+
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">
+            {{ prod.tagline if prod and prod.tagline else 'Hands-on practical engineering program built for industry mastery.' }}
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1.25rem; background: rgba(8, 12, 20, 0.5); padding: 0.75rem; border-radius: 8px;">
+            <div><strong style="color: #fff;">Cohort:</strong> {{ cohort.name if cohort else (enr.cohort_name or 'Cohort 1') }}</div>
+            <div><strong style="color: #fff;">Duration:</strong> {{ prod.duration_days if prod and prod.duration_days else 45 }} Days Practical Bootcamp</div>
+            <div><strong style="color: #fff;">UTR Reference:</strong> <code style="color: #38bdf8;">{{ enr.utr_number or 'VERIFIED' }}</code></div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline btn-sm w-100" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick='openProgramDetailsModal({{ (prod or {}) | tojson }}, {{ (enr or {}) | tojson }}, {{ (cohort or {}) | tojson }})'>
+          <i class="bi bi-info-circle me-1"></i> View Program Details
+        </button>
+      </div>
+    {% else %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-dim);">
+        No confirmed program enrollments found. Explore our programs catalog to enroll!
+      </div>
+    {% endfor %}
   </div>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-  <!-- ASSIGNED PROJECTS SUMMARY -->
-  <div class="glass-card">
-    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;"><i class="bi bi-folder text-gradient"></i> Active Projects</h3>
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
-      {% for proj in projects[:3] %}
-        <div style="background: rgba(8, 12, 20, 0.6); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
-            <strong style="font-size: 0.95rem; color: var(--text-main);">{{ proj.name }}</strong>
-            <span class="tech-badge" style="font-size: 0.7rem;">{{ proj.domain }}</span>
-          </div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">{{ proj.description }}</p>
-        </div>
-      {% endfor %}
+<!-- 2. PROGRAM CALENDAR SCHEDULE SECTION -->
+<div class="glass-card" style="margin-bottom: 2rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.3rem; margin: 0; color: #fff;"><i class="bi bi-calendar3 text-gradient me-2"></i> Program Calendar Schedule</h2>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin: 0.2rem 0 0 0;">Day-by-day timetable schedule for your active cohort.</p>
     </div>
-    <div style="margin-top: 1.25rem;">
-      <a href="{{ url_for('student.projects') }}" class="btn btn-outline btn-sm" style="width: 100%;">View All Projects</a>
-    </div>
+    <a href="{{ url_for('student.calendar') }}" class="btn btn-outline btn-sm" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+      <i class="bi bi-arrows-fullscreen me-1"></i> View Full Calendar
+    </a>
   </div>
 
-  <!-- ANNOUNCEMENTS WIDGET -->
+  {% if timetable %}
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+    {% for item in timetable[:6] %}
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 800; font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-family: monospace;">
+            Day {{ item.day }}
+          </span>
+          <span style="font-size: 0.75rem; color: var(--text-dim);">{{ item.formatted_date or item.date }}</span>
+        </div>
+        <div style="font-weight: 700; color: #fff; font-size: 0.92rem; margin-bottom: 0.4rem;">{{ item.title }}</div>
+        <span class="tech-badge" style="font-size: 0.7rem; background: rgba(192, 132, 252, 0.15); color: #c084fc;">
+          {{ item.domain }}
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+  {% if timetable | length > 6 %}
+    <div style="text-align: center; margin-top: 1.25rem;">
+      <a href="{{ url_for('student.calendar') }}" class="btn btn-outline btn-sm">View All {{ timetable | length }} Days Schedule &rarr;</a>
+    </div>
+  {% endif %}
+  {% else %}
+    <p style="color: var(--text-dim); text-align: center; padding: 2rem;">Cohort timetable schedule is currently being finalized by mentors.</p>
+  {% endif %}
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  
+  <!-- 3. ASSIGNED PROJECTS SUMMARY -->
   <div class="glass-card">
-    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;"><i class="bi bi-megaphone text-gradient"></i> Cohort Announcements</h3>
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
-      {% for ann in announcements %}
-        <div style="background: rgba(8, 12, 20, 0.6); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
-            <strong style="font-size: 0.92rem; color: var(--text-main);">{{ ann.title }}</strong>
-            <span class="font-mono" style="font-size: 0.75rem; color: var(--primary-cyan);">{{ ann.date }}</span>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.15rem; margin: 0;"><i class="bi bi-folder-check text-gradient me-2"></i> Assigned Projects</h3>
+      <a href="{{ url_for('student.projects') }}" class="btn btn-outline btn-sm" style="font-size: 0.78rem;">View All</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      {% for proj in projects[:3] %}
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem;">
+            <strong style="font-size: 0.92rem; color: #fff;">{{ proj.title or proj.name }}</strong>
+            <span class="tech-badge" style="font-size: 0.68rem;">{{ proj.domain or 'Engineering' }}</span>
           </div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">{{ ann.content }}</p>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.3;">{{ proj.description }}</p>
         </div>
       {% else %}
-        <p style="font-size: 0.9rem; color: var(--text-muted);">No announcements posted yet.</p>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">No active projects assigned yet.</p>
       {% endfor %}
     </div>
   </div>
+
+  <!-- 4. STUDENT FEEDBACK & REVIEWS WIDGET -->
+  <div class="glass-card" style="border-top: 3px solid #38bdf8;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.15rem; margin: 0; color: #fff;"><i class="bi bi-star-half text-gradient me-2"></i> Give Feedback</h3>
+      <a href="{{ url_for('student.feedback') }}" class="btn btn-primary btn-sm" style="font-size: 0.78rem; background: linear-gradient(135deg, #0284c7, #2563eb); border: none;">
+        <i class="bi bi-chat-square-heart me-1"></i> Submit Review
+      </a>
+    </div>
+
+    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); padding: 1.1rem; border-radius: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+      Rate and share feedback for your assigned mentor (<strong>{{ mentors[0].full_name if mentors else 'Assigned Mentor' }}</strong>) or submit overall feedback for <strong>{{ cohort.name if cohort else 'your cohort' }}</strong>.
+    </div>
+
+    <a href="{{ url_for('student.feedback') }}" class="btn btn-outline btn-sm w-100" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+      Open Feedback & Review Portal &rarr;
+    </a>
+  </div>
+
+  <!-- 5. MASTER STUDENT PROFILE SUMMARY -->
+  <div class="glass-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-size: 1.15rem; margin: 0;"><i class="bi bi-person-badge text-gradient me-2"></i> My Profile Summary</h3>
+      <a href="{{ url_for('student.profile') }}" class="btn btn-outline btn-sm" style="font-size: 0.78rem;"><i class="bi bi-pencil me-1"></i> Edit Profile</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.88rem; background: rgba(15, 23, 42, 0.7); padding: 1rem; border-radius: 10px; border: 1px solid var(--border-color);">
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+        <span style="color: var(--text-dim);">Full Name:</span>
+        <strong style="color: #fff;">{{ user.full_name or user.name }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+        <span style="color: var(--text-dim);">Email Address:</span>
+        <strong style="color: #38bdf8;">{{ user.email }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+        <span style="color: var(--text-dim);">Phone Number:</span>
+        <strong style="color: #fff;">{{ user.phone or 'Not specified' }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-dim);">Academic Branch:</span>
+        <strong style="color: #c084fc;">{{ user.branch or 'ECE / CSE / EEE' }}</strong>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<!-- PROGRAM DETAILS MODAL -->
+<div id="programDetailsModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1050; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 640px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+      <div>
+        <h2 id="modalProgramName" style="font-size: 1.4rem; font-weight: 700; margin: 0; color: #38bdf8;">Program Details</h2>
+        <p id="modalRefId" style="font-size: 0.82rem; color: var(--text-dim); margin: 0.2rem 0 0 0; font-family: monospace;">ENR-2026-001</p>
+      </div>
+      <button onclick="document.getElementById('programDetailsModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div>
+        <label style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); font-weight: 700;">Program Tagline & Overview</label>
+        <div id="modalTagline" style="font-size: 0.95rem; color: #fff; font-weight: 600; margin-top: 0.2rem;"></div>
+        <p id="modalDescription" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.5;"></p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: rgba(15, 23, 42, 0.7); padding: 1rem; border-radius: 10px; border: 1px solid var(--border-color);">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">Assigned Cohort:</div>
+          <div id="modalCohortName" style="font-weight: 700; color: #38bdf8; font-size: 0.95rem;">Cohort 1</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">Payment Status:</div>
+          <div style="font-weight: 700; color: #34d399; font-size: 0.95rem;">Confirmed & Verified</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">UTR / Reference No:</div>
+          <div id="modalUtr" style="font-weight: 600; color: #fff; font-size: 0.85rem; font-family: monospace;">1234567890</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">Duration:</div>
+          <div id="modalDuration" style="font-weight: 600; color: #c084fc; font-size: 0.85rem;">45 Days</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+        <button onclick="document.getElementById('programDetailsModal').style.display='none'" class="btn btn-primary btn-sm">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openProgramDetailsModal(product, enrollment, cohort) {
+  document.getElementById('modalProgramName').innerText = (product && product.name) ? product.name : 'Engineering Pack';
+  document.getElementById('modalRefId').innerText = 'Reference ID: ' + (enrollment && enrollment.reference_id ? enrollment.reference_id : 'ENR-VERIFIED');
+  document.getElementById('modalTagline').innerText = (product && product.tagline) ? product.tagline : 'Hands-on practical engineering program built for industry mastery.';
+  document.getElementById('modalDescription').innerText = (product && product.description) ? product.description : 'Complete engineering bootcamp with daily mentor sessions, practical project tasks, and career guidance.';
+  document.getElementById('modalCohortName').innerText = (cohort && cohort.name) ? cohort.name : ((enrollment && enrollment.cohort_name) ? enrollment.cohort_name : 'Cohort 1');
+  document.getElementById('modalUtr').innerText = (enrollment && enrollment.utr_number) ? enrollment.utr_number : 'VERIFIED';
+  document.getElementById('modalDuration').innerText = (product && product.duration_days ? product.duration_days : 45) + ' Days';
+  
+  document.getElementById('programDetailsModal').style.display = 'flex';
+}
+</script>
 {% endblock %}

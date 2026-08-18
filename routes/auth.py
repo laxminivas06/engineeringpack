@@ -26,22 +26,21 @@ def allowed_file(filename):
 
 
 def get_google_redirect_uri():
-    """Generates exact redirect URI matching Google Console configuration."""
+    """Generates exact redirect URI matching Google Console configuration dynamically for Local and Production."""
     config_uri = current_app.config.get('GOOGLE_REDIRECT_URI')
     if config_uri:
         return config_uri
 
-    import re
-    host = request.host
-    hostname = host.split(':')[0]
-    port_suffix = f":{host.split(':')[1]}" if ':' in host else ''
+    host = request.host.lower()
+    
+    # 1. Localhost development environment
+    if 'localhost' in host or '127.0.0.1' in host:
+        port_suffix = f":{host.split(':')[1]}" if ':' in host else ''
+        return f"http://localhost{port_suffix}/auth/google/callback"
 
-    if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', hostname):
-        return f"{request.scheme}://localhost{port_suffix}/auth/google/callback"
-
-    # For production environments (like PythonAnywhere), ensure HTTPS scheme is used
+    # 2. Production environment (e.g., learnovaa.pythonanywhere.com)
     scheme = request.headers.get('X-Forwarded-Proto', request.scheme)
-    if hostname not in ('localhost', '127.0.0.1'):
+    if scheme != 'https':
         scheme = 'https'
 
     return f"{scheme}://{request.host}/auth/google/callback"

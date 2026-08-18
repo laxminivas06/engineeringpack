@@ -5,7 +5,7 @@
 {% block content %}
 <section style="padding: 4rem 0 5rem;" class="tech-grid-bg">
   <div class="container">
-    <div style="max-width: 460px; margin: 0 auto;">
+    <div style="max-width: 460px; width: 100%; margin: 0 auto;">
       <div class="glass-card"
         style="padding: 2.75rem 2rem; border-color: var(--border-accent); box-shadow: var(--shadow-glow); text-align: center;">
 
@@ -13,7 +13,8 @@
           <i class="bi bi-cpu-fill"></i>
         </div>
 
-        <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Welcome Back</h1>
+        <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Welcome Back
+        </h1>
         <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
           Sign in to access your engineering program dashboard, curriculum, and live cohorts.
         </p>
@@ -36,26 +37,9 @@
           </a>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 1rem; color: var(--text-dim); font-size: 0.8rem; margin: 1.5rem 0;">
-          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
-          <span>OR DIRECT EMAIL SIGN-IN</span>
-          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
-        </div>
-
-        <!-- 2. DIRECT EMAIL SIGN-IN FORM -->
-        <form action="{{ url_for('auth.email_login') }}" method="POST" style="text-align: left;">
-          <div class="form-group">
-            <label class="form-label" for="email">Email Address</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
-          </div>
-
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.85rem;">
-            <i class="bi bi-box-arrow-in-right me-1"></i> Continue with Email
-          </button>
-        </form>
-
-        <div style="text-align: center; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); font-size: 0.88rem; color: var(--text-dim);">
-          <i class="bi bi-shield-check me-1"></i> Secure & Encrypted Connection
+        <div
+          style="text-align: center; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); font-size: 0.88rem; color: var(--text-dim);">
+          <i class="bi bi-shield-check me-1"></i> Secure & Encrypted OAuth Authentication
         </div>
 
       </div>

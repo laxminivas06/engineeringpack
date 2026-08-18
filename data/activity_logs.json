@@ -152,5 +152,19 @@
     "title": "New Student Registered",
     "description": "Student Test (student.test@example.com) registered for Engineering Pack.",
     "timestamp": "2026-08-18T09:49:14.612066Z"
+  },
+  {
+    "id": "act_74f345",
+    "type": "student_registered",
+    "title": "New Student Registered",
+    "description": "Jaganmohanreddy kontham (konthamjaganmohanreddy@gmail.com) registered for Engineering Pack.",
+    "timestamp": "2026-08-18T14:02:14.779604Z"
+  },
+  {
+    "id": "act_b0645e",
+    "type": "student_registered",
+    "title": "New Student Registered",
+    "description": "Laxminivasmorishetty (laxminivasmorishetty@gmail.com) registered for Engineering Pack.",
+    "timestamp": "2026-08-18T14:35:46.440676Z"
   }
 ]

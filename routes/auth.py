@@ -138,37 +138,16 @@ def google_redirect():
 
 @auth_bp.route('/auth/email-login', methods=['POST'])
 def email_login():
-    """Direct Email sign-in for students, mentors, and admins on PythonAnywhere."""
-    email = request.form.get('email', '').strip().lower()
-    if not email or '@' not in email:
-        flash("Please enter a valid email address to sign in.", "danger")
-        return redirect(url_for('auth.login'))
-
-    google_info = {
-        'email': email,
-        'name': email.split('@')[0].replace('.', ' ').replace('_', ' ').title(),
-        'sub': f'email_{uuid.uuid4().hex[:8]}'
-    }
-
-    success, msg, user_data, role = get_or_create_google_user(google_info)
-    if success:
-        login_session(user_data, role=role)
-        flash(f"Signed in successfully as {email}!", "success")
-        if role == 'admin':
-            return redirect(url_for('admin.dashboard'))
-        elif role == 'mentor':
-            return redirect(url_for('mentor.dashboard'))
-        else:
-            return redirect(url_for('public.index'))
-    else:
-        flash(msg, "danger")
-        return redirect(url_for('auth.login'))
+    """Disabled direct email login for security - users must sign in via Google OAuth."""
+    flash("Direct email login is disabled for security. Please sign in with Google.", "warning")
+    return redirect(url_for('auth.login'))
 
 
 @auth_bp.route('/auth/dev-login', methods=['POST'])
 def dev_login():
-    """Developer bypass login for testing."""
-    return email_login()
+    """Disabled dev bypass login for security."""
+    flash("Developer login bypass is disabled. Please sign in with Google.", "warning")
+    return redirect(url_for('auth.login'))
 
 
 @auth_bp.route('/auth/google/callback', methods=['GET', 'POST'])

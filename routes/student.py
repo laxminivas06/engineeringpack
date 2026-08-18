@@ -268,7 +268,10 @@ def profile():
         college = request.form.get('college', '').strip()
         user_type = request.form.get('user_type', '').strip()
         branch = request.form.get('branch', '').strip()
-        academic_year = request.form.get('academic_year', '').strip()
+        academic_year = request.form.get('academic_year', '').strip() or request.form.get('year', '').strip()
+        github_url = request.form.get('github_url', '').strip()
+        linkedin_url = request.form.get('linkedin_url', '').strip()
+        portfolio_url = request.form.get('portfolio_url', '').strip()
 
         updates = {
             'full_name': full_name or user.get('full_name'),
@@ -276,12 +279,16 @@ def profile():
             'college': college or user.get('college'),
             'user_type': user_type or user.get('user_type'),
             'branch': branch or user.get('branch'),
-            'academic_year': academic_year or user.get('academic_year')
+            'academic_year': academic_year or user.get('academic_year'),
+            'year': academic_year or user.get('year'),
+            'github_url': github_url,
+            'linkedin_url': linkedin_url,
+            'portfolio_url': portfolio_url
         }
         updated_user = users_db.update(user['id'], updates)
         if updated_user:
             session['name'] = updated_user.get('full_name')
-            flash("Profile details updated successfully!", "success")
+            flash("Profile details & social links updated successfully!", "success")
             user = updated_user
         else:
             flash("Failed to update profile details.", "danger")

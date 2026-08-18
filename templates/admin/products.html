@@ -37,10 +37,10 @@
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
       <div>
         <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">{{ prod.status }}</span>
-        <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 0.5rem; margin-bottom: 0.25rem;">{{ prod.name }}</h2>
-        <p style="font-size: 0.85rem; color: #38bdf8; font-weight: 500; margin: 0;">{{ prod.tagline }}</p>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 0.5rem; margin-bottom: 0.25rem;">{{ prod.name }}</h2>
+        <p style="font-size: 0.85rem; color: var(--primary-cyan); font-weight: 500; margin: 0;">{{ prod.tagline }}</p>
       </div>
-      <div style="font-size: 1.5rem; font-weight: 800; color: #34d399;">
+      <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;">
         {{ prod.currency_symbol }}{{ "{:,.0f}".format(prod.price) }}
       </div>
     </div>
@@ -48,10 +48,10 @@
     <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 1.25rem;">{{ prod.description }}</p>
 
     <!-- METRICS STRIP -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: rgba(15, 23, 42, 0.6); padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--bg-surface); border: 1px solid var(--border-accent); padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
       <div>
         <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Duration</span>
-        <div style="font-weight: 700; font-size: 0.95rem; color: #fff;">{{ prod.duration_days }} Days</div>
+        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">{{ prod.duration_days }} Days</div>
       </div>
       <div>
         <span style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Cohorts</span>
@@ -65,13 +65,10 @@
 
     <!-- ACTIONS -->
     <div style="display: flex; gap: 0.5rem;">
-      <a href="{{ url_for('admin.select_product', product_id=prod.id) }}" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.8rem;">
-        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      <a href="{{ url_for('admin.product_settings', product_id=prod.id) }}" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.8rem; border-color: var(--border-accent); color: var(--text-main); font-weight: 600;">
+        <i class="bi bi-sliders me-1" style="color: #0369a1;"></i> Program Settings
       </a>
-      <a href="{{ url_for('admin.product_settings', product_id=prod.id) }}" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.8rem; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
-        <i class="bi bi-sliders me-1"></i> Settings
-      </a>
-      <button class="btn btn-outline btn-sm" onclick="openEditProductModal({{ prod.id | tojson }})" style="padding: 0.4rem 0.6rem;">
+      <button class="btn btn-outline btn-sm" onclick="openEditProductModal({{ prod.id | tojson }})" style="padding: 0.4rem 0.6rem; color: var(--text-main);">
         <i class="bi bi-pencil"></i>
       </button>
     </div>

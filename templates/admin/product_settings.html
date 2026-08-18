@@ -31,7 +31,7 @@
     </div>
 
     <!-- PRODUCT SWITCHER TABS -->
-    <div style="display: flex; gap: 0.5rem; background: rgba(15, 23, 42, 0.8); padding: 0.3rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+    <div style="display: flex; gap: 0.5rem; background: var(--bg-surface); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-color);">
       {% for p in all_products %}
         <a href="{{ url_for('admin.product_settings', product_id=p.id) }}" class="btn btn-sm {% if p.id == product.id %}btn-primary{% else %}btn-outline{% endif %}" style="font-size: 0.78rem; padding: 0.3rem 0.75rem;">
           {{ p.name }}

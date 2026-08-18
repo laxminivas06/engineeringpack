@@ -47,7 +47,7 @@
   {% for phase in phases %}
   <div class="glass-card" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
     <div style="display: flex; align-items: center; gap: 1.25rem;">
-      <div style="width: 54px; height: 54px; border-radius: 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+      <div style="width: 54px; height: 54px; border-radius: 12px; background: rgba(3, 105, 161, 0.12); border: 1px solid rgba(3, 105, 161, 0.3); color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
         <i class="bi bi-{{ phase.icon or 'layers' }}"></i>
       </div>
       <div>
@@ -55,7 +55,7 @@
           <span class="tech-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; font-size: 0.72rem;">Phase {{ phase.phase_number }}</span>
           <span style="font-size: 0.8rem; color: var(--text-dim);">{{ phase.day_range }}</span>
         </div>
-        <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">{{ phase.title }}</h3>
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">{{ phase.title }}</h3>
         <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">{{ phase.description }}</p>
       </div>
     </div>

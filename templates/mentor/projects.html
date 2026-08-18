@@ -5,25 +5,25 @@
 {% block dashboard_content %}
 <div class="dashboard-header" style="margin-bottom: 2rem;">
   <div>
-    <h1 style="font-size: 1.85rem; font-weight: 800; color: #f8fafc;">
-      <i class="bi bi-folder-check" style="color: #38bdf8; margin-right: 0.5rem;"></i> Mentor-Controlled Project Access Center
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">
+      <i class="bi bi-folder-check" style="color: #0369a1; margin-right: 0.5rem;"></i> Mentor-Controlled Project Access Center
     </h1>
-    <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem;">
+    <p style="color: var(--text-dim); font-size: 0.95rem; margin-top: 0.25rem;">
       You control when projects become accessible to enrolled students in your assigned cohorts.
     </p>
   </div>
 </div>
 
 <!-- LIFECYCLE EXPLANATION BANNER -->
-<div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
-  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
+<div class="glass-card" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+  <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(3, 105, 161, 0.15); color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
     <i class="bi bi-info-circle-fill"></i>
   </div>
   <div style="flex: 1;">
-    <h4 style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin: 0;">Project Lifecycle Access Rule</h4>
-    <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.25rem; line-height: 1.4;">
-      <strong style="color: #ef4444;">Locked:</strong> Students see "Project not yet opened by mentor" and cannot view instructions or submit.<br>
-      <strong style="color: #10b981;">Open:</strong> Students can view instructions, access submission forms, and submit their GitHub repository URL.
+    <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0;">Project Lifecycle Access Rule</h4>
+    <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.25rem; line-height: 1.4;">
+      <strong style="color: #dc2626;">Locked:</strong> Students see "Project not yet opened by mentor" and cannot view instructions or submit.<br>
+      <strong style="color: #059669;">Open:</strong> Students can view instructions, access submission forms, and submit their GitHub repository URL.
     </p>
   </div>
 </div>
@@ -31,63 +31,63 @@
 {% if projects %}
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
     {% for p in projects %}
-      <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid {% if p.status == 'Open' %}rgba(16, 185, 129, 0.3){% else %}rgba(255, 255, 255, 0.1){% endif %}; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+      <div class="glass-card" style="background: var(--bg-surface); border: 1px solid {% if p.status == 'Open' %}rgba(16, 185, 129, 0.4){% else %}var(--border-color){% endif %}; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
         
         <div>
           <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;">
             <div>
-              <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem;">
+              <span class="badge" style="background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem;">
                 {{ p.domain }}
               </span>
-              <h3 style="font-size: 1.2rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem;">
-                <i class="bi bi-{{ p.icon if p.icon else 'layers' }}" style="color: #38bdf8; margin-right: 0.4rem;"></i> {{ p.name }}
+              <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-top: 0.4rem;">
+                <i class="bi bi-{{ p.icon if p.icon else 'layers' }}" style="color: #0369a1; margin-right: 0.4rem;"></i> {{ p.name }}
               </h3>
             </div>
 
             <div>
               {% if p.status == 'Open' %}
-                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 16px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 16px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;">
                   <i class="bi bi-unlock-fill"></i> OPEN
                 </span>
               {% else %}
-                <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 16px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 16px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;">
                   <i class="bi bi-lock-fill"></i> LOCKED
                 </span>
               {% endif %}
             </div>
           </div>
 
-          <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 1rem;">
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
             {{ p.description }}
           </p>
 
           {% if p.instructions %}
-            <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; font-size: 0.82rem; color: #94a3b8;">
-              <strong style="color: #f8fafc;"><i class="bi bi-list-task"></i> Instructions:</strong>
-              <div style="white-space: pre-line; margin-top: 0.3rem; color: #cbd5e1;">{{ p.instructions }}</div>
+            <div style="background: var(--bg-card-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; font-size: 0.82rem; color: var(--text-dim);">
+              <strong style="color: var(--text-main);"><i class="bi bi-list-task"></i> Instructions:</strong>
+              <div style="white-space: pre-line; margin-top: 0.3rem; color: var(--text-muted);">{{ p.instructions }}</div>
             </div>
           {% endif %}
 
-          <div style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 1.25rem; display: flex; gap: 1rem; align-items: center;">
-            <span><i class="bi bi-file-earmark-check"></i> Submissions: <strong style="color: #f8fafc;">{{ p.submission_count }}</strong></span>
+          <div style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1.25rem; display: flex; gap: 1rem; align-items: center;">
+            <span><i class="bi bi-file-earmark-check"></i> Submissions: <strong style="color: var(--text-main);">{{ p.submission_count }}</strong></span>
             {% if p.pending_count %}
-              <span class="badge" style="background: rgba(236, 72, 153, 0.2); color: #ec4899; padding: 0.2rem 0.5rem; border-radius: 8px;">
+              <span class="badge" style="background: rgba(219, 39, 119, 0.15); color: #db2777; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 8px;">
                 {{ p.pending_count }} Pending Review
               </span>
             {% endif %}
           </div>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1rem; margin-top: 0.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
           <form action="{{ url_for('mentor.toggle_project_status', project_id=p.id) }}" method="POST" style="margin: 0; flex: 1;">
             <input type="hidden" name="status" value="{% if p.status == 'Open' %}Closed{% else %}Open{% endif %}">
-            <button type="submit" class="btn" style="width: 100%; font-weight: 700; padding: 0.6rem 1rem; border-radius: 8px; {% if p.status == 'Open' %}background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4);{% else %}background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; border: none;{% endif %}">
+            <button type="submit" class="btn" style="width: 100%; font-weight: 700; padding: 0.6rem 1rem; border-radius: 8px; {% if p.status == 'Open' %}background: rgba(239, 68, 68, 0.15); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.4);{% else %}background: linear-gradient(135deg, #047857, #059669); color: #ffffff; border: none;{% endif %}">
               {% if p.status == 'Open' %}<i class="bi bi-lock-fill"></i> Close Access{% else %}<i class="bi bi-unlock-fill"></i> Open for Students{% endif %}
             </button>
           </form>
 
-          <a href="{{ url_for('mentor.project_submissions', project_id=p.id) }}" class="btn btn-outline" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 600; padding: 0.6rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.35rem;">
-            <i class="bi bi-eye"></i> Submissions ({{ p.submission_count }})
+          <a href="{{ url_for('mentor.project_submissions', project_id=p.id) }}" class="btn btn-outline" style="border-color: var(--border-accent); color: var(--text-main); font-weight: 600; padding: 0.6rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i class="bi bi-eye" style="color: #0369a1;"></i> Submissions ({{ p.submission_count }})
           </a>
         </div>
 
@@ -95,8 +95,8 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem; text-align: center;">
-    <p style="color: #94a3b8; font-size: 1rem; margin: 0;">No projects assigned to your cohorts yet.</p>
+  <div class="glass-card" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; text-align: center;">
+    <p style="color: var(--text-dim); font-size: 1rem; margin: 0;">No projects assigned to your cohorts yet.</p>
   </div>
 {% endif %}
 {% endblock %}

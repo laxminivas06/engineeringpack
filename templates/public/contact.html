@@ -1,94 +1,105 @@
 {% extends 'base.html' %}
 
-{% block title %}Contact Us — ENGINEERING PACK{% endblock %}
+{% block title %}Contact Us — {{ settings.company }}{% endblock %}
 
 {% block content %}
 <section style="padding: 3rem 0 2rem;">
   <div class="container">
     <div class="section-header">
-      <div class="tech-badge"><i class="bi bi-envelope-fill"></i> Support & Enquiries</div>
-      <h1 class="section-title">Get in <span class="text-gradient">Touch</span></h1>
-      <p class="section-subtitle">Have questions about the 45-day program or registration? Send us a message.</p>
+      <div class="tech-badge" style="background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700;"><i class="bi bi-envelope-fill me-1"></i> Support & Enquiries</div>
+      <h1 class="section-title" style="color: var(--text-main); font-weight: 800;">Get in <span class="text-gradient">Touch</span></h1>
+      <p class="section-subtitle" style="color: var(--text-dim);">Have questions about our engineering exposure programs or registration? Send us a message.</p>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; max-width: 1050px; margin: 0 auto 4rem;">
       <!-- CONTACT FORM -->
-      <div class="glass-card">
-        <h2 style="font-size: 1.4rem; margin-bottom: 1.5rem;">Send Us a Message</h2>
+      <div class="glass-card" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 2rem;">
+        <h2 style="font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--text-main); font-weight: 800;">Send Us a Message</h2>
         <form action="{{ url_for('public.contact') }}" method="POST">
-          <div class="form-group">
-            <label class="form-label" for="name">Full Name *</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Alex Johnson" required>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="name" style="color: var(--text-main); font-weight: 700;">Full Name *</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Alex Johnson" required style="background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-main); width: 100%; padding: 0.65rem; border-radius: 8px;">
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="email">Email Address *</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="e.g. alex@example.com" required>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="email" style="color: var(--text-main); font-weight: 700;">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="e.g. alex@example.com" required style="background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-main); width: 100%; padding: 0.65rem; border-radius: 8px;">
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="phone" style="color: var(--text-main); font-weight: 700;">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210" style="background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-main); width: 100%; padding: 0.65rem; border-radius: 8px;">
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="subject">Subject</label>
-            <input type="text" id="subject" name="subject" class="form-control" placeholder="Program Enquiry / Registration">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="subject" style="color: var(--text-main); font-weight: 700;">Subject</label>
+            <input type="text" id="subject" name="subject" class="form-control" placeholder="Program Enquiry / Registration" style="background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-main); width: 100%; padding: 0.65rem; border-radius: 8px;">
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="message">Your Message *</label>
-            <textarea id="message" name="message" class="form-control" placeholder="How can we help you?" required></textarea>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="message" style="color: var(--text-main); font-weight: 700;">Your Message *</label>
+            <textarea id="message" name="message" class="form-control" placeholder="How can we help you?" required style="background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-main); width: 100%; padding: 0.65rem; border-radius: 8px; min-height: 120px;"></textarea>
           </div>
 
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-            <i class="bi bi-send-fill"></i> Submit Message
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; font-weight: 700;">
+            <i class="bi bi-send-fill me-1"></i> Submit Message
           </button>
         </form>
       </div>
 
       <!-- COMPANY INFO CARD -->
       <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-        <div class="glass-card">
-          <h2 style="font-size: 1.4rem; margin-bottom: 1.25rem;">Corporate Headquarters</h2>
+        <div class="glass-card" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 2rem;">
+          <h2 style="font-size: 1.4rem; margin-bottom: 1.25rem; color: var(--text-main); font-weight: 800;">Corporate Headquarters</h2>
           <div style="display: flex; flex-direction: column; gap: 1.25rem;">
             <div style="display: flex; gap: 1rem; align-items: flex-start;">
-              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-building"></i></div>
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-building"></i></div>
               <div>
-                <strong style="color: var(--text-main); display: block;">{{ site_settings.company }}</strong>
+                <strong style="color: var(--text-main); display: block; font-weight: 800;">{{ settings.company }}</strong>
                 <span style="font-size: 0.88rem; color: var(--text-muted);">Automation & Engineering Platform Provider</span>
               </div>
             </div>
 
             <div style="display: flex; gap: 1rem; align-items: flex-start;">
-              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-envelope"></i></div>
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-globe2"></i></div>
               <div>
-                <strong style="color: var(--text-main); display: block;">Email Support</strong>
-                <a href="mailto:{{ site_settings.support_email }}" style="font-size: 0.9rem;">{{ site_settings.support_email }}</a>
+                <strong style="color: var(--text-main); display: block; font-weight: 800;">Website</strong>
+                <a href="https://www.aivontraa.com" target="_blank" rel="noopener" style="font-size: 0.9rem; color: #0369a1; font-weight: 700;">www.aivontraa.com</a>
               </div>
             </div>
 
             <div style="display: flex; gap: 1rem; align-items: flex-start;">
-              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-telephone"></i></div>
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-envelope"></i></div>
               <div>
-                <strong style="color: var(--text-main); display: block;">Phone Helpline</strong>
-                <span style="font-size: 0.9rem; color: var(--text-muted);">{{ site_settings.support_phone }}</span>
+                <strong style="color: var(--text-main); display: block; font-weight: 800;">Email Support</strong>
+                <a href="mailto:{{ settings.support_email }}" style="font-size: 0.9rem; color: #0369a1; font-weight: 700;">{{ settings.support_email }}</a>
               </div>
             </div>
 
             <div style="display: flex; gap: 1rem; align-items: flex-start;">
-              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem;"><i class="bi bi-geo-alt"></i></div>
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-telephone"></i></div>
               <div>
-                <strong style="color: var(--text-main); display: block;">Location</strong>
-                <span style="font-size: 0.88rem; color: var(--text-muted);">AIVONTRAA Tech Park, Innovation Hub, India</span>
+                <strong style="color: var(--text-main); display: block; font-weight: 800;">Phone Helplines</strong>
+                <div style="font-size: 0.9rem; color: #0369a1; font-weight: 700; display: flex; flex-direction: column; gap: 0.2rem;">
+                  <a href="tel:+919059160424" style="color: #0369a1;"><i class="bi bi-phone me-1"></i> +91 9059160424</a>
+                  <a href="tel:+917993976247" style="color: #0369a1;"><i class="bi bi-phone me-1"></i> +91 7993976247</a>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="card-icon" style="width: 42px; height: 42px; font-size: 1.2rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-geo-alt"></i></div>
+              <div>
+                <strong style="color: var(--text-main); display: block; font-weight: 800;">Location</strong>
+                <span style="font-size: 0.88rem; color: var(--text-muted);">{{ settings.company_address or 'Hyderabad, Telangana, India' }}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="glass-card" style="border-color: var(--border-accent);">
-          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;"><i class="bi bi-clock-history text-gradient"></i> Support Hours</h3>
-          <p style="font-size: 0.88rem; color: var(--text-muted);">Monday – Saturday: 9:00 AM – 7:00 PM IST</p>
+        <div class="glass-card" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 800;"><i class="bi bi-clock-history text-gradient me-1"></i> Support Hours</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Monday – Saturday: 9:00 AM – 7:00 PM IST</p>
         </div>
       </div>
     </div>

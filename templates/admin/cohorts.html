@@ -43,24 +43,24 @@
 </div>
 
 <!-- COHORTS GRID -->
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+<div data-paginate="true" data-page-size="6" id="adminCohortsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
   {% for c in cohorts %}
   <div class="glass-card" style="padding: 1.75rem; position: relative;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
       <div>
-        <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem;">{{ c.product_name }}</span>
-        <h2 style="font-size: 1.35rem; font-weight: 700; color: #fff; margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ c.name }}</h2>
+        <span class="tech-badge" style="background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700; font-size: 0.72rem;">{{ c.product_name }}</span>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ c.name }}</h2>
         <span style="font-size: 0.8rem; color: var(--text-dim);">ID: {{ c.id }}</span>
       </div>
       <div>
         {% if c.status == 'Active' %}
-          <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">ACTIVE</span>
+          <span class="tech-badge" style="background: rgba(16, 185, 129, 0.2); color: #059669; border-color: rgba(16, 185, 129, 0.4);">ACTIVE</span>
         {% elif c.status == 'Full' %}
-          <span class="tech-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: rgba(239, 68, 68, 0.4);">FULL</span>
+          <span class="tech-badge" style="background: rgba(239, 68, 68, 0.2); color: #dc2626; border-color: rgba(239, 68, 68, 0.4);">FULL</span>
         {% elif c.status == 'Completed' %}
           <span class="tech-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border-color: rgba(168, 85, 247, 0.4);">COMPLETED</span>
         {% else %}
-          <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">UPCOMING</span>
+          <span class="tech-badge" style="background: rgba(245, 158, 11, 0.2); color: #d97706; border-color: rgba(245, 158, 11, 0.4);">UPCOMING</span>
         {% endif %}
       </div>
     </div>
@@ -71,18 +71,18 @@
     <div style="margin-bottom: 1.25rem;">
       <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.4rem;">
         <span style="color: var(--text-dim);">Seat Capacity</span>
-        <strong style="color: #fff;">{{ c.current_enrollment }} / {{ c.max_capacity }} Students</strong>
+        <strong style="color: var(--text-main);">{{ c.current_enrollment }} / {{ c.max_capacity }} Students</strong>
       </div>
       <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
         {% set pct = (c.current_enrollment / c.max_capacity * 100) if c.max_capacity > 0 else 0 %}
-        <div style="width: {{ pct }}%; height: 100%; background: {% if pct >= 100 %}#ef4444{% else %}#38bdf8{% endif %}; transition: width 0.3s ease;"></div>
+        <div style="width: {{ pct }}%; height: 100%; background: #0369a1; transition: width 0.3s ease;"></div>
       </div>
     </div>
 
     <!-- DATES -->
-    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.25rem; background: rgba(15,23,42,0.5); padding: 0.5rem 0.75rem; border-radius: 6px;">
-      <div><i class="bi bi-calendar-event me-1"></i> Start: {{ c.start_date }}</div>
-      <div><i class="bi bi-calendar-check me-1"></i> End: {{ c.end_date }}</div>
+    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-main); margin-bottom: 1.25rem; background: var(--bg-surface); border: 1px solid var(--border-color); padding: 0.55rem 0.85rem; border-radius: 6px;">
+      <div><i class="bi bi-calendar-event me-1" style="color: #0369a1;"></i> <strong>Start:</strong> {{ c.start_date }}</div>
+      <div><i class="bi bi-calendar-check me-1" style="color: #059669;"></i> <strong>End:</strong> {{ c.end_date }}</div>
     </div>
 
     <!-- ACTIONS -->
@@ -138,8 +138,8 @@
 <div id="createCohortModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
   <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Manually Create Next Cohort</h2>
-      <button onclick="document.getElementById('createCohortModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0; color: var(--text-main);">Manually Create Next Cohort</h2>
+      <button onclick="document.getElementById('createCohortModal').style.display='none'" style="background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer;">&times;</button>
     </div>
 
     <form action="{{ url_for('admin.create_new_cohort') }}" method="POST">
@@ -187,9 +187,9 @@
 
       <div style="margin-bottom: 1rem;">
         <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Projects to this Cohort</label>
-        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="max-height: 120px; overflow-y: auto; background: var(--bg-surface); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
           {% for proj in all_projects %}
-            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: var(--text-main); cursor: pointer;">
               <input type="checkbox" name="assigned_project_ids" value="{{ proj.id }}">
               <span>{{ proj.name or proj.title }} <small style="color: var(--text-dim);">({{ proj.domain or 'Engineering' }})</small></span>
             </label>
@@ -201,9 +201,9 @@
 
       <div style="margin-bottom: 1rem;">
         <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Mentors to this Cohort</label>
-        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="max-height: 120px; overflow-y: auto; background: var(--bg-surface); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
           {% for mnt in all_mentors %}
-            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: var(--text-main); cursor: pointer;">
               <input type="checkbox" name="assigned_mentor_ids" value="{{ mnt.id }}">
               <span>{{ mnt.name }} <small style="color: var(--text-dim);">({{ mnt.designation or 'Mentor' }})</small></span>
             </label>
@@ -238,8 +238,8 @@
 <div id="editCohortModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
   <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;">Edit Cohort Details</h2>
-      <button onclick="document.getElementById('editCohortModal').style.display='none'" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0; color: var(--text-main);">Edit Cohort Details</h2>
+      <button onclick="document.getElementById('editCohortModal').style.display='none'" style="background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer;">&times;</button>
     </div>
 
     <form id="editCohortForm" method="POST">
@@ -286,9 +286,9 @@
 
       <div style="margin-bottom: 1rem;">
         <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Projects to this Cohort</label>
-        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="max-height: 120px; overflow-y: auto; background: var(--bg-surface); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
           {% for proj in all_projects %}
-            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: var(--text-main); cursor: pointer;">
               <input type="checkbox" name="assigned_project_ids" value="{{ proj.id }}">
               <span>{{ proj.name or proj.title }} <small style="color: var(--text-dim);">({{ proj.domain or 'Engineering' }})</small></span>
             </label>
@@ -300,9 +300,9 @@
 
       <div style="margin-bottom: 1rem;">
         <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Assign Mentors to this Cohort</label>
-        <div style="max-height: 120px; overflow-y: auto; background: rgba(8, 12, 20, 0.6); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        <div style="max-height: 120px; overflow-y: auto; background: var(--bg-surface); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color);">
           {% for mnt in all_mentors %}
-            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: #fff; cursor: pointer;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.3rem; color: var(--text-main); cursor: pointer;">
               <input type="checkbox" name="assigned_mentor_ids" value="{{ mnt.id }}">
               <span>{{ mnt.name }} <small style="color: var(--text-dim);">({{ mnt.designation or 'Mentor' }})</small></span>
             </label>

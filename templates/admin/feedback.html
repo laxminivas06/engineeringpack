@@ -22,21 +22,21 @@
 {% block dashboard_content %}
 <div class="dashboard-header" style="margin-bottom: 2rem;">
   <div>
-    <h1 style="font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Platform Student Reviews & Feedback</h1>
+    <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">Platform Student Reviews & Feedback</h1>
     <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Monitor student reviews submitted for specific mentors and overall cohorts across all programs.</p>
   </div>
 </div>
 
 <div class="glass-card" style="padding: 1.75rem;">
-  <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">
+  <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.25rem;">
     All Student Feedback Submissions ({{ reviews|length }})
   </h3>
 
   {% if reviews %}
     <div style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+      <table data-paginate="true" data-page-size="10" id="adminFeedbackTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
         <thead>
-          <tr style="background: rgba(30, 41, 59, 0.8); color: var(--text-dim); border-bottom: 1px solid var(--border-color);">
+          <tr style="background: var(--bg-surface); color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
             <th style="padding: 0.85rem 1rem;">Student</th>
             <th style="padding: 0.85rem 1rem;">Scope</th>
             <th style="padding: 0.85rem 1rem;">Target (Mentor / Cohort)</th>

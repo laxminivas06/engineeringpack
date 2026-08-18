@@ -7,23 +7,23 @@
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 :root {
-  /* Color Palette */
-  --bg-dark: #080c14;
-  --bg-surface: #0d1322;
-  --bg-card: rgba(18, 26, 43, 0.75);
-  --bg-card-hover: rgba(26, 37, 60, 0.85);
-  --bg-elevated: #162035;
+  /* Default Light Theme Palette (Dark Blue Accents) */
+  --bg-dark: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-elevated: #f1f5f9;
   
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(0, 242, 254, 0.25);
-  --border-glow: rgba(0, 242, 254, 0.5);
+  --border-color: #e2e8f0;
+  --border-accent: rgba(3, 105, 161, 0.35);
+  --border-glow: rgba(3, 105, 161, 0.2);
 
-  /* Primary Accents & Gradients */
-  --primary-cyan: #00f2fe;
-  --primary-blue: #4facfe;
-  --gradient-cyan-blue: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  --gradient-accent-purple: linear-gradient(135deg, #7928ca 0%, #ff0080 100%);
-  --gradient-card-glow: radial-gradient(circle at top left, rgba(0, 242, 254, 0.15), transparent 60%);
+  /* Primary Accents & Gradients (Rich Dark Blue) */
+  --primary-cyan: #0369a1;
+  --primary-blue: #1e3a8a;
+  --gradient-cyan-blue: linear-gradient(135deg, #1e40af 0%, #0369a1 100%);
+  --gradient-accent-purple: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(2, 132, 199, 0.08), transparent 60%);
 
   /* Status Colors */
   --color-success: #10b981;
@@ -32,10 +32,10 @@
   --color-info: #3b82f6;
 
   /* Typography Colors */
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-main: #0f172a;
+  --text-muted: #475569;
   --text-dim: #64748b;
-  --text-inverse: #080c14;
+  --text-inverse: #ffffff;
 
   /* Typography Fonts */
   --font-heading: 'Outfit', -apple-system, sans-serif;
@@ -43,16 +43,50 @@
   --font-mono: 'Fira Code', monospace;
 
   /* Spacing & Heights */
-  --nav-height: 72px;
+  --header-height: 70px;
+  --nav-height: var(--header-height);
+  --sidebar-width: 260px;
   --container-max: 1240px;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-full: 9999px;
+  --z-header: 1000;
+  --z-sidebar: 900;
+  --z-drawer: 1050;
+  --z-backdrop: 1040;
+  --z-alert: 1100;
 
-  /* Transitions & Shadows */
+  /* Shadows */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.15);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark Theme Palette */
+[data-theme="dark"] {
+  --bg-dark: #080c14;
+  --bg-surface: #0d1322;
+  --bg-card: rgba(18, 26, 43, 0.85);
+  --bg-card-hover: rgba(26, 37, 60, 0.9);
+  --bg-elevated: #162035;
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(0, 242, 254, 0.25);
+  --border-glow: rgba(0, 242, 254, 0.5);
+
+  --primary-cyan: #00f2fe;
+  --primary-blue: #4facfe;
+  --gradient-cyan-blue: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  --gradient-accent-purple: linear-gradient(135deg, #7928ca 0%, #ff0080 100%);
+  --gradient-card-glow: radial-gradient(circle at top left, rgba(0, 242, 254, 0.15), transparent 60%);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-inverse: #080c14;
+
   --shadow-glow: 0 0 25px rgba(0, 242, 254, 0.2);
   --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.4);
 }

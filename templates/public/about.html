@@ -6,6 +6,11 @@
 <section style="padding: 3.5rem 0 2rem;">
   <div class="container">
     <div class="section-header" style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">
+      <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+        <div style="width: clamp(75px, 10vw, 100px); height: clamp(75px, 10vw, 100px); border-radius: 50%; border: 3px solid #0369a1; padding: 4px; background: var(--bg-surface); box-shadow: 0 6px 20px rgba(3, 105, 161, 0.2); display: flex; align-items: center; justify-content: center;">
+          <img src="{{ url_for('static', filename='images/logo/roundlogo.png') }}" alt="{{ site_settings.company }} Round Logo" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/logo/logo.png') }}';" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+        </div>
+      </div>
       <span class="tech-badge" style="margin-bottom: 0.75rem;"><i class="bi bi-info-circle-fill me-1"></i> About Our Organization</span>
       <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
         About <span class="text-gradient">AIVONTRAA</span>
@@ -17,7 +22,7 @@
 
     <!-- MISSION CARD -->
     <div class="glass-card" style="padding: 3rem; margin-bottom: 3.5rem;">
-      <h2 style="font-size: 1.8rem; margin-bottom: 1.25rem; font-weight: 700; color: #fff;">
+      <h2 style="font-size: 1.8rem; margin-bottom: 1.25rem; font-weight: 700; color: var(--text-main);">
         Building Industry-Ready Engineers & Technical Founders
       </h2>
       <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.5rem;">
@@ -27,12 +32,12 @@
       <!-- 8-STAGE STUDENT DEVELOPMENT GRID -->
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 2rem;">
         {% for step in lifecycle_steps %}
-          <div class="glass-card" style="text-align: left; padding: 1.5rem; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color);">
+          <div class="glass-card" style="text-align: left; padding: 1.5rem; background: var(--bg-surface); border: 1px solid var(--border-accent);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
               <span class="tech-badge" style="font-size: 0.75rem; background: rgba(0, 242, 254, 0.1); color: var(--primary-cyan);">Pillar {{ step.num }}</span>
               <i class="bi bi-{{ step.icon }} text-gradient" style="font-size: 1.4rem;"></i>
             </div>
-            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff;">{{ step.title }}</h3>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-main);">{{ step.title }}</h3>
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">{{ step.desc }}</p>
           </div>
         {% endfor %}
@@ -54,7 +59,7 @@
               <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(0, 242, 254, 0.1); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--primary-cyan);">
                 <i class="bi bi-{{ pillar.icon }}"></i>
               </div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: #fff;">{{ pillar.title }}</h3>
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-main);">{{ pillar.title }}</h3>
             </div>
             <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin: 0;">{{ pillar.description }}</p>
           </div>

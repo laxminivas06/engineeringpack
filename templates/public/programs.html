@@ -5,33 +5,38 @@
 {% block content %}
 <section class="hero-section tech-grid-bg" style="padding: 4rem 0 3rem;">
   <div class="container text-center">
-    <div class="tech-badge" style="margin-bottom: 1rem;">
-      <i class="bi bi-box-seam-fill"></i> Dynamic Learning Programs
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+      <div style="width: clamp(75px, 10vw, 100px); height: clamp(75px, 10vw, 100px); border-radius: 50%; border: 3px solid #0369a1; padding: 4px; background: var(--bg-surface); box-shadow: 0 6px 20px rgba(3, 105, 161, 0.2); display: flex; align-items: center; justify-content: center;">
+        <img src="{{ url_for('static', filename='images/logo/roundlogo.png') }}" alt="{{ site_settings.company }} Round Logo" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/logo/logo.png') }}';" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+      </div>
     </div>
-    <h1 class="hero-title" style="max-width: 850px; margin: 0 auto 1rem;">
+    <div class="tech-badge" style="margin-bottom: 1rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700;">
+      <i class="bi bi-box-seam-fill me-1"></i> Dynamic Learning Programs
+    </div>
+    <h1 class="hero-title" style="max-width: 850px; margin: 0 auto 1rem; color: var(--text-main); font-weight: 800;">
       Empowering Every Student with <span class="text-gradient">Structured Engineering Programs</span>
     </h1>
-    <p class="hero-description" style="max-width: 720px; margin: 0 auto 2rem;">
+    <p class="hero-description" style="max-width: 720px; margin: 0 auto 2rem; color: var(--text-dim);">
       From first-principles STEM logic to advanced distributed cloud architectures and robotics, explore our specialized programs built for hands-on technical mastery.
     </p>
 
     <!-- PUBLIC AGGREGATED STATS STRIP -->
     <div class="hero-stats-grid" style="max-width: 900px; margin: 2.5rem auto 0; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.active_programs }}</div>
-        <div class="stat-label">Active Programs</div>
+      <div class="stat-card" style="background: var(--bg-surface); border: 1px solid var(--border-color);">
+        <div class="stat-number" style="color: var(--text-main); font-weight: 800;">{{ stats.active_programs }}</div>
+        <div class="stat-label" style="color: var(--text-dim);">Active Programs</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.total_registered }}+</div>
-        <div class="stat-label">Registered Members</div>
+      <div class="stat-card" style="background: var(--bg-surface); border: 1px solid var(--border-color);">
+        <div class="stat-number" style="color: #0369a1; font-weight: 800;">{{ stats.total_registered }}+</div>
+        <div class="stat-label" style="color: var(--text-dim);">Registered Members</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.completed_cohorts }}</div>
-        <div class="stat-label">Completed Cohorts</div>
+      <div class="stat-card" style="background: var(--bg-surface); border: 1px solid var(--border-color);">
+        <div class="stat-number" style="color: #059669; font-weight: 800;">{{ stats.completed_cohorts }}</div>
+        <div class="stat-label" style="color: var(--text-dim);">Completed Cohorts</div>
       </div>
-      <div class="stat-card" style="border-color: var(--border-accent);">
-        <div class="stat-number">100%</div>
-        <div class="stat-label">Practical Outcomes</div>
+      <div class="stat-card" style="background: var(--bg-surface); border: 1px solid var(--border-color);">
+        <div class="stat-number" style="color: #7c3aed; font-weight: 800;">100%</div>
+        <div class="stat-label" style="color: var(--text-dim);">Practical Outcomes</div>
       </div>
     </div>
   </div>
@@ -41,14 +46,14 @@
 <section style="padding: 4rem 0 5rem;">
   <div class="container">
     <div class="section-header">
-      <div class="tech-badge"><i class="bi bi-grid-3x3-gap-fill"></i> Choose Your Path</div>
-      <h2 class="section-title">Explore <span class="text-gradient">Our Programs</span></h2>
-      <p class="section-subtitle">Select any program to view full overview, modules, curriculum roadmap, outcomes, and enrollment options.</p>
+      <div class="tech-badge" style="background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700;"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Choose Your Path</div>
+      <h2 class="section-title" style="color: var(--text-main); font-weight: 800;">Explore <span class="text-gradient">Our Programs</span></h2>
+      <p class="section-subtitle" style="color: var(--text-dim);">Select any program to view full overview, modules, curriculum roadmap, outcomes, and pricing details.</p>
     </div>
 
     <div class="domains-grid" style="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;">
       {% for prod in products %}
-        <div class="glass-card domain-card" style="padding: 2rem; display: flex; flex-direction: column; position: relative; border-top: 3px solid var(--primary-cyan);">
+        <div class="glass-card domain-card" style="padding: 2rem; display: flex; flex-direction: column; position: relative; border-top: 3px solid #0369a1; background: var(--bg-surface); border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-radius: 12px;">
           {% if prod.banner_image_url %}
             <div style="width: 100%; height: 160px; overflow: hidden; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
               <img src="{{ prod.banner_image_url }}" alt="{{ prod.name }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -57,12 +62,9 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
             <div>
-              <span class="tech-badge" style="font-size: 0.75rem;"><i class="bi bi-clock"></i> {{ prod.duration_days }} Days Program</span>
-              <h3 style="font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0.25rem;">{{ prod.name }}</h3>
-              <p style="font-size: 0.88rem; color: var(--primary-cyan); font-weight: 500; margin: 0;">{{ prod.tagline }}</p>
-            </div>
-            <div style="font-size: 1.4rem; font-weight: 800; color: #34d399; font-family: var(--font-heading);">
-              {{ prod.currency_symbol }}{{ "{:,.0f}".format(prod.price) }}
+              <span class="tech-badge" style="font-size: 0.75rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700;"><i class="bi bi-clock me-1"></i> {{ prod.duration_days }} Days Program</span>
+              <h3 style="font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 0.25rem; color: var(--text-main); font-weight: 800;">{{ prod.name }}</h3>
+              <p style="font-size: 0.88rem; color: #0369a1; font-weight: 600; margin: 0;">{{ prod.tagline }}</p>
             </div>
           </div>
 
@@ -71,7 +73,7 @@
           </p>
 
           <div style="display: flex; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-            <a href="{{ url_for('public.program_detail', product_id_or_slug=prod.slug or prod.id) }}" class="btn btn-primary btn-block" style="text-align: center;">
+            <a href="{{ url_for('public.program_detail', product_id_or_slug=prod.slug or prod.id) }}" class="btn btn-primary btn-block" style="text-align: center; font-weight: 700; width: 100%;">
               <i class="bi bi-eye-fill me-1"></i> View Program Details
             </a>
           </div>

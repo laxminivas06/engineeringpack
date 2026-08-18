@@ -18,13 +18,21 @@ cohorts_db = JSONDatabase('cohorts')
 def get_site_settings():
     settings = settings_db.read_all()
     if isinstance(settings, list) and len(settings) > 0:
-        return settings[0]
-    return {
-        "company": "AIVONTRAA Automation Pvt. Ltd.",
-        "currency_symbol": "₹",
-        "support_email": "hello.aivontraa@gmail.com",
-        "support_phone": "+91 9876543210"
-    }
+        s = dict(settings[0])
+    else:
+        s = {
+            "company": "AIVONTRAA Automation Pvt. Ltd.",
+            "currency_symbol": "₹",
+            "support_email": "hello.aivontraa@gmail.com",
+            "support_phone": "+91 9059160424, +91 7993976247"
+        }
+    s["company_website"] = "https://www.aivontraa.com"
+    s["company_website_display"] = "www.aivontraa.com"
+    s["support_phone"] = "+91 9059160424, +91 7993976247"
+    s["phone1"] = "+91 9059160424"
+    s["phone2"] = "+91 7993976247"
+    s.setdefault("company_address", "Hyderabad, Telangana, India")
+    return s
 
 
 def get_public_stats():
@@ -238,6 +246,7 @@ def pricing():
     return render_template('public/pricing.html', products=products, settings=settings)
 
 
+
 @public_bp.route('/contact', methods=['GET', 'POST'])
 def contact():
     settings = get_site_settings()
@@ -266,3 +275,28 @@ def contact():
         return redirect(url_for('public.contact'))
 
     return render_template('public/contact.html', settings=settings)
+
+
+@public_bp.route('/privacy-policy')
+def privacy_policy():
+    settings = get_site_settings()
+    return render_template('public/privacy_policy.html', settings=settings)
+
+
+@public_bp.route('/terms-of-service')
+def terms_of_service():
+    settings = get_site_settings()
+    return render_template('public/terms_of_service.html', settings=settings)
+
+
+@public_bp.route('/copyright-policy')
+def copyright_policy():
+    settings = get_site_settings()
+    return render_template('public/copyright_policy.html', settings=settings)
+
+
+@public_bp.route('/disclaimer')
+def disclaimer():
+    settings = get_site_settings()
+    return render_template('public/disclaimer.html', settings=settings)
+

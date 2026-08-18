@@ -43,7 +43,7 @@
 </div>
 
 <!-- ANNOUNCEMENTS LIST -->
-<div style="display: grid; gap: 1.25rem; margin-bottom: 3rem;">
+<div data-paginate="true" data-page-size="5" id="adminAnnouncementsList" style="display: grid; gap: 1.25rem; margin-bottom: 2rem;">
   {% for ann in announcements %}
   <div class="glass-card" style="padding: 1.5rem; position: relative;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Legal Disclaimer — {{ settings.company }}{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 0 5rem;">
+  <div class="container" style="max-width: 920px;">
+    <div class="section-header text-center" style="margin-bottom: 3rem;">
+      <span class="tech-badge" style="margin-bottom: 0.75rem; background: rgba(3, 105, 161, 0.15); color: #0369a1; font-weight: 700;">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> Legal Compliance & Notice
+      </span>
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+        Legal Disclaimer
+      </h1>
+      <p style="color: var(--text-dim); font-size: 1.05rem;">
+        Official Corporate & Service Delivery Disclaimer | {{ settings.company }}
+      </p>
+    </div>
+
+    <div class="glass-card" style="padding: 2.5rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+      
+      <div style="background: rgba(3, 105, 161, 0.08); border-left: 4px solid #0369a1; padding: 1.25rem 1.5rem; border-radius: 8px; margin-bottom: 2rem; font-size: 1rem; color: var(--text-main); font-weight: 700; line-height: 1.6;">
+        AIVONTRAA Automation Private Limited (“AIVONTRAA”) is a Private Limited Company established on 29 June 2026 under applicable laws of India.
+      </div>
+
+      <div style="font-size: 0.96rem; color: var(--text-muted); line-height: 1.8; display: flex; flex-direction: column; gap: 1.5rem;">
+        <p>
+          The information, software, features, content, tools, and services provided through 
+          <strong style="color: var(--text-main);">AIVONTRAA ENGINEERING PACK</strong> platform are intended for general informational and service-delivery purposes.
+        </p>
+
+        <p>
+          While AIVONTRAA makes reasonable efforts to maintain accurate, reliable, and secure Services, we do not guarantee that all information will always be complete, accurate, current, uninterrupted, or error-free.
+        </p>
+
+        <p>
+          Certain features may depend on third-party services, APIs, infrastructure, internet connectivity, payment providers, hosting providers, or other external systems. AIVONTRAA is not responsible for failures caused by independent third-party services beyond its reasonable control.
+        </p>
+
+        <p>
+          Users are responsible for reviewing information before relying upon it for decisions or actions.
+        </p>
+
+        <p>
+          Nothing on the platform should be interpreted as creating a professional, legal, financial, medical, or other specialised advisory relationship unless expressly stated.
+        </p>
+
+        <p>
+          To the maximum extent permitted by applicable law, AIVONTRAA Automation Private Limited disclaims liability for losses arising from reliance on information or services provided through the platform, subject to rights and liabilities that cannot legally be excluded.
+        </p>
+
+        <p>
+          All intellectual property rights in the platform and its proprietary materials belong to or are lawfully licensed to AIVONTRAA Automation Private Limited.
+        </p>
+      </div>
+
+      <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+          <i class="bi bi-building-fill me-1" style="color: #0369a1;"></i> Contact & Corporate Information
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.5rem;">
+          For questions regarding legal, privacy, copyright, or intellectual-property matters, contact:
+        </p>
+        
+        <div style="background: var(--bg-card-hover); padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.92rem; color: var(--text-main); display: flex; flex-direction: column; gap: 0.4rem;">
+          <strong style="font-size: 1.05rem; color: #0369a1; font-weight: 800;">AIVONTRAA Automation Private Limited</strong>
+          <div><strong style="color: var(--text-main);">Established:</strong> 29 June 2026</div>
+          <div><strong style="color: var(--text-main);">Website:</strong> <a href="https://www.aivontraa.com" target="_blank" rel="noopener" style="color: #0369a1; font-weight: 700;">www.aivontraa.com</a></div>
+          <div><strong style="color: var(--text-main);">Email:</strong> <a href="mailto:{{ settings.support_email }}" style="color: #0369a1; font-weight: 700;">{{ settings.support_email }}</a></div>
+          <div><strong style="color: var(--text-main);">Phones:</strong> <a href="tel:+919059160424" style="color: #0369a1; font-weight: 700;">+91 9059160424</a>, <a href="tel:+917993976247" style="color: #0369a1; font-weight: 700;">+91 7993976247</a></div>
+        </div>
+
+        <div style="margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-dim); text-align: center; font-weight: 600;">
+          Copyright © 2026 AIVONTRAA Automation Private Limited. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

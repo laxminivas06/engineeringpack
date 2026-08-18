@@ -43,13 +43,13 @@
 </div>
 
 <!-- PROJECTS GRID -->
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+<div data-paginate="true" data-page-size="6" id="adminProjectsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
   {% for proj in projects %}
   <div class="glass-card" style="padding: 1.75rem; position: relative;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
       <div>
         <span class="tech-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-size: 0.72rem;">{{ proj.domain }}</span>
-        <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ proj.name }}</h3>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 0.4rem; margin-bottom: 0.25rem;">{{ proj.name }}</h3>
       </div>
       <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
         <i class="bi bi-{{ proj.icon or 'layers' }}"></i>
@@ -58,12 +58,12 @@
 
     <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 1.25rem;">{{ proj.description }}</p>
 
-    <div style="background: rgba(15, 23, 42, 0.6); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: #34d399; margin-bottom: 1.25rem;">
-      <i class="bi bi-trophy me-1"></i> <strong>Outcome:</strong> {{ proj.outcome or 'Portfolio artifact' }}
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-accent); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: var(--text-main); margin-bottom: 1.25rem;">
+      <i class="bi bi-trophy me-1" style="color: #10b981;"></i> <strong>Outcome:</strong> {{ proj.outcome or 'Portfolio artifact' }}
     </div>
 
     <!-- TARGET SCOPE -->
-    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); pt-2;">
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem;">
       <span>Central Repository Project <strong style="color: #38bdf8;">(Attachable to any Cohort)</strong></span>
     </div>
 

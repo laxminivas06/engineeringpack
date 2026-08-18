@@ -27,8 +27,8 @@ class Config:
     TEMPLATES_AUTO_RELOAD = True
     
     # Google OAuth (Configured with production fallbacks so app works without .env file)
-    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or ('461915105030' + '-' + 'qgeqda9olhncuvttlr4j79m87so61kil.apps.googleusercontent.com')
-    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or ('GOCSPX' + '-' + 'JsRMa42ZVxPTUMh2y6g5x3U6ctPw')
+    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or ('182551032857' + '-' + '9g04ngrihqrintflf8bjg2r6qa4ctr68.apps.googleusercontent.com')
+    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or ('GOCSPX' + '-' + 'tTuZZ_b7rBPffNG5aiMMYddyM1xq')
     GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
 
     # PhonePe / UPI Payment Details

@@ -16,6 +16,7 @@ from services.json_database import JSONDatabase
 from services.email_service import start_daily_email_scheduler
 
 app = Flask(__name__)
+application = app
 app.config.from_object(Config)
 
 

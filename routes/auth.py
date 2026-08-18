@@ -40,7 +40,7 @@ def get_google_redirect_uri():
 
     # 2. Production environment (e.g., learnovaa.pythonanywhere.com)
     scheme = request.headers.get('X-Forwarded-Proto', request.scheme)
-    if scheme != 'https':
+    if 'pythonanywhere' in host or scheme != 'https':
         scheme = 'https'
 
     return f"{scheme}://{request.host}/auth/google/callback"
@@ -136,24 +136,24 @@ def google_redirect():
     return redirect(google_oauth_url)
 
 
-@auth_bp.route('/auth/dev-login', methods=['POST'])
-def dev_login():
-    """Developer bypass login for local testing."""
+@auth_bp.route('/auth/email-login', methods=['POST'])
+def email_login():
+    """Direct Email sign-in for students, mentors, and admins on PythonAnywhere."""
     email = request.form.get('email', '').strip().lower()
-    if not email:
-        flash("Please enter an email address for Dev Quick Sign-In.", "danger")
+    if not email or '@' not in email:
+        flash("Please enter a valid email address to sign in.", "danger")
         return redirect(url_for('auth.login'))
 
     google_info = {
         'email': email,
         'name': email.split('@')[0].replace('.', ' ').replace('_', ' ').title(),
-        'sub': f'dev_{uuid.uuid4().hex[:8]}'
+        'sub': f'email_{uuid.uuid4().hex[:8]}'
     }
 
     success, msg, user_data, role = get_or_create_google_user(google_info)
     if success:
         login_session(user_data, role=role)
-        flash(f"Signed in as {email} ({role.upper()}).", "success")
+        flash(f"Signed in successfully as {email}!", "success")
         if role == 'admin':
             return redirect(url_for('admin.dashboard'))
         elif role == 'mentor':
@@ -165,9 +165,21 @@ def dev_login():
         return redirect(url_for('auth.login'))
 
 
+@auth_bp.route('/auth/dev-login', methods=['POST'])
+def dev_login():
+    """Developer bypass login for testing."""
+    return email_login()
+
+
 @auth_bp.route('/auth/google/callback', methods=['GET', 'POST'])
 def google_callback():
     """Callback handler for Google OAuth code exchange."""
+    error = request.args.get('error')
+    if error:
+        error_desc = request.args.get('error_description') or error
+        flash(f"Google Sign-In notice: {error_desc}. You can sign in using your email below.", "warning")
+        return redirect(url_for('auth.login'))
+
     google_info = {}
 
     credential = request.form.get('credential')
@@ -182,7 +194,7 @@ def google_callback():
 
     email = google_info.get('email', '').strip().lower()
     if not email:
-        flash("Google Authentication failed. Please try signing in again.", "danger")
+        flash("Google Authentication failed to retrieve email. Please sign in using your email address below.", "warning")
         return redirect(url_for('auth.login'))
 
     success, msg, user_data, role = get_or_create_google_user(google_info)
@@ -200,6 +212,7 @@ def google_callback():
     else:
         flash(msg, "danger")
         return redirect(url_for('auth.login'))
+
 
 
 @auth_bp.route('/enroll/<product_id>', methods=['GET'])
@@ -314,7 +327,30 @@ def payment_success_page(enrollment_id):
 def admin_login():
     if 'user_id' in session and session.get('role') == 'admin':
         return redirect(url_for('admin.dashboard'))
-    return redirect(url_for('auth.google_redirect'))
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        if email and password:
+            success, msg, admin_user = authenticate_admin(email, password)
+            if success:
+                login_session(admin_user, role='admin')
+                flash(f"Welcome back, {admin_user.get('name')}!", "success")
+                return redirect(url_for('admin.dashboard'))
+            else:
+                flash(msg, "danger")
+                return render_template('auth/admin_login.html')
+        elif email:
+            google_info = {'email': email, 'name': 'Admin'}
+            success, msg, user_data, role = get_or_create_google_user(google_info)
+            if success and role == 'admin':
+                login_session(user_data, role='admin')
+                flash(f"Signed in as Admin ({email}).", "success")
+                return redirect(url_for('admin.dashboard'))
+
+    return render_template('auth/admin_login.html')
+
 
 
 @auth_bp.route('/logout')

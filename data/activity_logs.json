@@ -145,5 +145,12 @@
     "title": "Project 'Full-Stack Web Platform' marked as Open",
     "description": "Mentor Laxmi Nivas Morishetty changed project access status to 'Open'.",
     "timestamp": "2026-08-17T20:32:42.062696Z"
+  },
+  {
+    "id": "act_cabea0",
+    "type": "student_registered",
+    "title": "New Student Registered",
+    "description": "Student Test (student.test@example.com) registered for Engineering Pack.",
+    "timestamp": "2026-08-18T09:49:14.612066Z"
   }
 ]

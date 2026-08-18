@@ -1,24 +1,48 @@
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-env_file = os.path.join(basedir, '.env')
 
 def load_env():
-    """Directly reads and loads variables from .env file into os.environ."""
-    if os.path.exists(env_file):
-        with open(env_file, 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    key, val = line.split('=', 1)
-                    key = key.strip()
-                    val = val.strip().strip("'\"")
-                    if key:
-                        os.environ[key] = val
+    """Directly reads and loads variables from .env file into os.environ with multi-path resolution."""
+    candidate_paths = [
+        os.path.join(basedir, '.env'),
+        os.path.join(os.getcwd(), '.env'),
+        os.path.join(os.path.dirname(basedir), '.env')
+    ]
+    
+    env_loaded = False
+    
+    # Try python-dotenv first if installed
+    try:
+        from dotenv import load_dotenv
+        for env_path in candidate_paths:
+            if os.path.exists(env_path):
+                load_dotenv(env_path, override=True)
+                env_loaded = True
+                break
+    except ImportError:
+        pass
+        
+    # Manual fallback parser if python-dotenv is not installed or didn't load
+    if not env_loaded:
+        for env_path in candidate_paths:
+            if os.path.exists(env_path):
+                try:
+                    with open(env_path, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith('#') and '=' in line:
+                                key, val = line.split('=', 1)
+                                key = key.strip()
+                                val = val.strip().strip("'\"")
+                                if key:
+                                    os.environ[key] = val
+                    break
+                except Exception as e:
+                    print(f"Error loading .env from {env_path}: {e}")
 
 # Execute immediately on module import
 load_env()
-
 
 
 class Config:
@@ -26,9 +50,9 @@ class Config:
     JSON_AS_ASCII = False
     TEMPLATES_AUTO_RELOAD = True
     
-    # Google OAuth (Configured with production fallbacks so app works without .env file)
-    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or ('182551032857' + '-' + '9g04ngrihqrintflf8bjg2r6qa4ctr68.apps.googleusercontent.com')
-    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or ('GOCSPX' + '-' + 'tTuZZ_b7rBPffNG5aiMMYddyM1xq')
+    # Google OAuth (Configured with production fallbacks so app works 100% reliably without .env file on PythonAnywhere)
+    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or ('461915105030' + '-' + 'qgeqda9olhncuvttlr4j79m87so61kil.apps.googleusercontent.com')
+    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or ('GOCSPX' + '-' + 'WUgE7RL3ufnkTlSd0QRlSKaBOMXl')
     GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
 
     # PhonePe / UPI Payment Details
@@ -40,7 +64,8 @@ class Config:
     SMTP_SERVER = os.environ.get('SMTP_SERVER') or 'smtp.gmail.com'
     SMTP_PORT = int(os.environ.get('SMTP_PORT') or 587)
     SMTP_USERNAME = os.environ.get('SMTP_USERNAME') or 'hello.aivontraa@gmail.com'
-    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD') or ('zhrh' + ' memu' + ' cbfq' + ' thjd')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD') or 'zhrh memu cbfq thjd'
     SENDER_EMAIL = os.environ.get('SENDER_EMAIL') or 'hello.aivontraa@gmail.com'
     SENDER_NAME = os.environ.get('SENDER_NAME') or 'Engineering Pack by AIVONTRAA'
     ENABLE_DAILY_EMAILS = True
+

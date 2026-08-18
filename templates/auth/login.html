@@ -3,37 +3,25 @@
 {% block title %}Sign In — ENGINEERING PACK{% endblock %}
 
 {% block content %}
-<section style="padding: 5rem 0 6rem;" class="tech-grid-bg">
+<section style="padding: 4rem 0 5rem;" class="tech-grid-bg">
   <div class="container">
-    <div style="max-width: 440px; margin: 0 auto;">
+    <div style="max-width: 460px; margin: 0 auto;">
       <div class="glass-card"
-        style="padding: 3.25rem 2.5rem; border-color: var(--border-accent); box-shadow: var(--shadow-glow); text-align: center;">
+        style="padding: 2.75rem 2rem; border-color: var(--border-accent); box-shadow: var(--shadow-glow); text-align: center;">
 
-        <div class="brand-icon" style="width: 58px; height: 58px; margin: 0 auto 1.5rem; font-size: 1.75rem;">
+        <div class="brand-icon" style="width: 58px; height: 58px; margin: 0 auto 1.25rem; font-size: 1.75rem;">
           <i class="bi bi-cpu-fill"></i>
         </div>
 
-        <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Enroll Program</h1>
-        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.5;">
-          Sign in with your Google account to access your program dashboard, curriculum, and live cohorts.
+        <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Welcome Back</h1>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
+          Sign in to access your engineering program dashboard, curriculum, and live cohorts.
         </p>
 
-        {% if not config.GOOGLE_CLIENT_ID or 'YOUR_GOOGLE_CLIENT_ID' in config.GOOGLE_CLIENT_ID %}
-        <!-- UNCONFIGURED GOOGLE OAUTH ALERT -->
-        <div class="alert alert-warning text-start mb-4"
-          style="font-size: 0.85rem; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; padding: 0.85rem 1rem;">
-          <div style="font-weight: 700; margin-bottom: 0.35rem;">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i> Google OAuth Setup Needed
-          </div>
-          Please configure <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in your <code>.env</code>
-          file to enable Google Sign-In.
-        </div>
-        {% endif %}
-
-        <!-- SINGLE UNIFIED GOOGLE OAUTH SIGN-IN BUTTON -->
+        <!-- 1. GOOGLE OAUTH SIGN-IN BUTTON -->
         <div style="margin-bottom: 1.5rem;">
           <a href="{{ url_for('auth.google_redirect') }}" class="btn btn-lg"
-            style="width: 100%; background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.85rem; padding: 0.9rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: all 0.2s ease;">
+            style="width: 100%; background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.85rem; padding: 0.85rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); transition: all 0.2s ease;">
             <svg width="22" height="22" viewBox="0 0 24 24">
               <path fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -48,9 +36,27 @@
           </a>
         </div>
 
-        <div style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.5;">
-          <i class="bi bi-shield-check text-gradient me-1"></i> Unified & Secure Google OAuth Sign-In.<br>No passwords
-          required.
+        <div style="display: flex; align-items: center; gap: 1rem; color: var(--text-dim); font-size: 0.8rem; margin: 1.5rem 0;">
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+          <span>OR DIRECT EMAIL SIGN-IN</span>
+          <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+        </div>
+
+        <!-- 2. DIRECT EMAIL SIGN-IN FORM -->
+        <form action="{{ url_for('auth.email_login') }}" method="POST" style="text-align: left;">
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.85rem;">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Continue with Email
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); font-size: 0.88rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+          <a href="{{ url_for('auth.admin_login') }}" style="color: var(--text-muted); font-size: 0.85rem;"><i class="bi bi-shield-lock me-1"></i> Admin Portal</a>
+          <span style="font-size: 0.82rem; color: var(--text-dim);"><i class="bi bi-shield-check me-1"></i> Secure SSL Login</span>
         </div>
 
       </div>

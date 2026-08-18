@@ -4,14 +4,14 @@ import io
 import uuid
 from flask import Blueprint, render_template, request, flash, redirect, url_for, Response, current_app, session
 from werkzeug.utils import secure_filename
-from services.auth_service import admin_required, get_current_user, approve_student_payment, reject_student_payment
+from services.auth_service import admin_required, get_current_user, approve_student_payment, reject_student_payment, hash_password
 from services.product_service import (
     get_all_products, get_product_by_id, create_product, update_product, delete_product, get_default_product
 )
 from services.cohort_service import (
     get_all_cohorts, get_cohort_by_id, get_active_cohort, create_cohort,
     set_active_cohort, complete_cohort, get_dashboard_kpis, can_open_new_cohort,
-    update_cohort, delete_cohort
+    update_cohort, delete_cohort, log_activity
 )
 from services.mentor_service import (
     get_all_mentors, get_mentor_by_id, create_mentor, update_mentor, delete_mentor,
@@ -22,6 +22,7 @@ from services.json_database import JSONDatabase
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 users_db = JSONDatabase('users')
+admins_db = JSONDatabase('admins')
 curriculum_db = JSONDatabase('curriculum')
 projects_db = JSONDatabase('projects')
 announcements_db = JSONDatabase('announcements')
@@ -1303,3 +1304,301 @@ def feedback():
     from services.review_service import get_all_reviews
     reviews = get_all_reviews()
     return render_template('admin/feedback.html', admin=admin_user, reviews=reviews)
+
+
+# ----------------------------------------------------
+# 11. ADMIN USER MANAGEMENT & BULK EMAIL ADDITION
+# ----------------------------------------------------
+@admin_bp.route('/admins')
+@admin_required
+def manage_admins():
+    admin_user = get_current_user()
+    all_admins = admins_db.find_all()
+
+    # Standardize records with default fields
+    for adm in all_admins:
+        if not adm.get('admin_type'):
+            adm['admin_type'] = 'Super Admin' if adm.get('role') == 'admin' else 'Admin'
+        if not adm.get('status'):
+            adm['status'] = 'Active'
+
+    # Filter parameters
+    role_filter = request.args.get('type', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    search_query = request.args.get('q', '').strip().lower()
+
+    filtered_admins = all_admins
+    if role_filter:
+        filtered_admins = [a for a in filtered_admins if a.get('admin_type') == role_filter]
+    if status_filter:
+        filtered_admins = [a for a in filtered_admins if a.get('status') == status_filter]
+    if search_query:
+        filtered_admins = [
+            a for a in filtered_admins
+            if search_query in a.get('name', '').lower() or search_query in a.get('email', '').lower()
+        ]
+
+    # Calculate statistics
+    total_admins = len(all_admins)
+    super_admins_count = len([a for a in all_admins if a.get('admin_type') == 'Super Admin'])
+    program_managers_count = len([a for a in all_admins if a.get('admin_type') == 'Program Manager'])
+    finance_admins_count = len([a for a in all_admins if a.get('admin_type') == 'Finance Admin'])
+    ops_admins_count = len([a for a in all_admins if a.get('admin_type') in ['Operations Admin', 'Content Admin', 'Support Admin']])
+    active_admins_count = len([a for a in all_admins if a.get('status') == 'Active'])
+
+    stats = {
+        'total': total_admins,
+        'super': super_admins_count,
+        'program': program_managers_count,
+        'finance': finance_admins_count,
+        'ops': ops_admins_count,
+        'active': active_admins_count,
+        'inactive': total_admins - active_admins_count
+    }
+
+    admin_types_list = [
+        'Super Admin',
+        'Program Manager',
+        'Finance Admin',
+        'Operations Admin',
+        'Content Admin',
+        'Support Admin',
+        'Custom Admin'
+    ]
+
+    return render_template(
+        'admin/admins.html',
+        admin=admin_user,
+        admins=filtered_admins,
+        all_admins=all_admins,
+        stats=stats,
+        admin_types=admin_types_list,
+        selected_type=role_filter,
+        selected_status=status_filter,
+        search_query=search_query
+    )
+
+
+@admin_bp.route('/admins/add', methods=['POST'])
+@admin_required
+def add_admin():
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email', '').strip().lower()
+    admin_type = request.form.get('admin_type', 'Super Admin').strip()
+    custom_admin_type = request.form.get('custom_admin_type', '').strip()
+    password = request.form.get('password', '').strip()
+    status = request.form.get('status', 'Active').strip()
+
+    if not email:
+        flash("Admin email address is required.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    existing = admins_db.find_one(email=email)
+    if existing:
+        flash(f"An admin with email '{email}' already exists.", "warning")
+        return redirect(url_for('admin.manage_admins'))
+
+    resolved_type = custom_admin_type if admin_type == 'Custom Admin' and custom_admin_type else admin_type
+    import datetime
+
+    new_admin = {
+        'id': f"adm_{uuid.uuid4().hex[:8]}",
+        'name': name or email.split('@')[0].replace('.', ' ').replace('_', ' ').title(),
+        'email': email,
+        'password_hash': hash_password(password or 'admin123'),
+        'role': 'admin',
+        'admin_type': resolved_type,
+        'status': status,
+        'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
+        'google_id': ''
+    }
+
+    admins_db.create(new_admin)
+    log_activity("admin_created", "New Admin Created", f"Admin '{new_admin['name']}' ({new_admin['email']}) created as {resolved_type}.")
+    flash(f"Admin '{new_admin['name']}' ({resolved_type}) added successfully!", "success")
+    return redirect(url_for('admin.manage_admins'))
+
+
+@admin_bp.route('/admins/add-multiple', methods=['POST'])
+@admin_required
+def add_multiple_admins():
+    emails_raw = request.form.get('emails', '').strip()
+    default_admin_type = request.form.get('default_admin_type', 'Super Admin').strip()
+    custom_admin_type = request.form.get('custom_admin_type', '').strip()
+    default_password = request.form.get('default_password', '').strip() or 'admin123'
+    status = request.form.get('status', 'Active').strip()
+
+    if not emails_raw:
+        flash("Please enter at least one email address.", "warning")
+        return redirect(url_for('admin.manage_admins'))
+
+    import re
+    import datetime
+
+    raw_tokens = re.split(r'[,\s;]+', emails_raw)
+    email_list = []
+    for token in raw_tokens:
+        cleaned = token.strip().lower()
+        if cleaned and '@' in cleaned and '.' in cleaned:
+            if cleaned not in email_list:
+                email_list.append(cleaned)
+
+    if not email_list:
+        flash("No valid email addresses found in the provided input.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    resolved_type = custom_admin_type if default_admin_type == 'Custom Admin' and custom_admin_type else default_admin_type
+
+    added_count = 0
+    skipped_emails = []
+
+    for email in email_list:
+        existing = admins_db.find_one(email=email)
+        if existing:
+            skipped_emails.append(email)
+            continue
+
+        name_part = email.split('@')[0].replace('.', ' ').replace('_', ' ').title()
+        new_admin = {
+            'id': f"adm_{uuid.uuid4().hex[:8]}",
+            'name': name_part,
+            'email': email,
+            'password_hash': hash_password(default_password),
+            'role': 'admin',
+            'admin_type': resolved_type,
+            'status': status,
+            'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
+            'google_id': ''
+        }
+        admins_db.create(new_admin)
+        added_count += 1
+
+    if added_count > 0:
+        log_activity("bulk_admins_created", "Batch Admins Added", f"Added {added_count} new admin(s) as {resolved_type}.")
+        msg = f"Successfully added {added_count} new administrator(s) as '{resolved_type}'!"
+        if skipped_emails:
+            msg += f" ({len(skipped_emails)} email(s) skipped because they already exist: {', '.join(skipped_emails[:3])}{'...' if len(skipped_emails)>3 else ''})"
+        flash(msg, "success")
+    else:
+        flash(f"No new admins added. All {len(skipped_emails)} email(s) already exist in the database.", "info")
+
+    return redirect(url_for('admin.manage_admins'))
+
+
+@admin_bp.route('/admins/edit/<admin_id>', methods=['POST'])
+@admin_required
+def edit_admin(admin_id):
+    current_admin = get_current_user()
+    target_admin = admins_db.find_by_id(admin_id)
+
+    if not target_admin:
+        flash("Admin record not found.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email', '').strip().lower()
+    admin_type = request.form.get('admin_type', '').strip()
+    custom_admin_type = request.form.get('custom_admin_type', '').strip()
+    status = request.form.get('status', '').strip()
+    new_password = request.form.get('new_password', '').strip()
+
+    if email and email != target_admin.get('email'):
+        existing = admins_db.find_one(email=email)
+        if existing and existing.get('id') != admin_id:
+            flash(f"The email address '{email}' is already used by another admin account.", "danger")
+            return redirect(url_for('admin.manage_admins'))
+
+    if current_admin and current_admin.get('id') == admin_id and status == 'Inactive':
+        flash("Safety Protection: You cannot set your own active logged-in admin account to Inactive.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    all_admins = admins_db.find_all()
+    active_super_admins = [
+        a for a in all_admins
+        if a.get('admin_type', 'Super Admin') == 'Super Admin' and a.get('status', 'Active') == 'Active'
+    ]
+
+    resolved_type = custom_admin_type if admin_type == 'Custom Admin' and custom_admin_type else admin_type
+
+    if target_admin.get('admin_type') == 'Super Admin' and (resolved_type != 'Super Admin' or status == 'Inactive'):
+        if len(active_super_admins) <= 1 and target_admin.get('id') in [a['id'] for a in active_super_admins]:
+            flash("Safety Guard: System requires at least one active Super Admin. Action cancelled.", "danger")
+            return redirect(url_for('admin.manage_admins'))
+
+    updates = {}
+    if name:
+        updates['name'] = name
+    if email:
+        updates['email'] = email
+    if resolved_type:
+        updates['admin_type'] = resolved_type
+    if status:
+        updates['status'] = status
+    if new_password:
+        updates['password_hash'] = hash_password(new_password)
+
+    admins_db.update(admin_id, updates)
+    log_activity("admin_updated", "Admin Updated", f"Admin account '{target_admin.get('name')}' updated by {current_admin.get('name')}.")
+    flash(f"Admin '{name or target_admin.get('name')}' updated successfully!", "success")
+    return redirect(url_for('admin.manage_admins'))
+
+
+@admin_bp.route('/admins/toggle-status/<admin_id>', methods=['POST'])
+@admin_required
+def toggle_admin_status(admin_id):
+    current_admin = get_current_user()
+    target_admin = admins_db.find_by_id(admin_id)
+
+    if not target_admin:
+        flash("Admin record not found.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    if current_admin and current_admin.get('id') == admin_id:
+        flash("Safety Guard: You cannot deactivate your own currently active session.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    current_status = target_admin.get('status', 'Active')
+    new_status = 'Inactive' if current_status == 'Active' else 'Active'
+
+    if new_status == 'Inactive' and target_admin.get('admin_type') == 'Super Admin':
+        all_admins = admins_db.find_all()
+        active_super_admins = [
+            a for a in all_admins
+            if a.get('admin_type', 'Super Admin') == 'Super Admin' and a.get('status', 'Active') == 'Active'
+        ]
+        if len(active_super_admins) <= 1:
+            flash("Safety Guard: Cannot deactivate the only active Super Admin account.", "danger")
+            return redirect(url_for('admin.manage_admins'))
+
+    admins_db.update(admin_id, {'status': new_status})
+    log_activity("admin_status_toggled", "Admin Status Changed", f"Admin '{target_admin.get('name')}' status set to {new_status}.")
+    flash(f"Status for '{target_admin.get('name')}' changed to {new_status}.", "success")
+    return redirect(url_for('admin.manage_admins'))
+
+
+@admin_bp.route('/admins/delete/<admin_id>', methods=['POST'])
+@admin_required
+def delete_admin(admin_id):
+    current_admin = get_current_user()
+    target_admin = admins_db.find_by_id(admin_id)
+
+    if not target_admin:
+        flash("Admin account not found.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    if current_admin and current_admin.get('id') == admin_id:
+        flash("Safety Guard: You cannot delete your own logged-in admin account.", "danger")
+        return redirect(url_for('admin.manage_admins'))
+
+    all_admins = admins_db.find_all()
+    if target_admin.get('admin_type') == 'Super Admin':
+        super_admins = [a for a in all_admins if a.get('admin_type', 'Super Admin') == 'Super Admin']
+        if len(super_admins) <= 1:
+            flash("Safety Guard: Cannot delete the primary/last Super Admin account in the system.", "danger")
+            return redirect(url_for('admin.manage_admins'))
+
+    admins_db.delete(admin_id)
+    log_activity("admin_deleted", "Admin Removed", f"Admin account '{target_admin.get('name')}' deleted.")
+    flash(f"Admin account '{target_admin.get('name')}' deleted successfully.", "success")
+    return redirect(url_for('admin.manage_admins'))
+

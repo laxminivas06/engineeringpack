@@ -108,6 +108,7 @@
         <ul class="sidebar-nav">
           <li><a href="{{ url_for('admin.products') }}" class="sidebar-link {% if request.endpoint == 'admin.products' %}active{% endif %}"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
           <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+          <li><a href="{{ url_for('admin.manage_admins') }}" class="sidebar-link {% if request.endpoint == 'admin.manage_admins' %}active{% endif %}"><i class="bi bi-shield-lock"></i> <span>Manage Admins</span></a></li>
           <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link {% if request.endpoint == 'admin.mentors_page' %}active{% endif %}"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
           <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link {% if request.endpoint == 'admin.cohorts' %}active{% endif %}"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
           <li><a href="{{ url_for('admin.students') }}" class="sidebar-link {% if request.endpoint == 'admin.students' %}active{% endif %}"><i class="bi bi-people"></i> <span>Students</span></a></li>

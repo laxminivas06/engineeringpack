@@ -29,6 +29,8 @@ def get_or_create_google_user(google_info: dict, target_product_id: str = None):
     # Check if this email belongs to an Admin account
     admin_user = admins_db.find_one(email=email)
     if admin_user:
+        if admin_user.get('status') == 'Inactive':
+            return False, "This admin account is inactive. Please contact Super Admin.", None, 'admin'
         updates = {}
         if not admin_user.get('google_id') and google_id:
             updates['google_id'] = google_id
@@ -225,6 +227,9 @@ def authenticate_admin(email: str, password: str):
     admin = admins_db.find_one(email=email)
     if not admin:
         return False, "Invalid admin credentials.", None
+
+    if admin.get('status') == 'Inactive':
+        return False, "This admin account is inactive. Please contact Super Admin.", None
 
     if verify_password(password, admin.get('password_hash', '')):
         return True, "Authentication successful.", admin

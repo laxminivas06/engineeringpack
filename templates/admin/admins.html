@@ -1,0 +1,522 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Manage Admins — Admin Console{% endblock %}
+
+{% block sidebar_menu %}
+<ul class="sidebar-nav">
+  <li><a href="{{ url_for('admin.products') }}" class="sidebar-link"><i class="bi bi-box-seam"></i> <span>Products / Programs</span></a></li>
+  <li><a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><i class="bi bi-speedometer2"></i> <span>Product Dashboard</span></a></li>
+  <li><a href="{{ url_for('admin.manage_admins') }}" class="sidebar-link active"><i class="bi bi-shield-lock"></i> <span>Manage Admins</span></a></li>
+  <li><a href="{{ url_for('admin.mentors_page') }}" class="sidebar-link"><i class="bi bi-person-badge"></i> <span>Mentor Database</span></a></li>
+  <li><a href="{{ url_for('admin.cohorts') }}" class="sidebar-link"><i class="bi bi-layers-half"></i> <span>Cohorts</span></a></li>
+  <li><a href="{{ url_for('admin.students') }}" class="sidebar-link"><i class="bi bi-people"></i> <span>Students</span></a></li>
+  <li><a href="{{ url_for('admin.curriculum') }}" class="sidebar-link"><i class="bi bi-journal-text"></i> <span>Curriculum</span></a></li>
+  <li><a href="{{ url_for('admin.projects') }}" class="sidebar-link"><i class="bi bi-folder"></i> <span>Projects</span></a></li>
+  <li><a href="{{ url_for('admin.announcements') }}" class="sidebar-link"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
+  <li><a href="{{ url_for('admin.feedback') }}" class="sidebar-link"><i class="bi bi-star-half"></i> <span>Student Feedback</span></a></li>
+  <li><a href="{{ url_for('admin.payments') }}" class="sidebar-link"><i class="bi bi-credit-card-2-front"></i> <span>Payments</span></a></li>
+  <li><a href="{{ url_for('admin.product_settings') }}" class="sidebar-link"><i class="bi bi-sliders"></i> <span>Product Settings</span></a></li>
+  <li><a href="{{ url_for('admin.settings') }}" class="sidebar-link"><i class="bi bi-gear"></i> <span>System Settings</span></a></li>
+</ul>
+{% endblock %}
+
+{% block dashboard_content %}
+<!-- PAGE HEADER -->
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.65rem;">
+      <i class="bi bi-shield-check" style="color: var(--primary-cyan);"></i> Admin User & Role Console
+    </h1>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Manage platform administrators, assign granular admin roles/types, and batch import multiple email accounts.</p>
+  </div>
+  <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <button class="btn btn-outline" onclick="openBatchAddModal()" style="border-color: var(--primary-cyan); color: var(--primary-cyan);">
+      <i class="bi bi-envelope-plus me-1"></i> Batch Add Multi-Emails
+    </button>
+    <button class="btn btn-primary" onclick="openAddSingleAdminModal()">
+      <i class="bi bi-person-plus-fill me-1"></i> Add Single Admin
+    </button>
+  </div>
+</div>
+
+<!-- KPI SUMMARY CARDS -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+  <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid var(--primary-cyan);">
+    <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(3, 105, 161, 0.15); color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <div>
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Total Admins</span>
+      <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ stats.total }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #8b5cf6;">
+    <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(139, 92, 246, 0.15); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+      <i class="bi bi-award-fill"></i>
+    </div>
+    <div>
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Super Admins</span>
+      <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ stats.super }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #0284c7;">
+    <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(2, 132, 199, 0.15); color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+      <i class="bi bi-journal-check"></i>
+    </div>
+    <div>
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Program Managers</span>
+      <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ stats.program }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #10b981;">
+    <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+      <i class="bi bi-cash-coin"></i>
+    </div>
+    <div>
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Finance Admins</span>
+      <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ stats.finance }}</div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid #f59e0b;">
+    <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+      <i class="bi bi-gear-fill"></i>
+    </div>
+    <div>
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Ops & Content</span>
+      <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">{{ stats.ops }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS & SEARCH BAR -->
+<div class="glass-card" style="padding: 1.25rem; margin-bottom: 2rem;">
+  <form method="GET" action="{{ url_for('admin.manage_admins') }}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
+      <!-- Search input -->
+      <div style="position: relative; flex: 1; min-width: 200px;">
+        <i class="bi bi-search" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-dim);"></i>
+        <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search admins by name or email..." style="padding-left: 2.3rem;">
+      </div>
+
+      <!-- Admin Type Filter -->
+      <select name="type" class="form-control" style="width: 180px;" onchange="this.form.submit()">
+        <option value="">All Admin Types</option>
+        {% for t in admin_types %}
+          <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Status Filter -->
+      <select name="status" class="form-control" style="width: 140px;" onchange="this.form.submit()">
+        <option value="">All Statuses</option>
+        <option value="Active" {% if selected_status == 'Active' %}selected{% endif %}>Active</option>
+        <option value="Inactive" {% if selected_status == 'Inactive' %}selected{% endif %}>Inactive</option>
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Apply Filters</button>
+      {% if search_query or selected_type or selected_status %}
+        <a href="{{ url_for('admin.manage_admins') }}" class="btn btn-outline btn-sm"><i class="bi bi-x-circle"></i> Clear</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<!-- ADMINS LIST TABLE -->
+<div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 3rem;">
+  <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-accent); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.05);">
+    <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="bi bi-shield-lock" style="color: var(--primary-cyan);"></i> Administrator Accounts ({{ admins|length }})
+    </h2>
+    <span style="font-size: 0.8rem; color: var(--text-dim);">Logged in as: <strong>{{ admin.name or admin.email }}</strong></span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-accent); background: var(--bg-surface); color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+          <th style="padding: 1rem 1.5rem;">Administrator</th>
+          <th style="padding: 1rem 1rem;">Email Address</th>
+          <th style="padding: 1rem 1rem;">Admin Role / Type</th>
+          <th style="padding: 1rem 1rem;">Status</th>
+          <th style="padding: 1rem 1rem;">Google Sync</th>
+          <th style="padding: 1rem 1.5rem; text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody data-paginate="true" data-page-size="8">
+        {% for a in admins %}
+        <tr style="border-bottom: 1px solid var(--border-accent); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+          <!-- Name & Avatar -->
+          <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                {{ a.name[0]|upper if a.name else 'A' }}
+              </div>
+              <div>
+                <div style="font-weight: 700; color: var(--text-main);">
+                  {{ a.name }}
+                  {% if admin and admin.id == a.id %}
+                    <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.65rem; margin-left: 0.35rem;">You</span>
+                  {% endif %}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ a.id }}</div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Email -->
+          <td style="padding: 1rem 1rem; vertical-align: middle;">
+            <span style="font-weight: 600; color: var(--text-main);">{{ a.email }}</span>
+          </td>
+
+          <!-- Admin Type Badge -->
+          <td style="padding: 1rem 1rem; vertical-align: middle;">
+            {% set atype = a.admin_type or 'Super Admin' %}
+            {% if atype == 'Super Admin' %}
+              <span class="tech-badge" style="background: rgba(139, 92, 246, 0.18); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-shield-fill-check me-1"></i> Super Admin
+              </span>
+            {% elif atype == 'Program Manager' %}
+              <span class="tech-badge" style="background: rgba(2, 132, 199, 0.18); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-journal-text me-1"></i> Program Manager
+              </span>
+            {% elif atype == 'Finance Admin' %}
+              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-cash-coin me-1"></i> Finance Admin
+              </span>
+            {% elif atype == 'Operations Admin' %}
+              <span class="tech-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-gear-wide-connected me-1"></i> Operations Admin
+              </span>
+            {% elif atype == 'Content Admin' %}
+              <span class="tech-badge" style="background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-file-earmark-text me-1"></i> Content Admin
+              </span>
+            {% else %}
+              <span class="tech-badge" style="background: rgba(100, 116, 139, 0.18); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+                <i class="bi bi-person-gear me-1"></i> {{ atype }}
+              </span>
+            {% endif %}
+          </td>
+
+          <!-- Status Badge -->
+          <td style="padding: 1rem 1rem; vertical-align: middle;">
+            {% if a.status == 'Inactive' %}
+              <span class="tech-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 700;">
+                <i class="bi bi-dash-circle me-1"></i> Inactive
+              </span>
+            {% else %}
+              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">
+                <i class="bi bi-check-circle-fill me-1"></i> Active
+              </span>
+            {% endif %}
+          </td>
+
+          <!-- Google Sync status -->
+          <td style="padding: 1rem 1rem; vertical-align: middle; font-size: 0.82rem;">
+            {% if a.google_id %}
+              <span style="color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+                <i class="bi bi-google"></i> Linked
+              </span>
+            {% else %}
+              <span style="color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem;">
+                <i class="bi bi-envelope"></i> Password Auth
+              </span>
+            {% endif %}
+          </td>
+
+          <!-- Action buttons -->
+          <td style="padding: 1rem 1.5rem; vertical-align: middle; text-align: right;">
+            <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+              <!-- Edit Admin -->
+              <button class="btn btn-outline btn-sm" 
+                      data-id="{{ a.id }}"
+                      data-name="{{ a.name }}"
+                      data-email="{{ a.email }}"
+                      data-type="{{ a.admin_type or 'Super Admin' }}"
+                      data-status="{{ a.status or 'Active' }}"
+                      onclick="openEditAdminModalFromBtn(this)" 
+                      title="Edit Admin">
+                <i class="bi bi-pencil"></i> Edit
+              </button>
+
+              <!-- Toggle Active / Inactive -->
+              <form action="{{ url_for('admin.toggle_admin_status', admin_id=a.id) }}" method="POST" style="display: inline;">
+                {% if a.status == 'Inactive' %}
+                  <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(16,185,129,0.4); color: #34d399;" title="Activate Admin Account">
+                    <i class="bi bi-play-circle"></i> Activate
+                  </button>
+                {% else %}
+                  <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(245,158,11,0.4); color: #fbbf24;" title="Deactivate Admin Account" {% if admin and admin.id == a.id %}disabled{% endif %}>
+                    <i class="bi bi-pause-circle"></i> Deactivate
+                  </button>
+                {% endif %}
+              </form>
+
+              <!-- Delete Admin -->
+              <form action="{{ url_for('admin.delete_admin', admin_id=a.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove admin {{ a.name }}? This action cannot be undone.');">
+                <button type="submit" class="btn btn-outline btn-sm" style="border-color: rgba(239,68,68,0.3); color: #ef4444;" title="Delete Admin" {% if admin and admin.id == a.id %}disabled{% endif %}>
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" style="padding: 3rem; text-align: center; color: var(--text-dim);">
+            <i class="bi bi-shield-x" style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+            No administrator accounts found matching your filters.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL 1: ADD SINGLE ADMIN MODAL -->
+<!-- ========================================================= -->
+<div id="addSingleAdminModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--border-accent); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-accent); padding-bottom: 0.75rem;">
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="bi bi-person-plus-fill" style="color: var(--primary-cyan);"></i> Create Single Administrator
+      </h3>
+      <button onclick="closeModal('addSingleAdminModal')" style="background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x"></i></button>
+    </div>
+
+    <form action="{{ url_for('admin.add_admin') }}" method="POST">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g. Alex Morgan" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Email Address *</label>
+        <input type="email" name="email" class="form-control" placeholder="e.g. alex.morgan@aivontraa.com" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Admin Type / Role *</label>
+        <select name="admin_type" id="addAdminTypeSelect" class="form-control" onchange="toggleCustomAdminInput(this.value, 'addCustomAdminTypeGroup')" required>
+          {% for t in admin_types %}
+            <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div id="addCustomAdminTypeGroup" style="display: none; margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Specify Custom Admin Role Name *</label>
+        <input type="text" name="custom_admin_type" class="form-control" placeholder="e.g. Regional Program Director">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Initial Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Leave empty for default 'admin123'">
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Default password if left blank is <code>admin123</code>. Admin can also sign in via Google OAuth with matching email.</span>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Account Status</label>
+        <select name="status" class="form-control">
+          <option value="Active" selected>Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border-accent); padding-top: 1rem;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('addSingleAdminModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-1"></i> Create Admin Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL 2: BATCH ADD MULTIPLE ADMINS (MULTI-EMAIL) MODAL -->
+<!-- ========================================================= -->
+<div id="batchAddAdminModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 620px; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--border-accent); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-accent); padding-bottom: 0.75rem;">
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="bi bi-envelope-plus-fill" style="color: var(--primary-cyan);"></i> Batch Add Multiple Admin Emails
+      </h3>
+      <button onclick="closeModal('batchAddAdminModal')" style="background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x"></i></button>
+    </div>
+
+    <div style="background: rgba(3, 105, 161, 0.12); border: 1px solid rgba(3, 105, 161, 0.3); border-radius: 8px; padding: 0.85rem; margin-bottom: 1.25rem; font-size: 0.83rem; color: var(--text-main);">
+      <i class="bi bi-info-circle-fill text-primary me-1"></i> Paste multiple email addresses below (separated by commas, semicolons, or newlines). Admin names will be automatically initialized from their email addresses.
+    </div>
+
+    <form action="{{ url_for('admin.add_multiple_admins') }}" method="POST">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Admin Email Addresses *</label>
+        <textarea name="emails" class="form-control" rows="5" placeholder="e.g.&#10;sarah.admin@company.com&#10;david.finance@company.com&#10;ops.lead@company.com, support.admin@company.com" required style="font-family: monospace; font-size: 0.85rem;"></textarea>
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Duplicate or existing email addresses will be automatically detected and skipped safely.</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Default Admin Type *</label>
+          <select name="default_admin_type" id="batchAdminTypeSelect" class="form-control" onchange="toggleCustomAdminInput(this.value, 'batchCustomAdminTypeGroup')" required>
+            {% for t in admin_types %}
+              <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Default Password</label>
+          <input type="text" name="default_password" class="form-control" value="admin123">
+        </div>
+      </div>
+
+      <div id="batchCustomAdminTypeGroup" style="display: none; margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Specify Custom Admin Role Name *</label>
+        <input type="text" name="custom_admin_type" class="form-control" placeholder="e.g. Field Co-ordinator">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Account Status for All</label>
+        <select name="status" class="form-control">
+          <option value="Active" selected>Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border-accent); padding-top: 1rem;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('batchAddAdminModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-people-fill me-1"></i> Import & Create All Admins</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL 3: EDIT ADMIN MODAL -->
+<!-- ========================================================= -->
+<div id="editAdminModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+  <div class="glass-card" style="width: 100%; max-width: 550px; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--border-accent); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-accent); padding-bottom: 0.75rem;">
+      <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="bi bi-pencil-square" style="color: var(--primary-cyan);"></i> Edit Administrator Profile
+      </h3>
+      <button onclick="closeModal('editAdminModal')" style="background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x"></i></button>
+    </div>
+
+    <form id="editAdminForm" method="POST">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name *</label>
+        <input type="text" name="name" id="editAdminName" class="form-control" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Email Address *</label>
+        <input type="email" name="email" id="editAdminEmail" class="form-control" required>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Admin Type / Role *</label>
+        <select name="admin_type" id="editAdminTypeSelect" class="form-control" onchange="toggleCustomAdminInput(this.value, 'editCustomAdminTypeGroup')" required>
+          {% for t in admin_types %}
+            <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div id="editCustomAdminTypeGroup" style="display: none; margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Specify Custom Admin Role Name *</label>
+        <input type="text" name="custom_admin_type" id="editCustomAdminTypeInput" class="form-control">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Reset Password (Optional)</label>
+        <input type="password" name="new_password" class="form-control" placeholder="Leave empty to keep existing password">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Account Status</label>
+        <select name="status" id="editAdminStatus" class="form-control">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border-accent); padding-top: 1rem;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('editAdminModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function openAddSingleAdminModal() {
+    document.getElementById('addSingleAdminModal').style.display = 'flex';
+  }
+
+  function openBatchAddModal() {
+    document.getElementById('batchAddAdminModal').style.display = 'flex';
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  function toggleCustomAdminInput(val, groupContainerId) {
+    const group = document.getElementById(groupContainerId);
+    if (group) {
+      group.style.display = val === 'Custom Admin' ? 'block' : 'none';
+    }
+  }
+
+  function openEditAdminModalFromBtn(btn) {
+    const adminObj = {
+      id: btn.getAttribute('data-id'),
+      name: btn.getAttribute('data-name'),
+      email: btn.getAttribute('data-email'),
+      admin_type: btn.getAttribute('data-type'),
+      status: btn.getAttribute('data-status')
+    };
+    const form = document.getElementById('editAdminForm');
+    form.action = '/admin/admins/edit/' + adminObj.id;
+    document.getElementById('editAdminName').value = adminObj.name || '';
+    document.getElementById('editAdminEmail').value = adminObj.email || '';
+    
+    const typeSelect = document.getElementById('editAdminTypeSelect');
+    const knownTypes = Array.from(typeSelect.options).map(o => o.value);
+    
+    const currentType = adminObj.admin_type || 'Super Admin';
+    if (knownTypes.includes(currentType)) {
+      typeSelect.value = currentType;
+      document.getElementById('editCustomAdminTypeGroup').style.display = 'none';
+    } else {
+      typeSelect.value = 'Custom Admin';
+      document.getElementById('editCustomAdminTypeGroup').style.display = 'block';
+      document.getElementById('editCustomAdminTypeInput').value = currentType;
+    }
+
+    document.getElementById('editAdminStatus').value = adminObj.status || 'Active';
+    document.getElementById('editAdminModal').style.display = 'flex';
+  }
+
+  // Close modals on outside overlay click
+  window.addEventListener('click', function(e) {
+    ['addSingleAdminModal', 'batchAddAdminModal', 'editAdminModal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && e.target === el) {
+        el.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}

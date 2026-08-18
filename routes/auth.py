@@ -39,7 +39,12 @@ def get_google_redirect_uri():
     if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', hostname):
         return f"{request.scheme}://localhost{port_suffix}/auth/google/callback"
 
-    return f"{request.scheme}://{request.host}/auth/google/callback"
+    # For production environments (like PythonAnywhere), ensure HTTPS scheme is used
+    scheme = request.headers.get('X-Forwarded-Proto', request.scheme)
+    if hostname not in ('localhost', '127.0.0.1'):
+        scheme = 'https'
+
+    return f"{scheme}://{request.host}/auth/google/callback"
 
 
 def parse_google_id_token(id_token: str) -> dict:

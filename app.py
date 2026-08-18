@@ -1,6 +1,10 @@
 import json
 from flask import Flask, session, request
-from config import Config
+from config import Config, load_env
+
+# Guarantee environment variables from .env are loaded into OS environment
+load_env()
+
 from routes.public import public_bp
 from routes.auth import auth_bp
 from routes.student import student_bp
@@ -13,6 +17,8 @@ from services.email_service import start_daily_email_scheduler
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+
 
 # Register Custom Jinja Filters
 @app.template_filter('escapejs')

@@ -1,10 +1,24 @@
 import os
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
+basedir = os.path.abspath(os.path.dirname(__file__))
+env_file = os.path.join(basedir, '.env')
+
+def load_env():
+    """Directly reads and loads variables from .env file into os.environ."""
+    if os.path.exists(env_file):
+        with open(env_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, val = line.split('=', 1)
+                    key = key.strip()
+                    val = val.strip().strip("'\"")
+                    if key:
+                        os.environ[key] = val
+
+# Execute immediately on module import
+load_env()
+
 
 
 class Config:

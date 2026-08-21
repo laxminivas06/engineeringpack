@@ -31,7 +31,7 @@
     </div>
 
     <!-- PRODUCT SWITCHER TABS -->
-    <div style="display: flex; gap: 0.5rem; background: var(--bg-surface); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-color);">
+    <div class="prod-tabs-scrollable">
       {% for p in all_products %}
         <a href="{{ url_for('admin.product_settings', product_id=p.id) }}" class="btn btn-sm {% if p.id == product.id %}btn-primary{% else %}btn-outline{% endif %}" style="font-size: 0.78rem; padding: 0.3rem 0.75rem;">
           {{ p.name }}
@@ -41,9 +41,9 @@
   </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+<div class="dash-two-col-grid" style="gap: 1.5rem;">
   <!-- MAIN SETTINGS FORM -->
-  <div class="glass-card" style="padding: 2rem;">
+  <div class="glass-card" style="padding: 1.75rem;">
     <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
       <i class="bi bi-gear-wide-connected text-primary me-2"></i> Configuration & Pricing
     </h2>
@@ -69,7 +69,7 @@
         <textarea name="overview" class="form-control" rows="4" placeholder="Detailed program overview displayed on the public program page...">{{ product.overview or '' }}</textarea>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
         <div>
           <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Product Price (₹) *</label>
           <input type="number" name="price" class="form-control" value="{{ product.price }}" required>

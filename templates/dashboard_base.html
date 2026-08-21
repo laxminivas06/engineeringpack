@@ -42,23 +42,23 @@
 
   <!-- TOP DASHBOARD NAVBAR -->
   <nav class="navbar">
-    <div class="container" style="max-width: 100%; padding: 0 1.25rem;">
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
+    <div class="container navbar-dash-container">
+      <div class="nav-left-brand-group">
         <!-- Mobile Sidebar Toggle Button in Header -->
-        <button class="sidebar-toggle-btn header-toggle-btn" id="headerSidebarToggle" aria-label="Toggle sidebar navigation" style="display: none; margin-bottom: 0; margin-right: 0.25rem;">
-          <i class="bi bi-list" style="font-size: 1.25rem;"></i>
+        <button class="sidebar-toggle-btn header-toggle-btn" id="headerSidebarToggle" aria-label="Toggle sidebar navigation">
+          <i class="bi bi-list"></i>
         </button>
 
-        <a href="{{ url_for('public.index') }}" class="nav-brand" style="display: flex; align-items: center; gap: 0.65rem;">
-          <div class="brand-icon" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: rgba(3, 105, 161, 0.15); color: #0369a1; font-size: 1.1rem;"><i class="bi bi-cpu-fill"></i></div>
-          <span style="font-weight: 800; font-size: 1.15rem; color: var(--text-main);">AIVONTRAA <span class="text-gradient">CONSOLE</span></span>
+        <a href="{{ url_for('public.index') }}" class="nav-brand">
+          <div class="brand-icon"><i class="bi bi-cpu-fill"></i></div>
+          <span class="brand-text">AIVONTRAA <span class="text-gradient">CONSOLE</span></span>
         </a>
 
         {% if session.role == 'admin' %}
         <!-- ADMIN PRODUCT CONTEXT SELECTOR DROPDOWN -->
-        <div class="product-context-selector" style="margin-left: 0.75rem; position: relative; display: inline-block;">
-          <select onchange="window.location.href='/admin/select-product/' + this.value" class="form-control" style="background: var(--bg-surface); border: 1px solid var(--border-accent); color: var(--primary-cyan); font-weight: 600; padding: 0.4rem 1.8rem 0.4rem 0.8rem; font-size: 0.82rem; border-radius: 8px; cursor: pointer;">
-            <option value="all" {% if admin_product_id == 'all' %}selected{% endif %}>🌐 All Products / Global Aggregate</option>
+        <div class="product-context-selector">
+          <select onchange="window.location.href='/admin/select-product/' + this.value" class="form-control admin-prod-select">
+            <option value="all" {% if admin_product_id == 'all' %}selected{% endif %}>🌐 All Products / Global</option>
             {% for prod in all_products %}
               <option value="{{ prod.id }}" {% if admin_product_id == prod.id %}selected{% endif %}>📦 {{ prod.name }}</option>
             {% endfor %}
@@ -67,18 +67,18 @@
         {% endif %}
       </div>
 
-      <div class="nav-actions">
+      <div class="nav-actions dashboard-nav-actions">
         <!-- Theme Selector Dropdown -->
-        <div class="theme-switcher-container" style="position: relative; display: inline-block;">
-          <select id="themeSelector" onchange="setAppTheme(this.value)" class="theme-select" aria-label="Select Theme" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); font-weight: 600; padding: 0.38rem 0.75rem; font-size: 0.82rem; border-radius: 8px; cursor: pointer;">
+        <div class="theme-switcher-container">
+          <select id="themeSelector" onchange="setAppTheme(this.value)" class="theme-select" aria-label="Select Theme">
             <option value="light">☀️ Light</option>
             <option value="dark">🌙 Dark</option>
             <option value="system">💻 System</option>
           </select>
         </div>
 
-        <a href="{{ url_for('public.index') }}" class="btn btn-outline btn-sm"><i class="bi bi-globe"></i> View Website</a>
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm" style="border-color: rgba(239,68,68,0.3); color: #ef4444;"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <a href="{{ url_for('public.index') }}" class="btn btn-outline btn-sm nav-hide-mobile"><i class="bi bi-globe"></i> Website</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm logout-btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
       </div>
     </div>
   </nav>
@@ -89,6 +89,11 @@
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <!-- SIDEBAR -->
     <aside class="dashboard-sidebar" id="dashboardSidebar">
+      <div class="sidebar-header-mobile">
+        <span class="sidebar-title-label">NAVIGATION MENU</span>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar"><i class="bi bi-x-lg"></i></button>
+      </div>
+
       <div class="sidebar-user-card">
         <div class="avatar-circle">
           {% if session.role == 'admin' %}

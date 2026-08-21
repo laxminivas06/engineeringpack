@@ -103,7 +103,7 @@
       </div>
 
       <!-- Admin Type Filter -->
-      <select name="type" class="form-control" style="width: 180px;" onchange="this.form.submit()">
+      <select name="type" class="form-control" style="flex: 1; min-width: 140px;" onchange="this.form.submit()">
         <option value="">All Admin Types</option>
         {% for t in admin_types %}
           <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t }}</option>
@@ -111,14 +111,14 @@
       </select>
 
       <!-- Status Filter -->
-      <select name="status" class="form-control" style="width: 140px;" onchange="this.form.submit()">
+      <select name="status" class="form-control" style="flex: 1; min-width: 120px;" onchange="this.form.submit()">
         <option value="">All Statuses</option>
         <option value="Active" {% if selected_status == 'Active' %}selected{% endif %}>Active</option>
         <option value="Inactive" {% if selected_status == 'Inactive' %}selected{% endif %}>Inactive</option>
       </select>
     </div>
 
-    <div style="display: flex; gap: 0.5rem;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Apply Filters</button>
       {% if search_query or selected_type or selected_status %}
         <a href="{{ url_for('admin.manage_admins') }}" class="btn btn-outline btn-sm"><i class="bi bi-x-circle"></i> Clear</a>
@@ -129,15 +129,15 @@
 
 <!-- ADMINS LIST TABLE -->
 <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 3rem;">
-  <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-accent); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.05);">
+  <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-accent); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.05); flex-wrap: wrap; gap: 0.5rem;">
     <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
       <i class="bi bi-shield-lock" style="color: var(--primary-cyan);"></i> Administrator Accounts ({{ admins|length }})
     </h2>
     <span style="font-size: 0.8rem; color: var(--text-dim);">Logged in as: <strong>{{ admin.name or admin.email }}</strong></span>
   </div>
 
-  <div style="overflow-x: auto;">
-    <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+  <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+    <table class="table" style="width: 100%; min-width: 650px; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
       <thead>
         <tr style="border-bottom: 1px solid var(--border-accent); background: var(--bg-surface); color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
           <th style="padding: 1rem 1.5rem;">Administrator</th>
@@ -152,87 +152,87 @@
         {% for a in admins %}
         <tr style="border-bottom: 1px solid var(--border-accent); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
           <!-- Name & Avatar -->
-          <td style="padding: 1rem 1.5rem; vertical-align: middle;">
+          <td style="padding: 1rem 1.5rem; vertical-align: middle; white-space: nowrap;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                 {{ a.name[0]|upper if a.name else 'A' }}
               </div>
               <div>
-                <div style="font-weight: 700; color: var(--text-main);">
+                <div style="font-weight: 700; color: var(--text-main); white-space: nowrap;">
                   {{ a.name }}
                   {% if admin and admin.id == a.id %}
-                    <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.65rem; margin-left: 0.35rem;">You</span>
+                    <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.65rem; margin-left: 0.35rem; white-space: nowrap;">You</span>
                   {% endif %}
                 </div>
-                <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ a.id }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim); white-space: nowrap;">ID: {{ a.id }}</div>
               </div>
             </div>
           </td>
 
           <!-- Email -->
-          <td style="padding: 1rem 1rem; vertical-align: middle;">
-            <span style="font-weight: 600; color: var(--text-main);">{{ a.email }}</span>
+          <td style="padding: 1rem 1rem; vertical-align: middle; white-space: nowrap;">
+            <span style="font-weight: 600; color: var(--text-main); white-space: nowrap;">{{ a.email }}</span>
           </td>
 
           <!-- Admin Type Badge -->
-          <td style="padding: 1rem 1rem; vertical-align: middle;">
+          <td style="padding: 1rem 1rem; vertical-align: middle; white-space: nowrap;">
             {% set atype = a.admin_type or 'Super Admin' %}
             {% if atype == 'Super Admin' %}
-              <span class="tech-badge" style="background: rgba(139, 92, 246, 0.18); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(139, 92, 246, 0.18); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-shield-fill-check me-1"></i> Super Admin
               </span>
             {% elif atype == 'Program Manager' %}
-              <span class="tech-badge" style="background: rgba(2, 132, 199, 0.18); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(2, 132, 199, 0.18); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-journal-text me-1"></i> Program Manager
               </span>
             {% elif atype == 'Finance Admin' %}
-              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-cash-coin me-1"></i> Finance Admin
               </span>
             {% elif atype == 'Operations Admin' %}
-              <span class="tech-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-gear-wide-connected me-1"></i> Operations Admin
               </span>
             {% elif atype == 'Content Admin' %}
-              <span class="tech-badge" style="background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-file-earmark-text me-1"></i> Content Admin
               </span>
             {% else %}
-              <span class="tech-badge" style="background: rgba(100, 116, 139, 0.18); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px;">
+              <span class="tech-badge" style="background: rgba(100, 116, 139, 0.18); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 6px; white-space: nowrap;">
                 <i class="bi bi-person-gear me-1"></i> {{ atype }}
               </span>
             {% endif %}
           </td>
 
           <!-- Status Badge -->
-          <td style="padding: 1rem 1rem; vertical-align: middle;">
+          <td style="padding: 1rem 1rem; vertical-align: middle; white-space: nowrap;">
             {% if a.status == 'Inactive' %}
-              <span class="tech-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 700;">
+              <span class="tech-badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-weight: 700; white-space: nowrap;">
                 <i class="bi bi-dash-circle me-1"></i> Inactive
               </span>
             {% else %}
-              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">
+              <span class="tech-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; white-space: nowrap;">
                 <i class="bi bi-check-circle-fill me-1"></i> Active
               </span>
             {% endif %}
           </td>
 
           <!-- Google Sync status -->
-          <td style="padding: 1rem 1rem; vertical-align: middle; font-size: 0.82rem;">
+          <td style="padding: 1rem 1rem; vertical-align: middle; font-size: 0.82rem; white-space: nowrap;">
             {% if a.google_id %}
-              <span style="color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+              <span style="color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap;">
                 <i class="bi bi-google"></i> Linked
               </span>
             {% else %}
-              <span style="color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem;">
+              <span style="color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem; white-space: nowrap;">
                 <i class="bi bi-envelope"></i> Password Auth
               </span>
             {% endif %}
           </td>
 
           <!-- Action buttons -->
-          <td style="padding: 1rem 1.5rem; vertical-align: middle; text-align: right;">
-            <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+          <td style="padding: 1rem 1.5rem; vertical-align: middle; text-align: right; white-space: nowrap;">
+            <div style="display: flex; gap: 0.4rem; justify-content: flex-end; white-space: nowrap;">
               <!-- Edit Admin -->
               <button class="btn btn-outline btn-sm" 
                       data-id="{{ a.id }}"

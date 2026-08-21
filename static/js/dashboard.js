@@ -38,12 +38,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
   if (sidebarToggleBtn) {
     sidebarToggleBtn.addEventListener('click', toggleSidebar);
   }
 
   if (headerSidebarToggle) {
     headerSidebarToggle.addEventListener('click', toggleSidebar);
+  }
+
+  if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener('click', closeSidebar);
   }
 
   if (sidebarBackdrop) {

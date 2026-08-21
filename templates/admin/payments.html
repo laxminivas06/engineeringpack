@@ -31,7 +31,7 @@
 </div>
 
 <!-- PRODUCT FILTER TABS -->
-<div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+<div class="prod-tabs-scrollable" style="margin-bottom: 1.5rem;">
   <a href="{{ url_for('admin.select_product', product_id='all') }}" class="btn btn-sm {% if selected_prod_id == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
     🌐 All Products
   </a>
@@ -66,8 +66,8 @@
 </div>
 
 <!-- PAYMENTS TABLE -->
-<div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
-  <table data-paginate="true" data-page-size="10" id="adminPaymentsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+<div class="glass-card table-responsive" style="padding: 1.25rem; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+  <table data-paginate="true" data-page-size="10" id="adminPaymentsTable" style="width: 100%; min-width: 700px; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
     <thead>
       <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">
         <th style="padding: 0.8rem 1rem;">Student Details</th>
